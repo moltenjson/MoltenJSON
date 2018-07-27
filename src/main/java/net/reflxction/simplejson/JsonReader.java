@@ -64,17 +64,14 @@ public class JsonReader {
      * @param clazz Class which contains the object
      * @param <T>   The given object assignment
      * @return The object assigned, after parsing from JSON
+     * @throws FileNotFoundException if the reader failed to find the file
      */
-    public <T> T readJson(Class<T> clazz) {
+    public <T> T readJson(Class<T> clazz) throws FileNotFoundException {
         Gson gson = new Gson();
-        try {
-            reader = new BufferedReader(new FileReader(getFile().getFile()));
-            T result = gson.fromJson(reader, clazz);
-            if (result != null) {
-                return result;
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+        reader = new BufferedReader(new FileReader(getFile().getFile()));
+        T result = gson.fromJson(reader, clazz);
+        if (result != null) {
+            return result;
         }
         return null;
     }

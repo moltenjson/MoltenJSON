@@ -31,14 +31,10 @@ public class JsonFile {
      *
      * @param path Path to the JSON file
      */
-    public JsonFile(String path) {
+    public JsonFile(String path) throws IOException {
         this.file = new File(path);
-        try {
-            if (!file.exists()) {
-                file.createNewFile();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!file.exists()) {
+            file.createNewFile();
         }
     }
 
