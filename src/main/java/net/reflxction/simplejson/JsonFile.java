@@ -35,7 +35,9 @@ public class JsonFile {
         if (!path.endsWith(".json")) throw new IllegalArgumentException("The given path name must be a JSON file!");
         this.file = new File(path);
         try {
-            file.createNewFile();
+            if (!file.exists()) {
+                file.createNewFile();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
