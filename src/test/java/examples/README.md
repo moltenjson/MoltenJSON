@@ -1,1 +1,2 @@
-hi
+# Examples
+This package contains examples on both using the library to [write](https://github.com/ReflxctionDev/SimpleJSON/blob/master/src/test/java/examples/RunWrite.java) and [read](https://github.com/ReflxctionDev/SimpleJSON/blob/master/src/test/java/examples/RunRead.java). Both examples use the Team and Player classes as examples, as they should give a rough idea on using the library to save various types of things (strings, numbers, boolean, lists). Happy coding!
