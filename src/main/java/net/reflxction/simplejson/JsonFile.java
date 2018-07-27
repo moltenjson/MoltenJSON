@@ -31,6 +31,7 @@ public class JsonFile {
      * @param path Path to the JSON file
      */
     public JsonFile(String path) {
+        if (!path.endsWith(".json")) throw new IllegalArgumentException("The given path name must be a JSON file!");
         this.file = new File(path);
     }
 

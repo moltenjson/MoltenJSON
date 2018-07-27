@@ -27,7 +27,6 @@ import java.io.IOException;
  */
 public class JsonReader {
 
-
     // The JSON file that it should read for
     private JsonFile file;
 
