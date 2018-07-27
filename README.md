@@ -49,5 +49,8 @@ dependencies {
 }
 ```
 
+# Download
+If you don't use Maven or Gradle, then you should consider using [the JAR file](https://github.com/ReflxctionDev/SimpleJSON/releases/tag/1.0-SNAPSHOT)
+
 # Examples
 For examples, take a look at the [examples](https://github.com/ReflxctionDev/SimpleJSON/tree/master/src/test/java/examples) package.
