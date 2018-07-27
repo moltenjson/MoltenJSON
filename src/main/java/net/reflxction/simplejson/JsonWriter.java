@@ -52,7 +52,7 @@ public class JsonWriter {
      * NOT "@SerializedName("age") @Expose private int age;"
      * <p>
      * You must keep in mind that you shouldn't call any methods like getName() when you want to save a string.
-     * As long as the name field has the above mentioned, GSON will handle saving the strings and other data
+     * As long as the name field has the above mentioned annotations, GSON will handle saving the strings and other data
      * appropriately.
      *
      * @param jsonResult JSON object to be saved
