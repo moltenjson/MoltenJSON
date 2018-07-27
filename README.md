@@ -33,7 +33,7 @@ Add this to your **pom.xml**:
 
 Add this to your **build.gradle**:
 
-```groovy
+```gradle
 allprojects {
     repositories {
 	    maven {
