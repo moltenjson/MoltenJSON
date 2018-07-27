@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-![Release](https://jitpack.io/v/ReflxctionDev/SimpleJSON)
+![Release](https://jitpack.io/v/ReflxctionDev/SimpleJSON.svg)
 # SimpleJSON
 A simple wrapper for [Google GSON's API](https://github.com/google/gson), to simplify writing [JSON](http://json.org/) data and reading it
 
