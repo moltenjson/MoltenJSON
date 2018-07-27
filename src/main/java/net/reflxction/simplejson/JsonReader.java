@@ -1,5 +1,5 @@
 /*
- * * Copyright 2017-2018 github.com/ReflxctionDev
+ * * Copyright 2018 github.com/ReflxctionDev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,16 +53,16 @@ public class JsonReader {
 
     /**
      * Reads and parses data from JSON, and returns an instance of the given object assignment
-     * E.g: <code>FootballPlayers players = reader.readJson(FootballPlayers.class);
-     *            for (FootballPlayer player : players.getPlayers()) {
-     *                System.out.println(player.getName());
-     *                System.out.println(player.getAge());
-     *            }</code>
+     * E.g: <code>Team team = reader.readJson(Team.class);
+     * for (Player player : team.getPlayers()) {
+     * System.out.println(player.getName());
+     * System.out.println(player.getAge());
+     * }</code>
      * After the reader finishes reading, you <strong>must</strong> call {@link JsonReader#close()} to close the IO connection.
      * This is to avoid IO issues and ensures safety for the file and the JVM
      *
      * @param clazz Class which contains the object
-     * @param <T> The given object assignment
+     * @param <T>   The given object assignment
      * @return The object assigned, after parsing from JSON
      */
     public <T> T readJson(Class<T> clazz) {
@@ -83,12 +83,11 @@ public class JsonReader {
      * Closes the IO connection between the reader and the file. This MUST be called when you are done with using the reader
      */
     public void close() {
-        if (reader != null) {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (reader == null) return;
+        try {
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

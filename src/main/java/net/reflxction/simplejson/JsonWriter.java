@@ -1,5 +1,5 @@
 /*
- * * Copyright 2017-2018 github.com/ReflxctionDev
+ * * Copyright 2018 github.com/ReflxctionDev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,15 +70,14 @@ public class JsonWriter {
     }
 
     /**
-     * Closes the IO connection between the reader and the file. This MUST be called when you are done with using the reader
+     * Closes the IO connection between the writer and the file. This MUST be called when you are done with using the writer
      */
     public void close() {
-        if (writer != null) {
-            try {
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (writer == null) return;
+        try {
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

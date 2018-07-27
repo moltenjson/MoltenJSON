@@ -1,5 +1,5 @@
 /*
- * * Copyright 2017-2018 github.com/ReflxctionDev
+ * * Copyright 2018 github.com/ReflxctionDev
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ public class JsonFile {
      * @param path Path to the JSON file
      */
     public JsonFile(String path) {
-        if (!path.endsWith(".json")) throw new IllegalArgumentException("The given path name must be a JSON file!");
         this.file = new File(path);
         try {
             if (!file.exists()) {
