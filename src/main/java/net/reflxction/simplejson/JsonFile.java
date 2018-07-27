@@ -16,6 +16,7 @@
 package net.reflxction.simplejson;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Represents a JSON file. This is used by JSON writers and readers
@@ -33,6 +34,11 @@ public class JsonFile {
     public JsonFile(String path) {
         if (!path.endsWith(".json")) throw new IllegalArgumentException("The given path name must be a JSON file!");
         this.file = new File(path);
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
