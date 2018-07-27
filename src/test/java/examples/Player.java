@@ -10,12 +10,12 @@ public class Player {
     @Expose
     private String fullName;
 
-    // The player age
+    // The player age. Must NOT be the primitive type, but instead the wrapper class!
     @SerializedName("age")
     @Expose
     private Integer age;
 
-    // Whether the player is retired or not
+    // Whether the player is retired or not. Must NOT be the primitive type, but instead the wrapper class!
     @SerializedName("retired")
     @Expose
     private Boolean retired;
