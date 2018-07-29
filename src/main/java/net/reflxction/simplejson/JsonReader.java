@@ -16,6 +16,7 @@
 package net.reflxction.simplejson;
 
 import com.google.gson.Gson;
+import net.reflxction.simplejson.exceptions.JsonParseException;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -64,16 +65,19 @@ public class JsonReader {
      * @param clazz Class which contains the object
      * @param <T>   The given object assignment
      * @return The object assigned, after parsing from JSON
-     * @throws FileNotFoundException if the reader failed to find the file
      */
-    public <T> T readJson(Class<T> clazz) throws FileNotFoundException {
+    public <T> T readJson(Class<T> clazz) throws JsonParseException {
         Gson gson = new Gson();
-        reader = new BufferedReader(new FileReader(getFile().getFile()));
-        T result = gson.fromJson(reader, clazz);
-        if (result != null) {
-            return result;
+        try {
+            reader = new BufferedReader(new FileReader(getFile().getFile()));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
-        return null;
+        T result = gson.fromJson(reader, clazz);
+        if (result == null)
+            throw new JsonParseException("Could not parse JSON from file " + getFile().getPath() + ". Object to parse: " + clazz.getName());
+        return result;
+
     }
 
     /**

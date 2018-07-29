@@ -15,6 +15,8 @@
  */
 package net.reflxction.simplejson;
 
+import net.reflxction.simplejson.exceptions.InvalidFilePathException;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -29,12 +31,18 @@ public class JsonFile {
     /**
      * Initiates a new JSON file
      *
-     * @param path Path to the JSON file
+     * @param path             Path to the JSON file
+     * @param createIfNotExist Whether this should create the file if it doesn't exist already.
+     *                         If true, {@link net.reflxction.simplejson.exceptions.InvalidFilePathException} will not be thrown.
      */
-    public JsonFile(String path) throws IOException {
+    public JsonFile(String path, boolean createIfNotExist) throws IOException {
         this.file = new File(path);
         if (!file.exists()) {
-            file.createNewFile();
+            if (createIfNotExist) {
+                file.createNewFile();
+            } else {
+                throw new InvalidFilePathException("The given path " + path + " is invalid or not found.");
+            }
         }
     }
 
@@ -45,6 +53,15 @@ public class JsonFile {
      */
     public File getFile() {
         return file;
+    }
+
+    /**
+     * The file path
+     *
+     * @return The path leading to the file
+     */
+    public String getPath() {
+        return file.getPath();
     }
 
 }

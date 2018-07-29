@@ -55,29 +55,25 @@ public class JsonWriter {
      * As long as the name field has the above mentioned annotations, GSON will handle saving the strings and other data
      * appropriately.
      *
-     * @param jsonResult JSON object to be saved
+     * @param jsonResult     JSON object to be saved
+     * @param prettyPrinting Whether the writer should write it in a pretty manner
+     * @throws IOException if it encountered IO issues while writing
      */
-    public void write(Object jsonResult) {
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .create();
+    public void write(Object jsonResult, boolean prettyPrinting) throws IOException {
+        GsonBuilder builder = new GsonBuilder();
+        if (prettyPrinting) builder.setPrettyPrinting();
+        Gson gson = builder.create();
         String json = gson.toJson(jsonResult);
-        try {
-            writer.write(json);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writer.write(json);
     }
 
     /**
      * Closes the IO connection between the writer and the file. This MUST be called when you are done with using the writer
+     *
+     * @throws IOException If it encountered IO issues while closing
      */
-    public void close() {
+    public void close() throws IOException {
         if (writer == null) return;
-        try {
-            writer.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        writer.close();
     }
 }
