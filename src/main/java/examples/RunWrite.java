@@ -19,14 +19,15 @@ public class RunWrite {
 
         // Using JSON to save it
 
-        // The JSON file
-        JsonFile soccer = new JsonFile("C:\\Users\\Germany\\Desktop\\Football\\players.json");
         try {
+            // The JSON file
+            JsonFile soccer = new JsonFile("C:\\Users\\Germany\\Desktop\\Football\\players.json", true);
+
             // Create a new writer for the file
             JsonWriter writer = new JsonWriter(soccer);
 
             // Write the data into it
-            writer.write(germanTeam);
+            writer.write(germanTeam, true);
 
             // Close the writer IO connection. This is a very important step and must not be forgotten to avoid safety issues
             writer.close();
