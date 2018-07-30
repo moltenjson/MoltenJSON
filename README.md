@@ -3,6 +3,14 @@
 # SimpleJSON
 A simple wrapper for [Google GSON's API](https://github.com/google/gson), to simplify writing [JSON](http://json.org/) data and reading it
 
+# Features
+* Fast and efficient
+* Easy reading from any JSON file
+* Easy, clean and safe writing to any JSON file
+* Ability to read JSON files from any URLs in fast and efficient ways
+* Ability to write content from any JSON URLs locally in easy and safe ways
+
+
 # Adding the dependency
 ## Maven
 
@@ -54,3 +62,6 @@ If you don't use Maven or Gradle, then you should consider using [the JAR file](
 
 # Examples
 For examples, take a look at the [examples](https://github.com/ReflxctionDev/SimpleJSON/tree/master/src/main/java/examples) package.
+
+# Planned features
+[ ] Add ability to use encryption and decryption when writing
