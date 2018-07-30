@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.reflxction.simplejson;
+package net.reflxction.simplejson.json;
 
 import com.google.gson.Gson;
 import net.reflxction.simplejson.exceptions.JsonParseException;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.reflxction.simplejson;
+package net.reflxction.simplejson.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -73,7 +73,7 @@ public class JsonWriter {
      * @throws IOException If it encountered IO issues while closing
      */
     public void close() throws IOException {
-        if (writer == null) return;
+        if (writer == null) throw new IllegalStateException("Attempted to close a writer of an invalid JSON file!");
         writer.close();
     }
 }
