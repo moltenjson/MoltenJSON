@@ -24,15 +24,14 @@ Add this to your **pom.xml**:
     </repository>
 </repositories>
 
-...
-
 <dependencies>
+    
     <!-- Adding the Maven dependency -->
     <dependency>
         <groupId>com.github.ReflxctionDev</groupId>
         <artifactId>SimpleJSON</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <scope>compile</scope>
+        <scope>compile</scope> <!-- To shade the JAR. This requires to have the correct build configuration -->
     </dependency>
 </dependencies>
 ```
@@ -44,13 +43,9 @@ Add this to your **build.gradle**:
 ```gradle
 allprojects {
     repositories {
-	    maven {
-	      url 'https://jitpack.io'
-	    }
+	    maven { 'url 'https://jitpack.io' }
     }
 }
-
-...
 
 dependencies {
     compile 'com.github.ReflxctionDev:SimpleJSON:1.0-SNAPSHOT'
@@ -64,4 +59,4 @@ If you don't use Maven or Gradle, then you should consider using [the JAR file](
 For examples, take a look at the [examples](https://github.com/ReflxctionDev/SimpleJSON/tree/master/src/main/java/examples) package.
 
 # Planned features
-[ ] Add ability to use encryption and decryption when writing
+- [ ] Add ability to use encryption and decryption when writing
