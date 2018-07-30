@@ -11,16 +11,16 @@ public class RunRead {
     public static void main(String[] args) {
 
         // Identify the JSON file
-        JsonFile soccer;
+        JsonFile playersFile;
 
         // The system file separator. This is always a better option than using "\" so it works across all platforms.
         final String s = File.separator;
 
         try {
-            soccer = new JsonFile("C:" + s + "Users" + s + "Germany" + s + "Desktop" + s + "Football" + s + "players.json", true);
+            playersFile = new JsonFile("C:" + s + "Users" + s + "Germany" + s + "Desktop" + s + "Football" + s + "players.json", true);
 
             // Create a reader for the file
-            JsonReader reader = new JsonReader(soccer);
+            JsonReader reader = new JsonReader(playersFile);
 
             // Parse the team from the JSON file
             Team germanTeam = reader.readJson(Team.class);

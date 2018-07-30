@@ -11,7 +11,7 @@ import java.io.IOException;
  * Example on using the library to read from a web URL
  */
 public class RunReadFromURL {
-    
+
     public static void main(String[] args) {
 
         // The system file separator. This is always a better option than using "\" so it works across all platforms.
@@ -31,10 +31,10 @@ public class RunReadFromURL {
             System.out.println(prettyJson);
 
             // Identify the JSON file
-            JsonFile file = new JsonFile("C:" + s + "Users" + s + "Germany" + s + "Desktop" + s + "hi.json");
+            JsonFile playersFile = new JsonFile("C:" + s + "Users" + s + "Germany" + s + "Desktop" + s + "Football" + s + "players.json");
 
             // Write the content locally
-            reader.writeToFile(file, false);
+            reader.writeToFile(playersFile, false);
 
         } catch (IOException e) {
             e.printStackTrace();

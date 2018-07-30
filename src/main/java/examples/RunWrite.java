@@ -25,10 +25,10 @@ public class RunWrite {
 
         try {
             // The JSON file
-            JsonFile soccer = new JsonFile("C:" + s + "Users" + s + "Germany" + s + "Desktop" + s + "Football" + s + "players.json", true);
+            JsonFile playersFile = new JsonFile("C:" + s + "Users" + s + "Germany" + s + "Desktop" + s + "Football" + s + "players.json", true);
 
             // Create a new writer for the file
-            JsonWriter writer = new JsonWriter(soccer);
+            JsonWriter writer = new JsonWriter(playersFile);
 
             // Write the data into it
             writer.write(germanTeam, true);
