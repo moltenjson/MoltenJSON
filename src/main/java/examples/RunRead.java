@@ -1,8 +1,9 @@
 package examples;
 
-import net.reflxction.simplejson.JsonFile;
-import net.reflxction.simplejson.JsonReader;
+import net.reflxction.simplejson.json.JsonFile;
+import net.reflxction.simplejson.json.JsonReader;
 
+import java.io.File;
 import java.io.IOException;
 
 public class RunRead {
@@ -11,8 +12,12 @@ public class RunRead {
 
         // Identify the JSON file
         JsonFile soccer;
+
+        // The system file separator. This is always a better option than using "\" so it works across all platforms.
+        final String s = File.separator;
+
         try {
-            soccer = new JsonFile("C:\\Users\\Germany\\Desktop\\Football\\players.json", true);
+            soccer = new JsonFile("C:" + s + "Users" + s + "Germany" + s + "Desktop" + s + "Football" + s + "players.json", true);
 
             // Create a reader for the file
             JsonReader reader = new JsonReader(soccer);

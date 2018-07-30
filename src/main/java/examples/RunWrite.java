@@ -1,8 +1,9 @@
 package examples;
 
-import net.reflxction.simplejson.JsonFile;
-import net.reflxction.simplejson.JsonWriter;
+import net.reflxction.simplejson.json.JsonFile;
+import net.reflxction.simplejson.json.JsonWriter;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -19,9 +20,12 @@ public class RunWrite {
 
         // Using JSON to save it
 
+        // The system file separator. This is always a better option than using "\" so it works across all platforms.
+        final String s = File.separator;
+
         try {
             // The JSON file
-            JsonFile soccer = new JsonFile("C:\\Users\\Germany\\Desktop\\Football\\players.json", true);
+            JsonFile soccer = new JsonFile("C:" + s + "Users" + s + "Germany" + s + "Desktop" + s + "Football" + s + "players.json", true);
 
             // Create a new writer for the file
             JsonWriter writer = new JsonWriter(soccer);
