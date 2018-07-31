@@ -39,7 +39,7 @@ public class WriteToFile {
             // Print a success message
             System.out.println("Successfully wrote the team into the file!");
 
-            // JSON file would like this:
+            // JSON file would look like this:
             /*
                 {
                   "players": [
