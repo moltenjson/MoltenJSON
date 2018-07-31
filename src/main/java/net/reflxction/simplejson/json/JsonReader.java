@@ -83,12 +83,8 @@ public class JsonReader {
     /**
      * Closes the IO connection between the reader and the file. This MUST be called when you are done with using the reader
      */
-    public void close() {
-        if (reader == null) return;
-        try {
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void close() throws IOException {
+        if (reader == null) throw new IllegalStateException("Attempted to close a writer of an invalid JSON file!");
+        reader.close();
     }
 }

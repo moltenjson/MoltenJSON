@@ -42,18 +42,8 @@ public class JsonWriter {
     /**
      * Writes the given content to the JSON file
      * <p>
-     * Note that each value you wish to write must be annotated with {@link com.google.gson.annotations.SerializedName}
-     * and {@link com.google.gson.annotations.Expose} in order to be added to the file.
-     * <p>
-     * Another important thing is that you should <strong>NOT</strong> use primitive types! Use the wrapper class instead.
-     * <p>
-     * E.g: "@SerializedName("age") @Expose private Integer age;"
-     * <p>
-     * NOT "@SerializedName("age") @Expose private int age;"
-     * <p>
-     * You must keep in mind that you shouldn't call any methods like getName() when you want to save a string.
-     * As long as the name field has the above mentioned annotations, GSON will handle saving the strings and other data
-     * appropriately.
+     * You must keep in mind that you shouldn't call any methods like getName() when you want to save an object.
+     * Using getters in this purpose
      *
      * @param jsonResult     JSON object to be saved
      * @param prettyPrinting Whether the writer should write it in a pretty manner
