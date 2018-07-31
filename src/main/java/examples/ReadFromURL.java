@@ -34,7 +34,7 @@ public class ReadFromURL {
             JsonFile playersFile = new JsonFile("C:" + s + "Users" + s + "Germany" + s + "Desktop" + s + "Football" + s + "players.json");
 
             // Write the content locally
-            reader.writeToFile(playersFile, false);
+            reader.writeToFile(playersFile, true);
 
         } catch (IOException e) {
             e.printStackTrace();
