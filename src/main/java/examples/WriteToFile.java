@@ -40,7 +40,32 @@ public class WriteToFile {
             System.out.println("Successfully wrote the team into the file!");
 
             // JSON file would like this:
-            // https://pastebin.com/raw/GfxZqf4M
+            /*
+                {
+                  "players": [
+                    {
+                      "fullName": "Mesut Ozil",
+                      "age": 29,
+                      "retired": true
+                    },
+                    {
+                      "fullName": "Jerome Boateng",
+                      "age": 29,
+                      "retired": false
+                    },
+                    {
+                      "fullName": "Julian Draxler",
+                      "age": 24,
+                      "retired": false
+                    },
+                    {
+                      "fullName": "Philipp Lahm",
+                      "age": 34,
+                      "retired": true
+                    }
+                  ]
+                }
+             */
         } catch (IOException e) {
             System.out.println("Failed to write data into the file. Stacktrace:");
             e.printStackTrace();
