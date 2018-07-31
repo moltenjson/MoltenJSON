@@ -52,7 +52,7 @@ dependencies {
 ```
 
 # Download
-If you don't use Maven or Gradle, then you should consider using [the JAR file](https://github.com/ReflxctionDev/SimpleJSON/releases/tag/1.0-SNAPSHOT) instead.
+If you don't use Maven or Gradle, then you should consider using [the JAR file](https://github.com/ReflxctionDev/SimpleJSON/releases/tag/1.1) instead.
 
 # Examples
 For examples, take a look at the [examples](https://github.com/ReflxctionDev/SimpleJSON/tree/master/src/main/java/examples) package.
