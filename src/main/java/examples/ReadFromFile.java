@@ -6,7 +6,7 @@ import net.reflxction.simplejson.json.JsonReader;
 import java.io.File;
 import java.io.IOException;
 
-public class RunRead {
+public class ReadFromFile {
 
     public static void main(String[] args) {
 
@@ -27,7 +27,7 @@ public class RunRead {
 
             // Use the team after parsing
             for (Player player : germanTeam.getPlayers()) {
-                System.out.println("Name: " + player.getFullName() + " - Age: " + player.getAge() + " - Retired: " + player.getRetired());
+                System.out.println("Name: " + player.getFullName() + " - Age: " + player.getAge() + " - Retired: " + player.isRetired());
             }
 
             // Close the reader to avoid IO issues. This is an important step and must not be forgotten to avoid safety issues.

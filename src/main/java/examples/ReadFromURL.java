@@ -10,7 +10,7 @@ import java.io.IOException;
 /**
  * Example on using the library to read from a web URL
  */
-public class RunReadFromURL {
+public class ReadFromURL {
 
     public static void main(String[] args) {
 

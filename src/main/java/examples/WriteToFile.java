@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class RunWrite {
+public class WriteToFile {
 
     public static void main(String[] args) {
         // Initializing the team
