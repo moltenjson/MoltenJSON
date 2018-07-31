@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Release](https://jitpack.io/v/ReflxctionDev/SimpleJSON.svg)](https://jitpack.io/#ReflxctionDev/SimpleJSON)
+[![](https://jitpack.io/v/ReflxctionDev/SimpleJSON.svg)](https://jitpack.io/#ReflxctionDev/SimpleJSON)
 # SimpleJSON
 A simple wrapper for [Google GSON's API](https://github.com/google/gson), to simplify writing [JSON](http://json.org/) data and reading it
 
@@ -30,8 +30,7 @@ Add this to your **pom.xml**:
     <dependency>
         <groupId>com.github.ReflxctionDev</groupId>
         <artifactId>SimpleJSON</artifactId>
-        <version>1.0-SNAPSHOT</version>
-        <scope>compile</scope> <!-- To shade the JAR. This requires to have the correct build configuration -->
+        <version>1.1</version>
     </dependency>
 </dependencies>
 ```
@@ -48,7 +47,7 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.ReflxctionDev:SimpleJSON:1.0-SNAPSHOT'
+    compile 'com.github.ReflxctionDev:SimpleJSON:1.1'
 }
 ```
 
