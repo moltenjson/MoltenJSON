@@ -18,6 +18,7 @@ package net.reflxction.simplejson.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -26,8 +27,10 @@ import java.io.IOException;
  */
 public class JsonWriter {
 
-    // A private instance of the writer used to manage IO connections
-    private FileWriter writer;
+    // A private buffered writer used to manage IO connections
+    private BufferedWriter bufferedWriter;
+
+    private FileWriter fileWriter;
 
     /**
      * Initiates a new JSON writer
@@ -36,7 +39,8 @@ public class JsonWriter {
      * @throws IOException If there were IO issues whilst initiating the file writer
      */
     public JsonWriter(JsonFile file) throws IOException {
-        this.writer = new FileWriter(file.getFile());
+        this.fileWriter = new FileWriter(file.getFile());
+        this.bufferedWriter = new BufferedWriter(fileWriter);
     }
 
     /**
@@ -54,7 +58,7 @@ public class JsonWriter {
         if (prettyPrinting) builder.setPrettyPrinting();
         Gson gson = builder.create();
         String json = gson.toJson(jsonResult);
-        writer.write(json);
+        bufferedWriter.write(json);
     }
 
     /**
@@ -63,7 +67,9 @@ public class JsonWriter {
      * @throws IOException If it encountered IO issues while closing
      */
     public void close() throws IOException {
-        if (writer == null) throw new IllegalStateException("Attempted to close a writer of an invalid JSON file!");
-        writer.close();
+        if (bufferedWriter == null || fileWriter == null)
+            throw new IllegalStateException("Attempted to close a writer of an invalid JSON file!");
+        bufferedWriter.close();
+        fileWriter.close();
     }
 }

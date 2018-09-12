@@ -31,8 +31,11 @@ public class JsonReader {
     // The JSON file that it should read for
     private JsonFile file;
 
-    // A private buffered reader to handle reading and managing IO for the reader
-    private BufferedReader reader;
+    // A buffered reader to handle reading and managing IO for the reader, while using GSON to parse
+    private BufferedReader bufferedReader;
+
+    // A file reader, used by the buffered reader
+    private FileReader fileReader;
 
     /**
      * Initiates a new JSON file reader
@@ -69,11 +72,12 @@ public class JsonReader {
     public <T> T readJson(Class<T> clazz) throws JsonParseException {
         Gson gson = new Gson();
         try {
-            reader = new BufferedReader(new FileReader(getFile().getFile()));
+            fileReader = new FileReader(file.getFile());
+            bufferedReader = new BufferedReader(fileReader);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        T result = gson.fromJson(reader, clazz);
+        T result = gson.fromJson(bufferedReader, clazz);
         if (result == null)
             throw new JsonParseException("Could not parse JSON from file " + getFile().getPath() + ". Object to parse: " + clazz.getName());
         return result;
@@ -82,9 +86,11 @@ public class JsonReader {
 
     /**
      * Closes the IO connection between the reader and the file. This MUST be called when you are done with using the reader
+     * to avoid wasting the finite resources.
      */
     public void close() throws IOException {
-        if (reader == null) throw new IllegalStateException("Attempted to close a writer of an invalid JSON file!");
-        reader.close();
+        if (bufferedReader == null || fileReader == null) throw new IllegalStateException("Attempted to close a writer of an invalid JSON file!");
+        bufferedReader.close();
+        fileReader.close();
     }
 }

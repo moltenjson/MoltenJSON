@@ -56,9 +56,9 @@ public class JsonFile {
      */
     public JsonFile(File file, boolean createIfNotExist) throws IOException {
         this.file = file;
-        if (!file.exists() && createIfNotExist) {
+        if (!file.exists() && createIfNotExist)
             file.createNewFile();
-        }
+
     }
 
     /**

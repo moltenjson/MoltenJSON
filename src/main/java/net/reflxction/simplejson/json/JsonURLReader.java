@@ -57,7 +57,6 @@ public class JsonURLReader {
         while ((cp = reader.read()) != -1) {
             sb.append((char) cp);
         }
-
         return sb.toString();
     }
 
@@ -71,6 +70,7 @@ public class JsonURLReader {
         try (InputStream is = url.openStream()) {
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
             String jsonText = parseJsonCharacters(reader);
+            reader.close();
             return new JSONObject(jsonText);
         }
     }
