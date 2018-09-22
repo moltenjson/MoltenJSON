@@ -25,3 +25,26 @@
 hs_err_pid*
 src/main/java/net/reflxction/run/
 
+.gradle/
+.idea/.name
+.idea/compiler.xml
+.idea/dictionaries/
+.idea/gradle.xml
+.idea/inspectionProfiles/
+.idea/markdown-exported-files.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/modules/SimpleJSO_main.iml
+.idea/modules/SimpleJSO_test.iml
+.idea/uiDesigner.xml
+.idea/vcs.xml
+.idea/workspace.xml
+build/reports/
+build/resources/
+build/test-results/
+build/tmp/
+gradle/wrapper/gradle-wrapper.properties
+gradlew
+gradlew.bat
+out/
+src/test/
