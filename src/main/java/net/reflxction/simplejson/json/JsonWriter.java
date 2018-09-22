@@ -27,9 +27,10 @@ import java.io.IOException;
  */
 public class JsonWriter {
 
-    // A private buffered writer used to manage IO connections
+    // A buffered writer used to manage IO connections
     private BufferedWriter bufferedWriter;
 
+    // A file writer, used by the writer above
     private FileWriter fileWriter;
 
     /**
@@ -41,6 +42,10 @@ public class JsonWriter {
     public JsonWriter(JsonFile file) throws IOException {
         this.fileWriter = new FileWriter(file.getFile());
         this.bufferedWriter = new BufferedWriter(fileWriter);
+    }
+
+    public JsonWriter(BufferedWriter writer) {
+        bufferedWriter = writer;
     }
 
     /**
