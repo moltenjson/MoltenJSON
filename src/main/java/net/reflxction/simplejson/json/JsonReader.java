@@ -37,13 +37,22 @@ public class JsonReader {
     // A file reader, used by the buffered reader
     private FileReader fileReader;
 
+    // Whether the reader should use the given BufferedReader instead of initiating its own
+    private boolean useCustomReaders = false;
+
     /**
      * Initiates a new JSON file reader
      *
      * @param file File to read for
      */
     public JsonReader(JsonFile file) {
+        useCustomReaders = false;
         this.file = file;
+    }
+
+    public JsonReader(BufferedReader reader) {
+        useCustomReaders = true;
+        bufferedReader = reader;
     }
 
     /**
@@ -72,8 +81,10 @@ public class JsonReader {
     public <T> T readJson(Class<T> clazz) throws JsonParseException {
         Gson gson = new Gson();
         try {
-            fileReader = new FileReader(file.getFile());
-            bufferedReader = new BufferedReader(fileReader);
+            if (!useCustomReaders) {
+                fileReader = new FileReader(file.getFile());
+                bufferedReader = new BufferedReader(fileReader);
+            }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -89,7 +100,8 @@ public class JsonReader {
      * to avoid wasting the finite resources.
      */
     public void close() throws IOException {
-        if (bufferedReader == null || fileReader == null) throw new IllegalStateException("Attempted to close a writer of an invalid JSON file!");
+        if (bufferedReader == null || fileReader == null)
+            throw new IllegalStateException("Attempted to close a writer of an invalid JSON file!");
         bufferedReader.close();
         fileReader.close();
     }
