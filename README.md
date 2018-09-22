@@ -30,7 +30,7 @@ Add this to your **pom.xml**:
     <dependency>
         <groupId>com.github.ReflxctionDev</groupId>
         <artifactId>SimpleJSON</artifactId>
-        <version>1.1</version>
+        <version>1.2-SNAPSHOT</version>
     </dependency>
 </dependencies>
 ```
@@ -47,7 +47,7 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.ReflxctionDev:SimpleJSON:1.1'
+    compile 'com.github.ReflxctionDev:SimpleJSON:1.2-SNAPSHOT'
 }
 ```
 
