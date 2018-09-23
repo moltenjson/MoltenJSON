@@ -31,3 +31,5 @@ src/test/
 settings.gradle
 gradlew
 gradlew.bat
+build/resources/
+src/main/resources/
