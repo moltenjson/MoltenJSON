@@ -33,3 +33,8 @@ gradlew
 gradlew.bat
 build/resources/
 src/main/resources/
+/src/main/java/examples/
+build/libs/
+build/reports/
+build/test-results/
+build/tmp/
