@@ -22,11 +22,19 @@ dependencies {
 
 }
 
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
+}
+
 sourceSets {
     main {
         java {
             srcDir 'src'
             exclude 'src/main/java/examples'
         }
+    }
+    build {
+        java.srcDir file('root/package/path')
     }
 }
