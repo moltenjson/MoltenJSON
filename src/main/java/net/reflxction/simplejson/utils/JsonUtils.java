@@ -15,8 +15,6 @@
  */
 package net.reflxction.simplejson.utils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -32,10 +30,18 @@ public class JsonUtils {
      * @return The given JSON string in a pretty manner
      */
     public static String setPretty(String json) {
+        return Gsons.PRETTY_PRINTING.toJson(getObjectFromString(json));
+    }
+
+    /**
+     * Returns a Google {@link JsonObject} from the given JSON text
+     *
+     * @param json Json text to parse
+     * @return JsonObject from the given JSON string
+     */
+    public static JsonObject getObjectFromString(String json) {
         JsonParser parser = new JsonParser();
-        JsonObject object = parser.parse(json).getAsJsonObject();
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        return gson.toJson(object);
+        return parser.parse(json).getAsJsonObject();
     }
 
 }
