@@ -30,6 +30,11 @@ public class Gsons {
     }
 
     /**
+     * Represents an unmodified {@link Gson} profile.
+     */
+    public static final Gson DEFAULT = new GsonBuilder().create();
+
+    /**
      * Represents a {@link Gson} profile which does pretty printing when serializing (by fixing
      * indentation, etc.)
      */
