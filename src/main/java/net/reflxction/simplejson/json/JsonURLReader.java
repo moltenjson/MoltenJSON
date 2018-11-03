@@ -84,7 +84,7 @@ public class JsonURLReader {
      */
     public void writeToFile(JsonFile file, boolean prettyPrinting) throws IOException {
         JsonWriter writer = new JsonWriter(file);
-        writer.write(readContent(), prettyPrinting);
+        writer.writeAndOverride(readContent(), prettyPrinting);
         writer.close();
     }
 

@@ -31,7 +31,7 @@ public class WriteToFile {
             JsonWriter writer = new JsonWriter(playersFile);
 
             // Write the data into it
-            writer.write(germanTeam, true);
+            writer.writeAndOverride(germanTeam, true);
 
             // Close the writer IO connection. This is a very important step and must not be forgotten to avoid safety issues
             writer.close();
