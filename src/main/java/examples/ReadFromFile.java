@@ -23,7 +23,7 @@ public class ReadFromFile {
             JsonReader reader = new JsonReader(playersFile);
 
             // Parse the team from the JSON file
-            Team germanTeam = reader.deserialize(Team.class);
+            Team germanTeam = reader.deserializeAs(Team.class);
 
             // Use the team after parsing
             for (Player player : germanTeam.getPlayers()) {

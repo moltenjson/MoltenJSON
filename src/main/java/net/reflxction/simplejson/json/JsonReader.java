@@ -90,7 +90,7 @@ public class JsonReader {
      * @param <T>   The given object assignment
      * @return The object assigned, after parsing from JSON
      */
-    public <T> T deserialize(Class<T> clazz) throws JsonParseException {
+    public <T> T deserializeAs(Class<T> clazz) throws JsonParseException {
         try {
             if (!inputReader) {
                 fileReader = new FileReader(file.getFile());
@@ -110,7 +110,7 @@ public class JsonReader {
      * Returns a {@link JSONObject} from the file, which can be used to parse content separately
      * rather than deserializing an entire object.
      * <p>
-     * For deserializing objects, see {@link #deserialize(Class)}
+     * For deserializing objects, see {@link #deserializeAs(Class)}
      * <p>
      * Any exceptions inside this method are not handled (no stacktrace, debugging, etc.),
      * to handle exceptions inside this method, use {@link #getAsJSONObject(Consumer)}
@@ -125,7 +125,7 @@ public class JsonReader {
      * Returns a {@link JSONObject} from the file, which can be used to parse content separately
      * rather than deserializing an entire object.
      * <p>
-     * For deserializing objects, see {@link #deserialize(Class)}
+     * For deserializing objects, see {@link #deserializeAs(Class)}
      * <p>
      * To leave exceptions unhandled (no stacktrace, etc.), use {@link #getAsJSONObject()}
      *
