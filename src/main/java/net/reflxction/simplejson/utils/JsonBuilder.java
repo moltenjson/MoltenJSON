@@ -15,6 +15,8 @@
  */
 package net.reflxction.simplejson.utils;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,6 +73,15 @@ public class JsonBuilder {
      */
     public String buildPretty() {
         return Gsons.PRETTY_PRINTING.toJson(jsonMap);
+    }
+
+    /**
+     * Constructs a {@link JSONObject} from the built/mapped JSON.
+     *
+     * @return The constructed JSON object
+     */
+    public JSONObject buildJSONObject() {
+        return new JSONObject(build());
     }
 
 }
