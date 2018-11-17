@@ -17,6 +17,7 @@ package net.reflxction.simplejson.json;
 
 import net.reflxction.simplejson.exceptions.JsonParseException;
 import net.reflxction.simplejson.utils.Gsons;
+import net.reflxction.simplejson.utils.ObjectUtils;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -100,8 +101,9 @@ public class JsonReader {
             e.printStackTrace();
         }
         T result = Gsons.DEFAULT.fromJson(bufferedReader, clazz);
-        if (result == null)
+        ObjectUtils.ifNull(result, () -> {
             throw new JsonParseException("Could not parse JSON from file " + getFile().getPath() + ". Object to parse: " + clazz.getCanonicalName());
+        });
         return result;
     }
 
@@ -139,7 +141,7 @@ public class JsonReader {
             String json = new String(encoded, StandardCharsets.UTF_8);
             return new JSONObject(json);
         } catch (IOException e) {
-            if (onError != null) onError.accept(e);
+            ObjectUtils.ifNotNull(onError, x -> onError.accept(e));
             return null;
         }
     }
