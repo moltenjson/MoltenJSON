@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -81,7 +82,11 @@ public class JsonWriter {
      */
     public void writeAndOverride(Object jsonResult, boolean prettyPrinting) throws IOException {
         Gson gson = prettyPrinting ? Gsons.PRETTY_PRINTING : Gsons.DEFAULT;
-        write(gson.toJson(jsonResult));
+        if (jsonResult instanceof JSONObject) {
+            write(jsonResult.toString());
+        } else {
+            write(gson.toJson(jsonResult));
+        }
     }
 
     /**
@@ -92,7 +97,7 @@ public class JsonWriter {
      * @param key            Key to assign to
      * @param value          Value to assign to the key
      * @param prettyPrinting Whether to write the file in a prettified format
-     * @param override       Whether to override the key value if it exists already or not
+     * @param override       Whether to override the key value if it exists already or not. !! UNPREPARED !!
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
     public void add(String key, Object value, boolean prettyPrinting, @Unprepared boolean override) throws IOException {
@@ -214,7 +219,6 @@ public class JsonWriter {
      */
     private void write(String text) throws IOException {
         if (bufferedWriter != null) bufferedWriter.write(text);
-        else Files.write(Paths.get(file.getPath()), text.getBytes());
+        else Files.write(Paths.get(file.getPath()), text.getBytes(StandardCharsets.UTF_8));
     }
-
 }
