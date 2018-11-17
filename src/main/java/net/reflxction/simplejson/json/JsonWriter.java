@@ -83,7 +83,7 @@ public class JsonWriter {
     public void writeAndOverride(Object jsonResult, boolean prettyPrinting) throws IOException {
         Gson gson = prettyPrinting ? Gsons.PRETTY_PRINTING : Gsons.DEFAULT;
         if (jsonResult instanceof JSONObject) {
-            write(gson.toJson(jsonResult.toString()));
+            write(prettyPrinting ? JsonUtils.setPretty(jsonResult.toString()) : jsonResult.toString());
         } else {
             write(gson.toJson(jsonResult));
         }
