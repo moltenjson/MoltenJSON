@@ -1,26 +1,17 @@
 package examples;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Represents a football player
  */
 public class Player {
 
     // The player name
-    @SerializedName("fullName")
-    @Expose
     private String fullName;
 
     // The player age.
-    @SerializedName("age")
-    @Expose
     private int age;
 
     // Whether the player is retired or not.
-    @SerializedName("retired")
-    @Expose
     private boolean retired;
 
     /**

@@ -12,8 +12,6 @@ import java.util.List;
 public class Team {
 
     // The list of the team players
-    @SerializedName("players")
-    @Expose
     private List<Player> players = new ArrayList<>();
 
     /**
