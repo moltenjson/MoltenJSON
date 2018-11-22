@@ -15,6 +15,8 @@
  */
 package net.reflxction.simplejson.utils;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -76,12 +78,21 @@ public class JsonBuilder {
     }
 
     /**
+     * Builds the JSON using the given {@link Gson} profile returns it as a {@link String}.
+     *
+     * @return The mapped JSON string
+     */
+    public String build(Gson profile) {
+        return profile.toJson(jsonMap);
+    }
+
+    /**
      * Constructs a {@link JSONObject} from the built/mapped JSON.
      *
      * @return The constructed JSON object
      */
-    public JSONObject buildJSONObject() {
-        return new JSONObject(build());
+    public JsonObject buildJsonObject() {
+        return JsonUtils.getObjectFromString(build());
     }
 
 }
