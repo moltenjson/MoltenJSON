@@ -30,7 +30,7 @@ Add this to your **pom.xml**:
     <dependency>
         <groupId>com.github.ReflxctionDev</groupId>
         <artifactId>SimpleJSON</artifactId>
-        <version>1.4-SNAPSHOT</version>
+        <version>1.8-SNAPSHOT</version>
     </dependency>
 </dependencies>
 ```
@@ -52,7 +52,7 @@ dependencies {
 ```
 
 # Download
-If you don't use Maven or Gradle, then you should consider using [the JAR file](https://github.com/ReflxctionDev/SimpleJSON/releases/tag/1.4-SNAPSHOT) instead.
+If you don't use Maven or Gradle, then you should consider using [the JAR file](https://github.com/ReflxctionDev/SimpleJSON/releases/tag/1.8-SNAPSHOT) instead.
 
 # Examples
 For examples, take a look at the [examples](https://github.com/ReflxctionDev/SimpleJSON/tree/master/src/main/java/examples) package.
