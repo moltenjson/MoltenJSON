@@ -17,6 +17,11 @@ package net.reflxction.simplejson.utils;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Contains various helping methods for JSON
@@ -42,6 +47,32 @@ public class JsonUtils {
     public static JsonObject getObjectFromString(String json) {
         JsonParser parser = new JsonParser();
         return parser.parse(json).getAsJsonObject();
+    }
+
+    /**
+     * Converts the given JSON text to a {@link Map}, which has all the strings (keys) assigned to their
+     * values according to the given JSON.
+     *
+     * @param json JSON to convert
+     * @return A Map with the JSON content
+     */
+    public static Map<String, Object> toMap(String json) {
+        Type type = new TypeToken<Map<String, Object>>() {
+        }.getType();
+        return Gsons.DEFAULT.fromJson(json, type);
+    }
+
+    /**
+     * Converts the given JSON text to a {@link List} which has all the elements in the JSON text in the
+     * correct order
+     *
+     * @param json JSON to convert
+     * @return A List with the JSON content
+     */
+    public static List<Object> toList(String json) {
+        Type listType = new TypeToken<List<String>>() {
+        }.getType();
+        return Gsons.DEFAULT.fromJson(json, listType);
     }
 
 }
