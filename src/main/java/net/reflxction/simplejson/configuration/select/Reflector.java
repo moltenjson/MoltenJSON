@@ -27,6 +27,7 @@ import java.lang.reflect.ParameterizedType;
  */
 class Reflector {
 
+    @SuppressWarnings("unchecked")
     static void setStatic(Field field, Object value) {
         try {
             if (field.getType().equals(SelectionHolder.class)) {
