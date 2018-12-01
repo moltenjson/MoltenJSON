@@ -15,15 +15,13 @@
  */
 package net.reflxction.simplejson.json;
 
+import com.google.gson.JsonObject;
 import net.reflxction.simplejson.exceptions.JsonParseException;
 import net.reflxction.simplejson.utils.Gsons;
+import net.reflxction.simplejson.utils.JsonUtils;
 import net.reflxction.simplejson.utils.ObjectUtils;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -32,7 +30,7 @@ import java.util.function.Consumer;
 /**
  * Reads and parses JSON data from JSON files
  */
-public class JsonReader {
+public class JsonReader implements Closeable {
 
     // The JSON file that it should read for
     private JsonFile file;
@@ -91,7 +89,7 @@ public class JsonReader {
      * @param <T>   The given object assignment
      * @return The object assigned, after parsing from JSON
      */
-    public <T> T deserializeAs(Class<T> clazz) throws JsonParseException {
+    public <T> T deserializeAs(Class<T> clazz) {
         try {
             if (!inputReader) {
                 fileReader = new FileReader(file.getFile());
@@ -109,37 +107,37 @@ public class JsonReader {
 
 
     /**
-     * Returns a {@link JSONObject} from the file, which can be used to parse content separately
+     * Returns a {@link JsonObject} from the file, which can be used to parse content separately
      * rather than deserializing an entire object.
      * <p>
      * For deserializing objects, see {@link #deserializeAs(Class)}
      * <p>
      * Any exceptions inside this method are not handled (no stacktrace, debugging, etc.),
-     * to handle exceptions inside this method, use {@link #getAsJSONObject(Consumer)}
+     * to handle exceptions inside this method, use {@link #getJsonObject(Consumer)}
      *
      * @return A JSONObject from the file
      */
-    public JSONObject getAsJSONObject() {
-        return getAsJSONObject(null);
+    public JsonObject getJsonObject() {
+        return getJsonObject(null);
     }
 
     /**
-     * Returns a {@link JSONObject} from the file, which can be used to parse content separately
+     * Returns a {@link JsonObject} from the file, which can be used to parse content separately
      * rather than deserializing an entire object.
      * <p>
      * For deserializing objects, see {@link #deserializeAs(Class)}
      * <p>
-     * To leave exceptions unhandled (no stacktrace, etc.), use {@link #getAsJSONObject()}
+     * To leave exceptions unhandled (no stacktrace, etc.), use {@link #getJsonObject()}
      *
      * @param onError A consumer for handling errors inside the try/catch of the
      *                parsing methods.
      * @return A JSONObject from the file
      */
-    public JSONObject getAsJSONObject(Consumer<IOException> onError) {
+    public JsonObject getJsonObject(Consumer<IOException> onError) {
         try {
             byte[] encoded = Files.readAllBytes(Paths.get(file.getPath()));
             String json = new String(encoded, StandardCharsets.UTF_8);
-            return new JSONObject(json);
+            return JsonUtils.getObjectFromString(json);
         } catch (IOException e) {
             ObjectUtils.ifNotNull(onError, x -> onError.accept(e));
             return null;
@@ -147,15 +145,39 @@ public class JsonReader {
     }
 
     /**
-     * Closes the IO connection between the reader and the file. This MUST be called when you are done with using the reader
-     * to avoid wasting the finite resources.
+     * Closes this stream and releases any system resources associated
+     * with it. If the stream is already closed then invoking this
+     * method has no effect.
+     *
+     * <p> As noted in {@link AutoCloseable#close()}, cases where the
+     * close may fail require careful attention. It is strongly advised
+     * to relinquish the underlying resources and to internally
+     * <em>mark</em> the {@code Closeable} as closed, prior to throwing
+     * the {@code IOException}.
+     *
+     * @throws IOException if an I/O error occurs
      */
+    @Override
     public void close() throws IOException {
         if (inputReader) {
             bufferedReader.close();
         } else {
             bufferedReader.close();
             fileReader.close();
+        }
+    }
+
+    /**
+     * Returns a new {@link JsonReader} and throws unchecked exceptions if there were any IO exceptions
+     *
+     * @param file JSON file to read from
+     * @return The JsonReader object
+     */
+    public static JsonReader of(JsonFile file) {
+        try {
+            return new JsonReader(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }

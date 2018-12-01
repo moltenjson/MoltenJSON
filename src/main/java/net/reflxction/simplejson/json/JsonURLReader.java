@@ -15,12 +15,12 @@
  */
 package net.reflxction.simplejson.json;
 
-import org.json.JSONObject;
+import com.google.gson.JsonObject;
+import net.reflxction.simplejson.exceptions.JsonParseException;
+import net.reflxction.simplejson.utils.JsonUtils;
+import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -33,6 +33,9 @@ public class JsonURLReader {
     // The URL to read from
     private URL url;
 
+    // The URL content
+    private JsonObject content;
+
     /**
      * Initiates a new URL reader
      *
@@ -41,38 +44,38 @@ public class JsonURLReader {
      */
     public JsonURLReader(String url) throws MalformedURLException {
         this.url = new URL(url);
-    }
-
-    /**
-     * Parses all characters from the JSON file from the URL, then builds it using a {@link StringBuilder}.
-     * This will help providing better iteration, as JSON files don't know "lines"
-     *
-     * @param reader Reader to use for reading
-     * @return The JSON content of the page as a string
-     * @throws IOException If IO connection issues while parsing JSON content were encountered
-     */
-    private String parseJsonCharacters(BufferedReader reader) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        int cp;
-        while ((cp = reader.read()) != -1) {
-            sb.append((char) cp);
-        }
-        return sb.toString();
+        this.content = parseContent();
     }
 
     /**
      * Gets the JSON object from the URL.
      *
      * @return A JSON object of the URL content
-     * @throws IOException Whether there were IO issues when parsing
      */
-    public JSONObject readContent() throws IOException {
-        try (InputStream is = url.openStream()) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
-            String jsonText = parseJsonCharacters(reader);
-            reader.close();
-            return new JSONObject(jsonText);
+    public JsonObject getContent() {
+        return content;
+    }
+
+    /**
+     * Returns the current JSON from the URL
+     *
+     * @return The content
+     */
+    private JsonObject parseContent() {
+        try {
+            return JsonUtils.getObjectFromString(IOUtils.toString(url, Charset.forName("UTF-8")));
+        } catch (IOException e) {
+            throw new JsonParseException(e.getMessage());
         }
+    }
+
+    /**
+     * Refreshes the content by re-parsing it.
+     *
+     * @return The new content
+     */
+    public JsonObject refresh() {
+        return content = parseContent();
     }
 
     /**
@@ -84,8 +87,22 @@ public class JsonURLReader {
      */
     public void writeToFile(JsonFile file, boolean prettyPrinting) throws IOException {
         JsonWriter writer = new JsonWriter(file);
-        writer.writeAndOverride(readContent(), prettyPrinting);
+        writer.writeAndOverride(getContent(), prettyPrinting);
         writer.close();
+    }
+
+    /**
+     * Returns a new {@link JsonURLReader} and throws unchecked exceptions if there were any IO exceptions
+     *
+     * @param url URL string to read from
+     * @return The DirectConfiguration object
+     */
+    public static JsonURLReader of(String url) {
+        try {
+            return new JsonURLReader(url);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

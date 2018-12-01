@@ -15,8 +15,13 @@
  */
 package net.reflxction.simplejson.json;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * Represents a JSON file. This is used by JSON writers and readers
@@ -31,22 +36,23 @@ public class JsonFile {
      *
      * @param file             File
      * @param createIfNotExist Whether the file should be created if it doesn't exist already.
-     * @throws IOException If there were IO exceptions while finding the file
      */
     public JsonFile(File file, boolean createIfNotExist) throws IOException {
         this.file = file;
-        if (!file.exists() && createIfNotExist)
+        maintain(createIfNotExist);
+        if (!file.exists() && createIfNotExist) //noinspection ResultOfMethodCallIgnored
             file.createNewFile();
+
+
     }
 
     /**
      * Retrieves a new JSON file from the given path
      *
      * @param file File to retrieve
-     * @throws IOException If there were IO issues when detecting the file
      */
     public JsonFile(File file) throws IOException {
-        this(file, false);
+        this(file, true);
     }
 
     /**
@@ -54,7 +60,6 @@ public class JsonFile {
      *
      * @param path             Path to the JSON file
      * @param createIfNotExist Whether this should create the file if it doesn't exist already.
-     * @throws IOException If there were issues while finding the file
      */
     public JsonFile(String path, boolean createIfNotExist) throws IOException {
         this(new File(path), createIfNotExist);
@@ -64,10 +69,9 @@ public class JsonFile {
      * Initiates a JSON file
      *
      * @param path Path of the file
-     * @throws IOException If there were issues while finding the file
      */
     public JsonFile(String path) throws IOException {
-        this(path, false);
+        this(path, true);
     }
 
     /**
@@ -86,6 +90,47 @@ public class JsonFile {
      */
     public String getPath() {
         return file.getPath();
+    }
+
+    /**
+     * Maintains this {@link JsonFile} by creating it (if required), and writes
+     * curly brackets ("{}") to make it usable and maintainable by readers and writers
+     *
+     * @throws IOException Issues with creating or writing
+     */
+    private void maintain(boolean create) throws IOException {
+        if ((!file.exists() && create && file.createNewFile()) || (file.exists() &&
+                isEmpty(FileUtils.readFileToString(file, Charset.forName("UTF-8")).trim())))
+            writeCurlyBrackets();
+    }
+
+    /**
+     * Writes curly brackets to the file
+     */
+    private void writeCurlyBrackets() {
+        try {
+            Files.write(Paths.get(file.getPath()), "{}".getBytes()); // Write the curly brackets so JSON can be parsed
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private boolean isEmpty(String text) {
+        return text == null || text.isEmpty();
+    }
+
+    /**
+     * Returns a new {@link JsonFile} and throws unchecked exceptions if there were any IO exceptions
+     *
+     * @param path Path of the JSON file
+     * @return The JsonFile object
+     */
+    public static JsonFile of(String path) {
+        try {
+            return new JsonFile(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

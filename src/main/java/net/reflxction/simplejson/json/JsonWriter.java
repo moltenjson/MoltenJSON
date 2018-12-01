@@ -16,11 +16,9 @@
 package net.reflxction.simplejson.json;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import net.reflxction.simplejson.utils.Gsons;
 import net.reflxction.simplejson.utils.JsonUtils;
-import net.reflxction.simplejson.utils.Unprepared;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -40,18 +38,18 @@ public class JsonWriter {
     private JsonFile file;
 
     // The cached content of the file
-    private JSONObject content;
+    private JsonObject content;
 
     /**
      * Initiates a new JSON writer
      *
-     * @param file JSON file to read from
+     * @param file JSON file to write to
      * @throws IOException If there were IO issues whilst initiating the file writer
      */
     public JsonWriter(JsonFile file) throws IOException {
         this.file = file;
         JsonReader reader = new JsonReader(file);
-        content = reader.getAsJSONObject(Throwable::printStackTrace);
+        content = reader.getJsonObject(Throwable::printStackTrace);
         reader.close();
     }
 
@@ -82,7 +80,7 @@ public class JsonWriter {
      */
     public void writeAndOverride(Object jsonResult, boolean prettyPrinting) throws IOException {
         Gson gson = prettyPrinting ? Gsons.PRETTY_PRINTING : Gsons.DEFAULT;
-        if (jsonResult instanceof JSONObject) {
+        if (jsonResult instanceof JsonObject) {
             write(prettyPrinting ? JsonUtils.setPretty(jsonResult.toString()) : jsonResult.toString());
         } else {
             write(gson.toJson(jsonResult));
@@ -100,9 +98,9 @@ public class JsonWriter {
      * @param override       Whether to override the key value if it exists already or not. !! UNPREPARED !!
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
-    public void add(String key, Object value, boolean prettyPrinting, @Unprepared boolean override) throws IOException {
-        //if (valueExists(key) && !override) return;
-        content.put(key, value);
+    public void add(String key, Object value, boolean prettyPrinting, boolean override) throws IOException {
+        if (memberExists(key) && !override) return;
+        content.add(key, Gsons.DEFAULT.toJsonTree(value));
         write(prettyPrinting ? JsonUtils.setPretty(content.toString()) : content.toString());
     }
 
@@ -152,10 +150,8 @@ public class JsonWriter {
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
     public void removeKey(String key, boolean prettyPrinting) throws IOException {
-        //if (valueExists(key)) {
         content.remove(key);
         write(prettyPrinting ? JsonUtils.setPretty(content.toString()) : content.toString());
-        //}
     }
 
     /**
@@ -169,7 +165,7 @@ public class JsonWriter {
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
     public void removeKey(String key) throws IOException {
-        removeKey(key, false);
+        removeKey(key, true);
     }
 
     /**
@@ -183,20 +179,13 @@ public class JsonWriter {
     }
 
     /**
-     * Returns {@code true} if the given key exists, or {@code false} if otherwise. Avoid
-     * using {@link JSONObject#get(String)} as an existence check (by comparing to null), as it will
-     * erase the entire content of the file, so using this should be a safer way to check if any value exists.
+     * Returns {@code true} if the given member exists, or {@code false} if otherwise.
      *
      * @param key Key to check for
      * @return true if the value exists, false if otherwise.
      */
-    public boolean valueExists(String key) {
-        try {
-            content.get(key);
-            return true;
-        } catch (JSONException e) {
-            return false;
-        }
+    public boolean memberExists(String key) {
+        return content.has(key);
     }
 
     /**
@@ -207,7 +196,7 @@ public class JsonWriter {
      *
      * @return The cached JSON object
      */
-    public JSONObject getCachedContent() {
+    public JsonObject getCachedContent() {
         return content;
     }
 
@@ -220,5 +209,19 @@ public class JsonWriter {
     private void write(String text) throws IOException {
         if (bufferedWriter != null) bufferedWriter.write(text);
         else Files.write(Paths.get(file.getPath()), text.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Returns a new {@link JsonWriter} and throws unchecked exceptions if there were any IO exceptions
+     *
+     * @param file JSON file to write to
+     * @return The JsonWriter object
+     */
+    public static JsonWriter of(JsonFile file) {
+        try {
+            return new JsonWriter(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

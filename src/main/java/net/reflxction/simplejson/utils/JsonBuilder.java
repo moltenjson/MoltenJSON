@@ -17,7 +17,6 @@ package net.reflxction.simplejson.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -87,7 +86,7 @@ public class JsonBuilder {
     }
 
     /**
-     * Constructs a {@link JSONObject} from the built/mapped JSON.
+     * Constructs a {@link JsonObject} from the built/mapped JSON.
      *
      * @return The constructed JSON object
      */
