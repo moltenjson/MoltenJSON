@@ -22,7 +22,7 @@ public class ReadFromURL {
             JsonURLReader reader = new JsonURLReader("https://pastebin.com/raw/GfxZqf4M");
 
             // Get the JSON as a string from the reader
-            String json = reader.readContent().toString();
+            String json = reader.getContent().toString();
 
             // Prettify the JSON text
             String prettyJson = JsonUtils.setPretty(json);
