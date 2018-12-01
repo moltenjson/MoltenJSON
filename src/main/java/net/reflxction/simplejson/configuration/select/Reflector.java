@@ -35,7 +35,6 @@ class Reflector {
             }
             field.setAccessible(true);
             field.set(field.getDeclaringClass(), value);
-            System.out.println("non final");
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
         }

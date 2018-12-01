@@ -27,9 +27,7 @@ package net.reflxction.simplejson.configuration.select;
  * {@link Boolean}.
  *
  * @param <T> Object type
- * @deprecated No support for all object types.
  */
-@Deprecated
 public class SelectionHolder<T> {
 
     // Selection value
