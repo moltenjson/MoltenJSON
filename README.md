@@ -5,11 +5,12 @@ A simple wrapper for [Google GSON's API](https://github.com/google/gson), to sim
 
 # Features
 * Fast and efficient
-* Easy reading from any JSON file
+* Easy reading from any JSON file.
+* Comes with flexible configurations for writing and reading, and wide support for JSON kingdoms
 * Easy, clean and safe writing to any JSON file
 * Ability to read JSON files from any URLs in fast and efficient ways
 * Ability to write content from any JSON URLs locally in easy and safe ways
-
+* Full serializing and deserializing support.
 
 # Adding the dependency
 ## Maven
