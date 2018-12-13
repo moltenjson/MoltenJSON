@@ -134,6 +134,14 @@ public class DirectConfiguration {
     }
 
     /**
+     * Returns the content of the JSON writer
+     * @return
+     */
+    public JsonObject getContent() {
+        return content;
+    }
+
+    /**
      * Assigns the given element to the key, and writes it to the JSON file.
      *
      * @param key   Key to assign to

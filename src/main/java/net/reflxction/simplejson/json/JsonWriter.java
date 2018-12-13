@@ -68,8 +68,8 @@ public class JsonWriter {
     /**
      * Writes the given content to the JSON file
      * <p>
-     * You must keep in mind that you shouldn't call any methods like getName() when you want to save an object.
-     * Using getters in this purpose
+     * You must keep in mind that you shouldn't call any methods like getName() when you want to save an object, as
+     * full serializing will be applied to the object.
      * <p>
      * This method will override the entire content of the file, so if you want to add a key rather than overriding
      * everything, using {@link #add(String, Object, boolean, boolean)} would be more appropriate.
