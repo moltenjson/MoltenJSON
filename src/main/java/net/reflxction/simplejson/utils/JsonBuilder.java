@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -27,7 +28,20 @@ import java.util.Map;
 public class JsonBuilder {
 
     // The map to assign values in
-    private Map<String, Object> jsonMap = new HashMap<>();
+    private Map<String, Object> jsonMap;
+
+    /**
+     * Initiates a new JSON builder
+     *
+     * @param order Whether it should keep the order of the elements or not.
+     */
+    public JsonBuilder(boolean order) {
+        jsonMap = order ? new LinkedHashMap<>() : new HashMap<>();
+    }
+
+    public JsonBuilder() {
+        this(true);
+    }
 
     /**
      * Maps the given value to the specified key
@@ -61,7 +75,7 @@ public class JsonBuilder {
      * @return The mapped JSON string
      */
     public String build() {
-        return Gsons.DEFAULT.toJson(jsonMap);
+        return build(Gsons.DEFAULT);
     }
 
     /**
@@ -73,7 +87,7 @@ public class JsonBuilder {
      * @return The mapped JSON string, prettified.
      */
     public String buildPretty() {
-        return Gsons.PRETTY_PRINTING.toJson(jsonMap);
+        return build(Gsons.PRETTY_PRINTING);
     }
 
     /**
