@@ -47,7 +47,7 @@ allprojects {
 }
 
 dependencies {
-    compile 'com.github.ReflxctionDev:SimpleJSON:1.4-SNAPSHOT'
+    compile 'com.github.ReflxctionDev:SimpleJSON:1.8-SNAPSHOT'
 }
 ```
 
