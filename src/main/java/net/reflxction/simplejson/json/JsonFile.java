@@ -36,20 +36,20 @@ public class JsonFile {
      *
      * @param file             File
      * @param createIfNotExist Whether the file should be created if it doesn't exist already.
+     * @throws IOException I/O exceptions while connecting with the file
      */
     public JsonFile(File file, boolean createIfNotExist) throws IOException {
         this.file = file;
         maintain(createIfNotExist);
         if (!file.exists() && createIfNotExist) //noinspection ResultOfMethodCallIgnored
             file.createNewFile();
-
-
     }
 
     /**
      * Retrieves a new JSON file from the given path
      *
      * @param file File to retrieve
+     * @throws IOException I/O problems with connecting to the file
      */
     public JsonFile(File file) throws IOException {
         this(file, true);
@@ -60,6 +60,7 @@ public class JsonFile {
      *
      * @param path             Path to the JSON file
      * @param createIfNotExist Whether this should create the file if it doesn't exist already.
+     * @throws IOException I/O exceptions while connecting with the file
      */
     public JsonFile(String path, boolean createIfNotExist) throws IOException {
         this(new File(path), createIfNotExist);
@@ -69,6 +70,7 @@ public class JsonFile {
      * Initiates a JSON file
      *
      * @param path Path of the file
+     * @throws IOException I/O exceptions while connecting with the file
      */
     public JsonFile(String path) throws IOException {
         this(path, true);
@@ -96,6 +98,7 @@ public class JsonFile {
      * Maintains this {@link JsonFile} by creating it (if required), and writes
      * curly brackets ("{}") to make it usable and maintainable by readers and writers
      *
+     * @param create Whether to create the file if it doesn't exist already
      * @throws IOException Issues with creating or writing
      */
     private void maintain(boolean create) throws IOException {
@@ -115,8 +118,43 @@ public class JsonFile {
         }
     }
 
+    /**
+     * Whether the given String is empty or equals {@code null}
+     *
+     * @param text Text to check for
+     * @return {@code true} if it's empty or {@code null}, false if otherwise.
+     */
     private boolean isEmpty(String text) {
         return text == null || text.isEmpty();
+    }
+
+    /**
+     * Retrieves a new JSON file from the given path
+     *
+     * @param file File to retrieve
+     * @return The JsonFile object
+     */
+    public static JsonFile of(File file) {
+        try {
+            return new JsonFile(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Initiates a JSON file
+     *
+     * @param file              File to use
+     * @param createIfNotExists Whether the file should be created if it doesn't exist already.
+     * @return The JsonFile object
+     */
+    public static JsonFile of(File file, boolean createIfNotExists) {
+        try {
+            return new JsonFile(file, createIfNotExists);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -128,6 +166,21 @@ public class JsonFile {
     public static JsonFile of(String path) {
         try {
             return new JsonFile(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Initiates a new JSON file
+     *
+     * @param path             Path to the JSON file
+     * @param createIfNotExist Whether this should create the file if it doesn't exist already.
+     * @return The JsonFile object
+     */
+    public static JsonFile of(String path, boolean createIfNotExist) {
+        try {
+            return new JsonFile(path, createIfNotExist);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

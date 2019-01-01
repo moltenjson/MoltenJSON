@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Represents a configuration file which makes <s>direct</s> contact with the
- * configuration. Direct contact is achieved from <s>getter</s> and <s>setter</s> methods
+ * Represents a configuration file which makes <p>direct</p> contact with the
+ * configuration. Direct contact is achieved from <p>getter</p> and <p>setter</p> methods
  * and eventually saves with {@link DirectConfiguration#save(Consumer)}
  *
  * @see net.reflxction.simplejson.configuration.select.SelectableConfiguration
@@ -46,6 +46,7 @@ public class DirectConfiguration {
      * Initiates a new configuration for the given addon name.
      *
      * @param file JSON file to contact
+     * @throws IOException I/O exception while connecting with the file
      */
     public DirectConfiguration(JsonFile file) throws IOException {
         JsonFile jsonFile = new JsonFile(file.getFile());
@@ -135,7 +136,8 @@ public class DirectConfiguration {
 
     /**
      * Returns the content of the JSON writer
-     * @return
+     *
+     * @return The JSON content
      */
     public JsonObject getContent() {
         return content;

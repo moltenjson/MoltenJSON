@@ -45,4 +45,17 @@ public @interface SelectKey {
      */
     String value() default "";
 
+    /**
+     * Whether should the path to the variable in the JSON file include the classpath.
+     * E.g, {@code @SelectKey("hello) public static boolean HELLO = true;} would be saved as "hello" : true, however with
+     * classpath enabled it would be saved as "com.foo.ConfigContainer.hello" : true.
+     * <p>
+     * If the {@link SelectableConfiguration} that this field is registered on
+     * has {@link SelectableConfiguration#isClasspath()} set to true, this will have no effect and classpath will
+     * always be used.
+     *
+     * @return Whether to use classpath when saving or not
+     */
+    boolean classpath() default false;
+
 }

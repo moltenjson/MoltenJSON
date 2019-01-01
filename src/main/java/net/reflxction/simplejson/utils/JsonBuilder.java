@@ -21,6 +21,8 @@ import com.google.gson.JsonObject;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 /**
  * A utility to create and build JSON text flexibly
@@ -39,6 +41,9 @@ public class JsonBuilder {
         jsonMap = order ? new LinkedHashMap<>() : new HashMap<>();
     }
 
+    /**
+     * Initiates a new JSON builder, and keeps the order of elements.
+     */
     public JsonBuilder() {
         this(true);
     }
@@ -48,7 +53,7 @@ public class JsonBuilder {
      *
      * @param key   Key to assign to
      * @param value Value assigned to the key
-     * @return This object instance
+     * @return This builder instance
      */
     public JsonBuilder map(String key, Object value) {
         jsonMap.put(key, value);
@@ -56,10 +61,49 @@ public class JsonBuilder {
     }
 
     /**
+     * Maps the given value to the specific key if the given {@link Predicate} is met, otherwise this
+     * method will have no effect.
+     *
+     * @param predicate Criteria to test for the value
+     * @param key       Key to assign to
+     * @param value     Value assigned to the key
+     * @param <T>       Object instance assignment
+     * @return This builder instance
+     */
+    public <T> JsonBuilder mapIf(Predicate<T> predicate, String key, T value) {
+        if (predicate.test(value))
+            map(key, value);
+        return this;
+    }
+
+    /**
+     * Maps the given value to the specific key if the value is not {@code null}. Otherwise, the method has
+     * no effect.
+     *
+     * @param key   Key to assign to
+     * @param value Value assigned to the key, must not be null.
+     * @return This builder instance
+     */
+    public JsonBuilder mapIfNotNull(String key, Object value) {
+        return mapIf(Objects::nonNull, key, value);
+    }
+
+    /**
+     * Maps the given value to the specific key as long as the JSON map does not contain it (absent)
+     *
+     * @param key   Key to assign to
+     * @param value Value assigned to the key
+     * @return This builder instance
+     */
+    public JsonBuilder mapIfAbsent(String key, Object value) {
+        return mapIf(o -> !jsonMap.containsKey(key), key, value);
+    }
+
+    /**
      * Removes the given key (hence its value as well) from the JSON map and the mapping
      *
      * @param key Key to remove
-     * @return This object instance
+     * @return This builder instance
      */
     public JsonBuilder removeKey(String key) {
         jsonMap.remove(key);
@@ -93,6 +137,7 @@ public class JsonBuilder {
     /**
      * Builds the JSON using the given {@link Gson} profile returns it as a {@link String}.
      *
+     * @param profile GSON profile to construct from
      * @return The mapped JSON string
      */
     public String build(Gson profile) {

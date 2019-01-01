@@ -51,15 +51,24 @@ public class SelectableConfiguration {
     // The list which holds all registered classes
     private Map<Class<?>, List<Field>> opted = Maps.newHashMap();
 
+    // Whether it should include the classpath of variables when saving or not.
+    private boolean classpath;
+
     /**
      * Initiates a new SelectableConfiguration and assigns all fields to their values from the JSON file
      *
      * @param file File to use
+     * @throws IOException I/O exceptions while connecting with the file
      */
-    public SelectableConfiguration(JsonFile file) throws IOException {
+    public SelectableConfiguration(JsonFile file, boolean classpath) throws IOException {
+        this.classpath = classpath;
         JsonFile jsonFile = new JsonFile(file.getFile());
         writer = new JsonWriter(jsonFile);
         content = writer.getCachedContent();
+    }
+
+    public SelectableConfiguration(JsonFile file) throws IOException {
+        this(file, true);
     }
 
     /**
@@ -139,9 +148,14 @@ public class SelectableConfiguration {
      */
     String getKey(Field field) {
         if (!field.isAnnotationPresent(SelectKey.class))
-            throw new RuntimeException();
+            throw new RuntimeException("Found a registered key which is not annotated with @SelectKey! " + field.getDeclaringClass()
+                    + "." + field.getName());
         SelectKey select = field.getAnnotation(SelectKey.class);
-        return select.value().isEmpty() ? field.getName() : select.value();
+        String name = select.value().isEmpty() ? field.getName() : select.value();
+        if (classpath || select.classpath()) {
+            name = field.getDeclaringClass().getName() + "." + name;
+        }
+        return name;
     }
 
     /**
@@ -168,6 +182,16 @@ public class SelectableConfiguration {
      */
     public JsonObject getContent() {
         return content;
+    }
+
+    /**
+     * Whether or not to save variables while including their classpath. If this is true,
+     * variables will be saved with their classpath appended behind the variable key.
+     *
+     * @return Whether to use classpath or not
+     */
+    public boolean isClasspath() {
+        return classpath;
     }
 
     /**

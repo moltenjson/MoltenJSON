@@ -48,6 +48,7 @@ public class JsonReader implements Closeable {
      * Initiates a new JSON file reader
      *
      * @param file File to read for
+     * @throws IOException I/O exceptions while connecting with the file
      */
     public JsonReader(JsonFile file) throws IOException {
         inputReader = false;
@@ -105,6 +106,23 @@ public class JsonReader implements Closeable {
         return result;
     }
 
+    /**
+     * Reads and parses the given JSON part of the file, and returns it as a deserialized instance of the
+     * object assignment.
+     * <p>
+     * After the reader finishes reading, you are better off call {@link JsonReader#close()} to close
+     * the IO connection. This is to avoid IO issues and ensures safety for the file and the JVM,
+     * beside better management for the finite file resources.
+     *
+     * @param element Element to opt from the file and deserialize
+     * @param clazz   Class to deserialize as and create an instance from.
+     * @param <T>     The given object assignment
+     * @return The deserialized object instance
+     */
+    public <T> T deserialize(String element, Class<T> clazz) {
+        JsonObject object = getJsonObject();
+        return Gsons.DEFAULT.fromJson(object.get(element), clazz);
+    }
 
     /**
      * Returns a {@link JsonObject} from the file, which can be used to parse content separately
