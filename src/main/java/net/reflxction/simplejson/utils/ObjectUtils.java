@@ -22,6 +22,10 @@ import java.util.function.Consumer;
  */
 public class ObjectUtils {
 
+    // Cannot be initiated
+    private ObjectUtils() {
+    }
+
     /**
      * Executes the given {@link Consumer} if the object is not null
      *

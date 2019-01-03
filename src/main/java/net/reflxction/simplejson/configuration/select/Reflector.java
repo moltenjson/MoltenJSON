@@ -27,6 +27,10 @@ import java.lang.reflect.ParameterizedType;
  */
 class Reflector {
 
+    // Cannot be initiated
+    private Reflector() {
+    }
+
     @SuppressWarnings("unchecked")
     static void setStatic(Field field, Object value) {
         try {

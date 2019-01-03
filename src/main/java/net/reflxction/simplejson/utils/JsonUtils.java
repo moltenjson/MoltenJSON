@@ -28,6 +28,10 @@ import java.util.Map;
  */
 public class JsonUtils {
 
+    // Cannot be initiated
+    private JsonUtils() {
+    }
+
     /**
      * Converts a JSON string to be pretty (by fixing whitespaces, etc.)
      *
