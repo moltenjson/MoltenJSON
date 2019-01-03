@@ -20,6 +20,7 @@ import net.reflxction.simplejson.json.JsonFile;
 import net.reflxction.simplejson.json.JsonWriter;
 import net.reflxction.simplejson.utils.Gsons;
 import net.reflxction.simplejson.utils.JsonUtils;
+import net.reflxction.simplejson.utils.ObjectUtils;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -49,8 +50,7 @@ public class DirectConfiguration {
      * @throws IOException I/O exception while connecting with the file
      */
     public DirectConfiguration(JsonFile file) throws IOException {
-        JsonFile jsonFile = new JsonFile(file.getFile());
-        writer = new JsonWriter(jsonFile);
+        writer = new JsonWriter(file);
         content = writer.getCachedContent();
     }
 
@@ -105,6 +105,16 @@ public class DirectConfiguration {
     }
 
     /**
+     * Returns a {@code boolean} from the associated boolean
+     *
+     * @param key Key to fetch from
+     * @return The associated boolean
+     */
+    public boolean getBoolean(String key) {
+        return content.get(key).getAsBoolean();
+    }
+
+    /**
      * Returns a {@link BigDecimal} from the associated key.
      *
      * @param key Key to fetch from
@@ -135,6 +145,18 @@ public class DirectConfiguration {
     }
 
     /**
+     * Returns a deserialized instance of the given class assignment.
+     *
+     * @param key   Key to fetch from
+     * @param clazz Class to return an instance of, as a deserialized object
+     * @param <T>   Class object assignment
+     * @return The deserialized object
+     */
+    public <T> T get(String key, Class<T> clazz) {
+        return Gsons.PRETTY_PRINTING.fromJson(content.get(key), clazz);
+    }
+
+    /**
      * Returns the content of the JSON writer
      *
      * @return The JSON content
@@ -150,7 +172,7 @@ public class DirectConfiguration {
      * @param value Value to assign to the key
      */
     public void set(String key, Object value) {
-        content.add(key, Gsons.DEFAULT.toJsonTree(value));
+        content.add(key, Gsons.PRETTY_PRINTING.toJsonTree(value));
     }
 
     /**
@@ -174,7 +196,7 @@ public class DirectConfiguration {
         try {
             writer.writeAndOverride(content, true);
         } catch (IOException e) {
-            onException.accept(e);
+            ObjectUtils.ifNotNull(onException, task -> task.accept(e));
         }
     }
 
