@@ -21,7 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 
 /**
- * A class with different reflection utilities
+ * A class with different unsafe reflection utilities
  * <p>
  * This class is not intended for public usage.
  */
