@@ -22,7 +22,7 @@ package net.reflxction.simplejson.configuration.select;
  * hence they can be used if the user does not wish to use raw types with {@code public static}
  * modifiers and allows the use of {@code final} modifier to use the <p>constant-like</p> pattern.
  * <p>
- * This will <p>not</p> for any object which uses generics. Specifically, this should only be used
+ * This will <p>not</p> work for any object which uses generics. Specifically, this should only be used
  * with {@link String}, {@link Integer}, {@link Long}, {@link Double}, {@link Byte}, {@link Short},
  * {@link Boolean}.
  *

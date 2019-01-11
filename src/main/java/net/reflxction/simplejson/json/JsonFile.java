@@ -24,7 +24,12 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * Represents a JSON file. This is used by JSON writers and readers
+ * Represents a JSON file. This is used by JSON writers and readers.
+ * <p>
+ * This cannot be used to write or read directly
+ * For reading, {@link JsonReader} and {@link net.reflxction.simplejson.configuration.DirectConfiguration}.
+ * <p>
+ * For writing, {@link JsonWriter} and {@link net.reflxction.simplejson.configuration.DirectConfiguration}.
  */
 public class JsonFile {
 
