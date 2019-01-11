@@ -72,7 +72,7 @@ public class JsonBuilder {
      */
     public <T> JsonBuilder mapIf(Predicate<T> predicate, String key, T value) {
         if (predicate.test(value))
-            map(key, value);
+           return map(key, value);
         return this;
     }
 
