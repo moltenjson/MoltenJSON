@@ -15,7 +15,6 @@
  */
 package net.reflxction.simplejson.configuration.select;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.json.JsonFile;
@@ -39,7 +38,6 @@ import java.util.stream.Collectors;
  * @see SelectKey
  * @see net.reflxction.simplejson.configuration.DirectConfiguration
  */
-@Beta
 public class SelectableConfiguration {
 
     // JSON writer
@@ -57,7 +55,8 @@ public class SelectableConfiguration {
     /**
      * Initiates a new SelectableConfiguration and assigns all fields to their values from the JSON file
      *
-     * @param file File to use
+     * @param file      File to use
+     * @param classpath Whether or not to include the variable classpath when saving
      * @throws IOException I/O exceptions while connecting with the file
      */
     public SelectableConfiguration(JsonFile file, boolean classpath) throws IOException {
@@ -198,11 +197,26 @@ public class SelectableConfiguration {
      * Returns a new {@link SelectableConfiguration} and throws unchecked exceptions if there were any IO exceptions
      *
      * @param file File to use
-     * @return The JsonFile object
+     * @return The SelectableConfiguration object
      */
     public static SelectableConfiguration of(JsonFile file) {
         try {
             return new SelectableConfiguration(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Initiates a new SelectableConfiguration and assigns all fields to their values from the JSON file
+     *
+     * @param file      File to use
+     * @param classpath Whether or not to include the variable classpath when saving
+     * @return The SelectableConfiguration object
+     */
+    public static SelectableConfiguration of(JsonFile file, boolean classpath) {
+        try {
+            return new SelectableConfiguration(file, classpath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

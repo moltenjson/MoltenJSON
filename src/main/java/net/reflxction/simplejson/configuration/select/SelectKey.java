@@ -15,8 +15,6 @@
  */
 package net.reflxction.simplejson.configuration.select;
 
-import com.google.common.annotations.Beta;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -32,7 +30,6 @@ import java.lang.annotation.Target;
  *
  * @see SelectableConfiguration
  */
-@Beta
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface SelectKey {
