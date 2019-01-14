@@ -30,7 +30,7 @@ import java.util.function.Predicate;
 public class JsonBuilder {
 
     // The map to assign values in
-    private Map<String, Object> jsonMap;
+    private final Map<String, Object> jsonMap;
 
     /**
      * Initiates a new JSON builder

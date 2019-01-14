@@ -41,16 +41,16 @@ import java.util.stream.Collectors;
 public class SelectableConfiguration {
 
     // JSON writer
-    private JsonWriter writer;
+    private final JsonWriter writer;
 
     // The cached JSON content on config creation
-    private JsonObject content;
+    private final JsonObject content;
 
     // The list which holds all registered classes
-    private Map<Class<?>, List<Field>> opted = Maps.newHashMap();
+    private final Map<Class<?>, List<Field>> opted = Maps.newHashMap();
 
     // Whether it should include the classpath of variables when saving or not.
-    private boolean classpath;
+    private final boolean classpath;
 
     /**
      * Initiates a new SelectableConfiguration and assigns all fields to their values from the JSON file
@@ -79,7 +79,7 @@ public class SelectableConfiguration {
      *
      * @param classes Classes to register
      */
-    public void register(Class<?>... classes) {
+    public final void register(Class<?>... classes) {
         for (Class<?> clazz : classes) {
             List<Field> fields = opt(clazz);
             if (fields.isEmpty()) return;
@@ -92,7 +92,7 @@ public class SelectableConfiguration {
      * <p>
      * This should be used after all the required classes have been registered,
      */
-    public void associate() {
+    public final void associate() {
         opted.forEach((clazz, fields) -> fields.forEach(this::assign));
     }
 
@@ -103,7 +103,7 @@ public class SelectableConfiguration {
      *
      * @param key Key to remove
      */
-    public void remove(String key) {
+    public final void remove(String key) {
         content.remove(key);
     }
 
@@ -111,7 +111,7 @@ public class SelectableConfiguration {
      * Saves the configuration and updates the cached {@link #content} to have the
      * current and updated values of the fields.
      */
-    public void save() {
+    public final void save() {
         try {
             opted.forEach((clazz, fields) -> fields.forEach(field -> {
                 field.setAccessible(true);
@@ -145,7 +145,7 @@ public class SelectableConfiguration {
      * @param field Field to fetch from
      * @return The field key
      */
-    String getKey(Field field) {
+    final String getKey(Field field) {
         if (!field.isAnnotationPresent(SelectKey.class))
             throw new RuntimeException("Found a registered key which is not annotated with @SelectKey! " + field.getDeclaringClass()
                     + "." + field.getName());
@@ -179,7 +179,7 @@ public class SelectableConfiguration {
      *
      * @return The configuration content
      */
-    public JsonObject getContent() {
+    public final JsonObject getContent() {
         return content;
     }
 
@@ -189,7 +189,7 @@ public class SelectableConfiguration {
      *
      * @return Whether to use classpath or not
      */
-    public boolean isClasspath() {
+    public final boolean isClasspath() {
         return classpath;
     }
 

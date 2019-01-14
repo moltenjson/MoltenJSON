@@ -34,7 +34,7 @@ import java.nio.file.Paths;
 public class JsonFile {
 
     // The file of the JSON file
-    private File file;
+    private final File file;
 
     /**
      * Initiates a JSON file
