@@ -28,7 +28,7 @@ For examples, take a look at the [examples](https://github.com/ReflxctionDev/Sim
 ### Introduction
 If you would like to contribute to SimpleJSON, please keep in mind a few things:
 
-* Code cleanliness (and format)
+* Code cleanliness, readability and format
 * Appropriate JavaDocs
 * Warning-free code
 * Thread-safe objects
