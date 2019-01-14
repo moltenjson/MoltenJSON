@@ -1,62 +1,55 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![](https://jitpack.io/v/ReflxctionDev/SimpleJSON.svg)](https://jitpack.io/#ReflxctionDev/SimpleJSON)
+
 # SimpleJSON
-A simple wrapper for [Google GSON's API](https://github.com/google/gson), to simplify writing [JSON](http://json.org/) data and reading it
+SimpleJSON is a wide, feature-extensive JSON/[GSON](https://github.com/google/gson) library which aims on simplifying loads of JSON operations, which makes dealing with JSON a *piece of cake*.
 
 # Features
-* Fast and efficient
-* Easy reading from any JSON file.
-* Comes with flexible configurations for writing and reading, and wide support for JSON kingdoms
-* Easy, clean and safe writing to any JSON file
-* Ability to read JSON files from any URLs in fast and efficient ways
-* Ability to write content from any JSON URLs locally in easy and safe ways
-* Full serializing and deserializing support.
+* Extremely easy to use
+* Easily read, write and handle JSON from any file or URL, using a basic reader, a basic configuration or a complex configuration.
+* Different JSON utilities for simplifying building JSON.
+* Clean, easy-to-read and heavily-documented code.
+* Built to be thread-safe. This library supports running in multi-threaded environments.
+* Outstanding performance and very fast.
 
-# Adding the dependency
-## Maven
+# Using the library
+As for now, you can access the built library from [JitPack](https://jitpack.io/#ReflxctionDev/SimpleJSON). It may be deployed to a Maven repository in the future.
 
-Add this to your **pom.xml**:
-```xml
-<repositories>
-    <!-- Adding JitPack to your repositories -->
-    <repository>
-    	<id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
-
-<dependencies>
-
-    <!-- Adding the Maven dependency -->
-    <dependency>
-        <groupId>com.github.ReflxctionDev</groupId>
-        <artifactId>SimpleJSON</artifactId>
-        <version>1.8.2-SNAPSHOT</version>
-    </dependency>
-</dependencies>
-```
-
-## Gradle
-
-Add this to your **build.gradle**:
-
-```gradle
-allprojects {
-    repositories {
-	    maven { 'url 'https://jitpack.io' }
-    }
-}
-
-dependencies {
-    compile 'com.github.ReflxctionDev:SimpleJSON:1.8.2-SNAPSHOT'
-}
-```
+The library is configured to produce javadoc and sources JARs. This should allow you to browse JavaDocs from your project directly.
 
 # Download
-If you don't use Maven or Gradle, then you should consider using [the JAR file](https://github.com/ReflxctionDev/SimpleJSON/releases/tag/1.8.2-SNAPSHOT) instead.
+If you aren't using Maven or Gradle, then you should consider using [JAR files](https://github.com/ReflxctionDev/SimpleJSON/releases/) instead.
 
 # Examples
 For examples, take a look at the [examples](https://github.com/ReflxctionDev/SimpleJSON/tree/master/src/main/java/examples) package.
 
-# Planned features
-- [ ] Add ability to use encryption and decryption when writing
+# Contributing
+
+### Introduction
+If you would like to contribute to SimpleJSON, please keep in mind a few things:
+
+* Code cleanliness (and format)
+* Appropriate JavaDocs
+* Warning-free code
+* Thread-safe objects
+* Generally abiding by Java's good practices and avoiding bad practices.
+
+As for contributing, it's heavily preferred if you use **IntelliJ IDEA**, as it encourages great practices and the entire project's formatting is based on IntelliJ IDEA's formatter.
+
+### Setting up workspace:
+* Fork the repository
+* Simply clone your fork of the repository:
+`git clone https://github.com/XXX/SimpleJSON.git`
+
+* Do your modifications freely to the code
+* Create a pull request which contains your changes	.
+
+# Building
+* The main JAR is produced using the **gradle build** command.
+* JavaDoc JAR is produced using the **gradle javadocJar** command.
+* Sources JAR is produced using the **gradle sourcesJar** command.
+
+# Disclaimer
+SimpleJSON is **not** maintained, sponsored **nor** affiliated with GSON and is an independent project maintained by (an) independent developer(s).
+
+SimpleJSON is licensed under Apache 2.0 license. License terms are found in the [LICENSE file](https://github.com/ReflxctionDev/SimpleJSON/blob/master/LICENSE).
