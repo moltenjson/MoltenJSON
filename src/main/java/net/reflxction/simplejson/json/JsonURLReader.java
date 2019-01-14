@@ -17,10 +17,12 @@ package net.reflxction.simplejson.json;
 
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.exceptions.JsonParseException;
+import net.reflxction.simplejson.utils.Gsons;
 import net.reflxction.simplejson.utils.JsonUtils;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -31,7 +33,7 @@ import java.nio.charset.Charset;
 public class JsonURLReader {
 
     // The URL to read from
-    private URL url;
+    private final URL url;
 
     // The URL content
     private JsonObject content;
@@ -89,6 +91,17 @@ public class JsonURLReader {
         JsonWriter writer = new JsonWriter(file);
         writer.writeAndOverride(getContent(), prettyPrinting);
         writer.close();
+    }
+
+    /**
+     * Deserializes the content to the specified object type
+     *
+     * @param type Type to deserialize as
+     * @param <T>  Object assignment
+     * @return The deserialized object
+     */
+    public <T> T deerializeAs(Type type) {
+        return Gsons.DEFAULT.fromJson(content, type);
     }
 
     /**
