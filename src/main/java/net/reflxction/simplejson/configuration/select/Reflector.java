@@ -15,23 +15,25 @@
  */
 package net.reflxction.simplejson.configuration.select;
 
+import com.google.common.reflect.TypeToken;
 import net.reflxction.simplejson.utils.Gsons;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * A class with different unsafe reflection utilities
  * <p>
  * This class is not intended for public usage.
  */
+@SuppressWarnings("unchecked")
 class Reflector {
 
     // Cannot be initiated
     private Reflector() {
     }
 
-    @SuppressWarnings("unchecked")
     static void setStatic(Field field, Object value) {
         try {
             if (field.getType().equals(SelectionHolder.class)) {
@@ -46,8 +48,8 @@ class Reflector {
     }
 
     static Object getValue(SelectableConfiguration configuration, Field field) {
-        Class<?> d = field.getType();
-        if (field.getType().equals(SelectionHolder.class)) {
+        Type d = field.getType();
+        if (d.equals(SelectionHolder.class)) {
             d = getGeneric(field);
         }
         return Gsons.DEFAULT.fromJson(configuration.getContent().get(configuration.getKey(field)), d);
@@ -65,19 +67,18 @@ class Reflector {
         }
     }
 
+
     private static SelectionHolder getSelectionHolder(Field field) {
         try {
-            return ((SelectionHolder) field.get(null));
+            return (SelectionHolder) field.get(null);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static Class<?> getGeneric(Field field) {
-        System.out.println(field.getName());
+    private static Type getGeneric(Field field) {
         ParameterizedType type = (ParameterizedType) field.getGenericType();
-        System.out.println(type);
-        return (Class<?>) type.getActualTypeArguments()[0];
+        return TypeToken.of(type).resolveType(SelectionHolder.class.getTypeParameters()[0]).getType();
     }
 
 }
