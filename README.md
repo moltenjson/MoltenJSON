@@ -18,7 +18,7 @@ As for now, you can access the built library from [JitPack](https://jitpack.io/#
 The library is configured to produce javadoc and sources JARs. This should allow you to browse JavaDocs from your project directly.
 
 # Download
-If you aren't using Maven or Gradle, then you should consider using [JAR files](https://github.com/ReflxctionDev/SimpleJSON/releases/) instead.
+If your project does not use a build system like Maven or Gradle, then you should consider adding [JAR files](https://github.com/ReflxctionDev/SimpleJSON/releases/) to your classpath instead.
 
 # Examples
 For examples, take a look at the [examples](https://github.com/ReflxctionDev/SimpleJSON/tree/master/src/main/java/examples) package.
@@ -40,9 +40,8 @@ As for contributing, it's heavily preferred if you use **IntelliJ IDEA**, as it 
 * Fork the repository
 * Simply clone your fork of the repository:
 `git clone https://github.com/XXX/SimpleJSON.git`
-
 * Do your modifications freely to the code
-* Create a pull request which contains your changes	.
+* Create a pull request which contains your changes and commits.
 
 # Building
 * The main JAR is produced using the **gradle build** command.
