@@ -15,6 +15,7 @@
  */
 package net.reflxction.simplejson.utils;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
@@ -49,8 +50,7 @@ public class JsonUtils {
      * @return JsonObject from the given JSON string
      */
     public static JsonObject getObjectFromString(String json) {
-        JsonParser parser = new JsonParser();
-        return parser.parse(json).getAsJsonObject();
+        return Gsons.DEFAULT.fromJson(json, JsonElement.class).getAsJsonObject();
     }
 
     /**
