@@ -23,6 +23,7 @@ import net.reflxction.simplejson.utils.JsonUtils;
 import net.reflxction.simplejson.utils.ObjectUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -38,10 +39,10 @@ import java.util.function.Consumer;
 public class DirectConfiguration {
 
     // JSON writer
-    private JsonWriter writer;
+    private final JsonWriter writer;
 
     // The cached JSON content on config creation
-    private JsonObject content;
+    private final JsonObject content;
 
     /**
      * Initiates a new configuration for the given addon name.
@@ -60,7 +61,7 @@ public class DirectConfiguration {
      * @param key Key to fetch from
      * @return The associated string
      */
-    public String getString(String key) {
+    public final String getString(String key) {
         return content.get(key).getAsString();
     }
 
@@ -70,7 +71,7 @@ public class DirectConfiguration {
      * @param key Key to fetch from
      * @return The associated integer
      */
-    public int getInt(String key) {
+    public final int getInt(String key) {
         return content.get(key).getAsInt();
     }
 
@@ -80,7 +81,7 @@ public class DirectConfiguration {
      * @param key Key to fetch from
      * @return The associated double
      */
-    public double getDouble(String key) {
+    public final double getDouble(String key) {
         return content.get(key).getAsDouble();
     }
 
@@ -90,7 +91,7 @@ public class DirectConfiguration {
      * @param key Key to fetch from
      * @return The associated long
      */
-    public long getLong(String key) {
+    public final long getLong(String key) {
         return content.get(key).getAsLong();
     }
 
@@ -100,7 +101,7 @@ public class DirectConfiguration {
      * @param key Key to fetch from
      * @return The associated float
      */
-    public float getFloat(String key) {
+    public final float getFloat(String key) {
         return content.get(key).getAsFloat();
     }
 
@@ -110,7 +111,7 @@ public class DirectConfiguration {
      * @param key Key to fetch from
      * @return The associated boolean
      */
-    public boolean getBoolean(String key) {
+    public final boolean getBoolean(String key) {
         return content.get(key).getAsBoolean();
     }
 
@@ -120,7 +121,7 @@ public class DirectConfiguration {
      * @param key Key to fetch from
      * @return The associated decimal
      */
-    public BigDecimal getBigDecimal(String key) {
+    public final BigDecimal getBigDecimal(String key) {
         return content.get(key).getAsBigDecimal();
     }
 
@@ -130,7 +131,7 @@ public class DirectConfiguration {
      * @param key Key to fetch from
      * @return The associated List
      */
-    public List<Object> getList(String key) {
+    public final List<Object> getList(String key) {
         return JsonUtils.toList(content.get(key).toString());
     }
 
@@ -140,7 +141,7 @@ public class DirectConfiguration {
      * @param key Key to fetch from
      * @return The associated Map
      */
-    public Map<String, Object> getMap(String key) {
+    public final Map<String, Object> getMap(String key) {
         return JsonUtils.toMap(content.get(key).toString());
     }
 
@@ -148,12 +149,12 @@ public class DirectConfiguration {
      * Returns a deserialized instance of the given class assignment.
      *
      * @param key   Key to fetch from
-     * @param clazz Class to return an instance of, as a deserialized object
+     * @param type Type to return an instance of, as a deserialized object
      * @param <T>   Class object assignment
      * @return The deserialized object
      */
-    public <T> T get(String key, Class<T> clazz) {
-        return Gsons.PRETTY_PRINTING.fromJson(content.get(key), clazz);
+    public final <T> T get(String key, Type type) {
+        return Gsons.PRETTY_PRINTING.fromJson(content.get(key), type);
     }
 
     /**
@@ -161,7 +162,7 @@ public class DirectConfiguration {
      *
      * @return The JSON content
      */
-    public JsonObject getContent() {
+    public final JsonObject getContent() {
         return content;
     }
 
@@ -171,7 +172,7 @@ public class DirectConfiguration {
      * @param key   Key to assign to
      * @param value Value to assign to the key
      */
-    public void set(String key, Object value) {
+    public final void set(String key, Object value) {
         content.add(key, Gsons.PRETTY_PRINTING.toJsonTree(value));
     }
 
@@ -182,7 +183,7 @@ public class DirectConfiguration {
      *
      * @param key Key to remove
      */
-    public void remove(String key) {
+    public final void remove(String key) {
         content.remove(key);
     }
 
@@ -192,7 +193,7 @@ public class DirectConfiguration {
      * @param onException The task to execute on exception. If no exception handling is required,
      *                    this may be left null.
      */
-    public void save(Consumer<IOException> onException) {
+    public final void save(Consumer<IOException> onException) {
         try {
             writer.writeAndOverride(content, true);
         } catch (IOException e) {

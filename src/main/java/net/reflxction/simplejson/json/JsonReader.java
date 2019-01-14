@@ -22,6 +22,7 @@ import net.reflxction.simplejson.utils.JsonUtils;
 import net.reflxction.simplejson.utils.ObjectUtils;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -42,7 +43,7 @@ public class JsonReader implements Closeable {
     private FileReader fileReader;
 
     // Whether the reader should use the given BufferedReader instead of initiating its own
-    private boolean inputReader;
+    private final boolean inputReader;
 
     /**
      * Initiates a new JSON file reader
@@ -86,11 +87,11 @@ public class JsonReader implements Closeable {
      * the IO connection. This is to avoid IO issues and ensures safety for the file and the JVM,
      * beside better management for the finite file resources.
      *
-     * @param clazz Class which contains the object
+     * @param type Type which contains the object
      * @param <T>   The given object assignment
      * @return The object assigned, after parsing from JSON
      */
-    public <T> T deserializeAs(Class<T> clazz) {
+    public <T> T deserializeAs(Type type) {
         try {
             if (!inputReader) {
                 fileReader = new FileReader(file.getFile());
@@ -99,9 +100,9 @@ public class JsonReader implements Closeable {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        T result = Gsons.DEFAULT.fromJson(bufferedReader, clazz);
+        T result = Gsons.DEFAULT.fromJson(bufferedReader, type);
         ObjectUtils.ifNull(result, () -> {
-            throw new JsonParseException("Could not parse JSON from file " + getFile().getPath() + ". Object to parse: " + clazz.getCanonicalName());
+            throw new JsonParseException("Could not parse JSON from file " + getFile().getPath() + ". Object to parse: " + type.getTypeName());
         });
         return result;
     }
@@ -128,7 +129,7 @@ public class JsonReader implements Closeable {
      * Returns a {@link JsonObject} from the file, which can be used to parse content separately
      * rather than deserializing an entire object.
      * <p>
-     * For deserializing objects, see {@link #deserializeAs(Class)}
+     * For deserializing objects, see {@link #deserializeAs(Type)}
      * <p>
      * Any exceptions inside this method are not handled (no stacktrace, debugging, etc.),
      * to handle exceptions inside this method, use {@link #getJsonObject(Consumer)}
@@ -143,7 +144,7 @@ public class JsonReader implements Closeable {
      * Returns a {@link JsonObject} from the file, which can be used to parse content separately
      * rather than deserializing an entire object.
      * <p>
-     * For deserializing objects, see {@link #deserializeAs(Class)}
+     * For deserializing objects, see {@link #deserializeAs(Type)}
      * <p>
      * To leave exceptions unhandled (no stacktrace, etc.), use {@link #getJsonObject()}
      *
