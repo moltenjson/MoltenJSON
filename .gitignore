@@ -24,9 +24,7 @@
 hs_err_pid*
 src/main/java/net/reflxction/run/
 
-.gradle/
 .idea/
-gradle/
 src/test/
 settings.gradle
 gradlew
