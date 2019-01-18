@@ -44,7 +44,7 @@ public class SelectableConfiguration {
     private final JsonWriter writer;
 
     // The cached JSON content on config creation
-    private final JsonObject content;
+    private JsonObject content;
 
     // The list which holds all registered classes
     private final Map<Class<?>, List<Field>> opted = Maps.newHashMap();
@@ -172,6 +172,18 @@ public class SelectableConfiguration {
         Object value = Reflector.getValue(this, field);
         Reflector.setStatic(field, value);
         content.add(key, Gsons.DEFAULT.toJsonTree(value));
+    }
+
+    /**
+     * Sets the target {@link JsonFile} and updates the cached content
+     *
+     * @param file New file to set
+     * @return The set file
+     */
+    public JsonFile setFile(JsonFile file) {
+        writer.setFile(file);
+        content = writer.getCachedContent();
+        return file;
     }
 
     /**

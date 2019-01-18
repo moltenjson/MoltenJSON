@@ -88,7 +88,7 @@ public class JsonReader implements Closeable {
      * beside better management for the finite file resources.
      *
      * @param type Type which contains the object
-     * @param <T>   The given object assignment
+     * @param <T>  The given object assignment
      * @return The object assigned, after parsing from JSON
      */
     public <T> T deserializeAs(Type type) {
@@ -161,6 +161,16 @@ public class JsonReader implements Closeable {
             ObjectUtils.ifNotNull(onError, x -> onError.accept(e));
             return null;
         }
+    }
+
+    /**
+     * Sets the target {@link JsonFile}
+     *
+     * @param file New file to set
+     * @return The set file
+     */
+    public JsonFile setFile(JsonFile file) {
+        return this.file = file;
     }
 
     /**

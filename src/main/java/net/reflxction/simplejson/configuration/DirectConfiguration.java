@@ -42,7 +42,7 @@ public class DirectConfiguration {
     private final JsonWriter writer;
 
     // The cached JSON content on config creation
-    private final JsonObject content;
+    private JsonObject content;
 
     /**
      * Initiates a new configuration for the given addon name.
@@ -148,9 +148,9 @@ public class DirectConfiguration {
     /**
      * Returns a deserialized instance of the given class assignment.
      *
-     * @param key   Key to fetch from
+     * @param key  Key to fetch from
      * @param type Type to return an instance of, as a deserialized object
-     * @param <T>   Class object assignment
+     * @param <T>  Class object assignment
      * @return The deserialized object
      */
     public final <T> T get(String key, Type type) {
@@ -199,6 +199,18 @@ public class DirectConfiguration {
         } catch (IOException e) {
             ObjectUtils.ifNotNull(onException, task -> task.accept(e));
         }
+    }
+
+    /**
+     * Sets the target {@link JsonFile} and updates the cached content
+     *
+     * @param file New file to set
+     * @return The set file
+     */
+    public JsonFile setFile(JsonFile file) {
+        writer.setFile(file);
+        content = writer.getCachedContent();
+        return file;
     }
 
     /**

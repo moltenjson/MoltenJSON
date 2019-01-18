@@ -40,6 +40,8 @@ public class JsonWriter {
     // The cached content of the file
     private JsonObject content;
 
+    private JsonReader reader;
+
     /**
      * Initiates a new JSON writer
      *
@@ -48,7 +50,7 @@ public class JsonWriter {
      */
     public JsonWriter(JsonFile file) throws IOException {
         this.file = file;
-        JsonReader reader = new JsonReader(file);
+        reader = new JsonReader(file);
         content = reader.getJsonObject(Throwable::printStackTrace);
         reader.close();
     }
@@ -186,6 +188,18 @@ public class JsonWriter {
      */
     public boolean memberExists(String key) {
         return content.has(key);
+    }
+
+    /**
+     * Sets the target {@link JsonFile} and updates the cached content
+     *
+     * @param file New file to set
+     * @return The set file
+     */
+    public JsonFile setFile(JsonFile file) {
+        reader.setFile(file);
+        content = reader.getJsonObject();
+        return this.file = file;
     }
 
     /**
