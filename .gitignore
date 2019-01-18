@@ -38,3 +38,5 @@ build/test-results/
 build/tmp/
 out/production/resources/
 out/test/resources/
+.gradle/
+build/docs/
