@@ -15,6 +15,7 @@
  */
 package net.reflxction.simplejson.json;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.exceptions.JsonParseException;
 import net.reflxction.simplejson.utils.Gsons;
@@ -100,8 +101,21 @@ public class JsonURLReader {
      * @param <T>  Object assignment
      * @return The deserialized object
      */
-    public <T> T deerializeAs(Type type) {
-        return Gsons.DEFAULT.fromJson(content, type);
+    public <T> T deserializeAs(Type type) {
+        return deserializeAs(type, Gsons.DEFAULT);
+    }
+
+    /**
+     * Deserializes the content to the specified object type, using the provided
+     * GSON profile
+     *
+     * @param type Type to deserialize as
+     * @param gson Gson profile to use
+     * @param <T>  Object assignment
+     * @return The deserialized object
+     */
+    public <T> T deserializeAs(Type type, Gson gson) {
+        return gson.fromJson(content, type);
     }
 
     /**

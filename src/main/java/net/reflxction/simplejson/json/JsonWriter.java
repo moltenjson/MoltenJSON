@@ -81,12 +81,24 @@ public class JsonWriter {
      * @throws IOException if it encountered IO issues while writing
      */
     public void writeAndOverride(Object jsonResult, boolean prettyPrinting) throws IOException {
-        Gson gson = prettyPrinting ? Gsons.PRETTY_PRINTING : Gsons.DEFAULT;
-        if (jsonResult instanceof JsonObject) {
-            write(prettyPrinting ? JsonUtils.setPretty(jsonResult.toString()) : jsonResult.toString());
-        } else {
-            write(gson.toJson(jsonResult));
-        }
+        writeAndOverride(jsonResult, prettyPrinting ? Gsons.PRETTY_PRINTING : Gsons.DEFAULT);
+    }
+
+    /**
+     * Writes the given content to the JSON file, using the provided GSON profile
+     * <p>
+     * You must keep in mind that you shouldn't call any methods like getName() when you want to save an object, as
+     * full serializing will be applied to the object.
+     * <p>
+     * This method will override the entire content of the file, so if you want to add a key rather than overriding
+     * everything, using {@link #add(String, Object, boolean, boolean)} would be more appropriate.
+     *
+     * @param jsonResult JSON object to be saved
+     * @param gson       GSON profile to use
+     * @throws IOException if it encountered IO issues while writing
+     */
+    public void writeAndOverride(Object jsonResult, Gson gson) throws IOException {
+        write(gson.toJson(jsonResult));
     }
 
     /**
@@ -97,13 +109,15 @@ public class JsonWriter {
      * @param key            Key to assign to
      * @param value          Value to assign to the key
      * @param prettyPrinting Whether to write the file in a prettified format
-     * @param override       Whether to override the key value if it exists already or not. !! UNPREPARED !!
+     * @param override       Whether to override the key value if it exists already or not.
+     * @return The modified JsonObject
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
-    public void add(String key, Object value, boolean prettyPrinting, boolean override) throws IOException {
-        if (memberExists(key) && !override) return;
+    public JsonObject add(String key, Object value, boolean prettyPrinting, boolean override) throws IOException {
+        if (memberExists(key) && !override) return content;
         content.add(key, Gsons.DEFAULT.toJsonTree(value));
         write(prettyPrinting ? JsonUtils.setPretty(content.toString()) : content.toString());
+        return content;
     }
 
     /**
@@ -117,10 +131,11 @@ public class JsonWriter {
      * @param key            Key to assign to
      * @param value          Value to assign to the key
      * @param prettyPrinting Whether to write the file in a prettified format
+     * @return The modified JsonObject
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
-    public void add(String key, Object value, boolean prettyPrinting) throws IOException {
-        add(key, value, prettyPrinting, false);
+    public JsonObject add(String key, Object value, boolean prettyPrinting) throws IOException {
+        return add(key, value, prettyPrinting, false);
     }
 
     /**
@@ -136,10 +151,11 @@ public class JsonWriter {
      *
      * @param key   Key to assign to
      * @param value Value to assign to the key
+     * @return The modified JsonObject
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
-    public void add(String key, Object value) throws IOException {
-        add(key, value, false);
+    public JsonObject add(String key, Object value) throws IOException {
+        return add(key, value, false);
     }
 
     /**
@@ -149,11 +165,13 @@ public class JsonWriter {
      *
      * @param key            Key to remove
      * @param prettyPrinting Whether to use pretty printing when writing
+     * @return The modified JsonObject
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
-    public void removeKey(String key, boolean prettyPrinting) throws IOException {
+    public JsonObject removeKey(String key, boolean prettyPrinting) throws IOException {
         content.remove(key);
         write(prettyPrinting ? JsonUtils.setPretty(content.toString()) : content.toString());
+        return content;
     }
 
     /**
@@ -164,10 +182,11 @@ public class JsonWriter {
      * This will <strong>NOT</strong> use pretty printing when writing.
      *
      * @param key Key to remove
+     * @return The modified JsonObject
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
-    public void removeKey(String key) throws IOException {
-        removeKey(key, true);
+    public JsonObject removeKey(String key) throws IOException {
+        return removeKey(key, true);
     }
 
     /**

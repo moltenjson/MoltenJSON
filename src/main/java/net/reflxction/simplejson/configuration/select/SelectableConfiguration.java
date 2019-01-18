@@ -16,6 +16,7 @@
 package net.reflxction.simplejson.configuration.select;
 
 import com.google.common.collect.Maps;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.json.JsonFile;
 import net.reflxction.simplejson.json.JsonWriter;
@@ -52,22 +53,26 @@ public class SelectableConfiguration {
     // Whether it should include the classpath of variables when saving or not.
     private final boolean classpath;
 
+    private final Gson gson;
+
     /**
      * Initiates a new SelectableConfiguration and assigns all fields to their values from the JSON file
      *
      * @param file      File to use
      * @param classpath Whether or not to include the variable classpath when saving
+     * @param gson      Gson profile to use
      * @throws IOException I/O exceptions while connecting with the file
      */
-    public SelectableConfiguration(JsonFile file, boolean classpath) throws IOException {
+    public SelectableConfiguration(JsonFile file, boolean classpath, Gson gson) throws IOException {
         this.classpath = classpath;
         JsonFile jsonFile = new JsonFile(file.getFile());
         writer = new JsonWriter(jsonFile);
         content = writer.getCachedContent();
+        this.gson = gson;
     }
 
     public SelectableConfiguration(JsonFile file) throws IOException {
-        this(file, true);
+        this(file, true, Gsons.PRETTY_PRINTING);
     }
 
     /**
@@ -115,7 +120,7 @@ public class SelectableConfiguration {
         try {
             opted.forEach((clazz, fields) -> fields.forEach(field -> {
                 field.setAccessible(true);
-                content.add(getKey(field), Gsons.DEFAULT.toJsonTree(Reflector.getStaticValue(field)));
+                content.add(getKey(field), gson.toJsonTree(Reflector.getStaticValue(field)));
             }));
             writer.writeAndOverride(content, true);
         } catch (IOException e) {
@@ -166,12 +171,12 @@ public class SelectableConfiguration {
     private void assign(Field field) {
         String key = getKey(field);
         if (!content.has(key)) {
-            content.add(key, Gsons.DEFAULT.toJsonTree(Reflector.getStaticValue(field)));
+            content.add(key, gson.toJsonTree(Reflector.getStaticValue(field)));
             return;
         }
         Object value = Reflector.getValue(this, field);
         Reflector.setStatic(field, value);
-        content.add(key, Gsons.DEFAULT.toJsonTree(value));
+        content.add(key, gson.toJsonTree(value));
     }
 
     /**
@@ -224,11 +229,12 @@ public class SelectableConfiguration {
      *
      * @param file      File to use
      * @param classpath Whether or not to include the variable classpath when saving
+     * @param gson      Gson profile to use
      * @return The SelectableConfiguration object
      */
-    public static SelectableConfiguration of(JsonFile file, boolean classpath) {
+    public static SelectableConfiguration of(JsonFile file, boolean classpath, Gson gson) {
         try {
-            return new SelectableConfiguration(file, classpath);
+            return new SelectableConfiguration(file, classpath, gson);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

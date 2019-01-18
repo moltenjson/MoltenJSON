@@ -15,6 +15,7 @@
  */
 package net.reflxction.simplejson.json;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.exceptions.JsonParseException;
 import net.reflxction.simplejson.utils.Gsons;
@@ -92,6 +93,23 @@ public class JsonReader implements Closeable {
      * @return The object assigned, after parsing from JSON
      */
     public <T> T deserializeAs(Type type) {
+        return deserializeAs(type, Gsons.DEFAULT);
+    }
+
+    /**
+     * Reads and parses data from JSON, and returns an instance of the given object assignment, using the provided
+     * GSON profile.
+     * <p>
+     * After the reader finishes reading, you are better off call {@link JsonReader#close()} to close
+     * the IO connection. This is to avoid IO issues and ensures safety for the file and the JVM,
+     * beside better management for the finite file resources.
+     *
+     * @param type Type which contains the object
+     * @param gson Gson profile to use
+     * @param <T>  The given object assignment
+     * @return The object assigned, after parsing from JSON
+     */
+    public <T> T deserializeAs(Type type, Gson gson) {
         try {
             if (!inputReader) {
                 fileReader = new FileReader(file.getFile());
@@ -100,7 +118,7 @@ public class JsonReader implements Closeable {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        T result = Gsons.DEFAULT.fromJson(bufferedReader, type);
+        T result = gson.fromJson(bufferedReader, type);
         ObjectUtils.ifNull(result, () -> {
             throw new JsonParseException("Could not parse JSON from file " + getFile().getPath() + ". Object to parse: " + type.getTypeName());
         });
@@ -116,14 +134,33 @@ public class JsonReader implements Closeable {
      * beside better management for the finite file resources.
      *
      * @param element Element to opt from the file and deserialize
-     * @param clazz   Class to deserialize as and create an instance from.
+     * @param type    Type to deserialize as and create an instance from.
      * @param <T>     The given object assignment
      * @return The deserialized object instance
      */
-    public <T> T deserialize(String element, Class<T> clazz) {
-        JsonObject object = getJsonObject();
-        return Gsons.DEFAULT.fromJson(object.get(element), clazz);
+    public <T> T deserialize(String element, Type type) {
+        return deserialize(element, type, Gsons.DEFAULT);
     }
+
+    /**
+     * Reads and parses the given JSON part of the file, and returns it as a deserialized instance of the
+     * object assignment using the provided GSON profile
+     * <p>
+     * After the reader finishes reading, you are better off call {@link JsonReader#close()} to close
+     * the IO connection. This is to avoid IO issues and ensures safety for the file and the JVM,
+     * beside better management for the finite file resources.
+     *
+     * @param element Element to opt from the file and deserialize
+     * @param type    Type to deserialize as and create an instance from.
+     * @param gson    Gson profile to use
+     * @param <T>     The given object assignment
+     * @return The deserialized object instance
+     */
+    public <T> T deserialize(String element, Type type, Gson gson) {
+        JsonObject object = getJsonObject();
+        return gson.fromJson(object.get(element), type);
+    }
+
 
     /**
      * Returns a {@link JsonObject} from the file, which can be used to parse content separately

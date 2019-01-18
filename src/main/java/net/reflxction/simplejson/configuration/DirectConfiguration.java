@@ -15,6 +15,7 @@
  */
 package net.reflxction.simplejson.configuration;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.json.JsonFile;
 import net.reflxction.simplejson.json.JsonWriter;
@@ -154,7 +155,20 @@ public class DirectConfiguration {
      * @return The deserialized object
      */
     public final <T> T get(String key, Type type) {
-        return Gsons.PRETTY_PRINTING.fromJson(content.get(key), type);
+        return get(key, type, Gsons.PRETTY_PRINTING);
+    }
+
+    /**
+     * Returns a deserialized instance of the given class assignment, using the given GSON profile
+     *
+     * @param key  Key to fetch from
+     * @param type Type to return an instance of, as a deserialized object
+     * @param gson Gson profile to use
+     * @param <T>  Class object assignment
+     * @return The deserialized object
+     */
+    public final <T> T get(String key, Type type, Gson gson) {
+        return gson.fromJson(content.get(key), type);
     }
 
     /**
@@ -173,7 +187,18 @@ public class DirectConfiguration {
      * @param value Value to assign to the key
      */
     public final void set(String key, Object value) {
-        content.add(key, Gsons.PRETTY_PRINTING.toJsonTree(value));
+        set(key, value, Gsons.PRETTY_PRINTING);
+    }
+
+    /**
+     * Assigns the given element to the key, and writes it to the JSON file.
+     *
+     * @param key   Key to assign to
+     * @param value Value to assign to the key
+     * @param gson  Gson profile to use
+     */
+    public final void set(String key, Object value, Gson gson) {
+        content.add(key, gson.toJsonTree(value));
     }
 
     /**
