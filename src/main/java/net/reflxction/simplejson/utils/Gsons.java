@@ -47,12 +47,6 @@ public class Gsons {
     public static final Gson SERIALIZE_NULLS = new GsonBuilder().serializeNulls().create();
 
     /**
-     * Represents a lenient {@link Gson} profile. When it is lenient, it will allow some violation on
-     * the expected JSON format.
-     */
-    public static final Gson LENIENT = new GsonBuilder().setLenient().create();
-
-    /**
      * Represents a {@link Gson} profile which allows serializing special float points.
      */
     public static final Gson SERIALIZE_SPECIAL_FLOATING_POINT_VALUES = new GsonBuilder().serializeSpecialFloatingPointValues().create();
