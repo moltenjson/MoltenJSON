@@ -179,7 +179,7 @@ public class JsonWriter {
      * <p>
      * This will have no effect if the given key doesn't exist.
      * <p>
-     * This will <strong>NOT</strong> use pretty printing when writing.
+     * This will use pretty printing when writing.
      *
      * @param key Key to remove
      * @return The modified JsonObject
