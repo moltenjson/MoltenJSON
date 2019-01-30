@@ -30,8 +30,19 @@ import java.nio.file.Paths;
  * For reading, {@link JsonReader} and {@link net.reflxction.simplejson.configuration.DirectConfiguration}.
  * <p>
  * For writing, {@link JsonWriter} and {@link net.reflxction.simplejson.configuration.DirectConfiguration}.
+ *
+ * @see JsonWriter
+ * @see JsonReader
+ * @see net.reflxction.simplejson.configuration.DirectConfiguration
+ * @see net.reflxction.simplejson.configuration.select.SelectableConfiguration
  */
 public class JsonFile {
+
+    /**
+     * Represents the string of an empty JSON object. This will be written in empty JSON files
+     * to allow them to be used by readers, writers and configurations
+     */
+    private static final String EMPTY_JSON = "{}";
 
     /**
      * The file which contains the JSON string
@@ -119,7 +130,7 @@ public class JsonFile {
      */
     private void writeCurlyBrackets() {
         try {
-            Files.write(Paths.get(file.getPath()), "{}".getBytes()); // Write the curly brackets so JSON can be parsed
+            Files.write(Paths.get(file.getPath()), EMPTY_JSON.getBytes()); // Write the curly brackets so JSON can be parsed
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
