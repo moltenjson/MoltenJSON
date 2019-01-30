@@ -150,6 +150,7 @@ public class JsonURLReader {
      * Deserializes the object assigned to the given key to the specified object type
      *
      * @param type Type to deserialize as
+     * @param key Key to deserialize its object
      * @param <T>  Object assignment
      * @return The deserialized object
      */
