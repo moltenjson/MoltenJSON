@@ -15,6 +15,9 @@
  */
 package net.reflxction.simplejson.exceptions;
 
+/**
+ * Thrown when parsing JSON fails when reading.
+ */
 public class JsonParseException extends IllegalStateException {
 
     /**

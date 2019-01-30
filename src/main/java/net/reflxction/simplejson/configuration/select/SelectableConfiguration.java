@@ -41,18 +41,29 @@ import java.util.stream.Collectors;
  */
 public class SelectableConfiguration {
 
-    // JSON writer
+    /**
+     * The JSON writer which caches the content and writes to the file
+     */
     private final JsonWriter writer;
 
-    // The cached JSON content on config creation
+    /**
+     * The cached JSON content. Initiated on configuration creation.
+     */
     private JsonObject content;
 
-    // The list which holds all registered classes
+    /**
+     * A map which links the class with all its annotated fields
+     */
     private final Map<Class<?>, List<Field>> opted = Maps.newHashMap();
 
-    // Whether it should include the classpath of variables when saving or not.
+    /**
+     * Whether it should include the classpath of variables when saving or not.
+     */
     private final boolean classpath;
 
+    /**
+     * The GSON profile to use when writing
+     */
     private final Gson gson;
 
     /**

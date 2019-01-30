@@ -39,10 +39,14 @@ import java.util.function.Consumer;
  */
 public class DirectConfiguration {
 
-    // JSON writer
+    /**
+     * The JSON writer used to cache content and write to the file
+     */
     private final JsonWriter writer;
 
-    // The cached JSON content on config creation
+    /**
+     * The cached JSON content as a JsonObject
+     */
     private JsonObject content;
 
     /**

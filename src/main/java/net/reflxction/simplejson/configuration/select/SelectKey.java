@@ -23,8 +23,8 @@ import java.lang.annotation.Target;
 /**
  * Annotation used to mark fields which are to be saved by {@link SelectableConfiguration}. Every field
  * annotated with this will be saved to the {@link SelectableConfiguration}, and on application bootstrap
- * every field annotated with this field will have its value set according to the value assigned in the
- * configuration.
+ * every field annotated with this annotation will have its value set according to the value assigned in the
+ * JSON configuration.
  * <p>
  * Fields annotated with this annotation must be {@code static}.
  *
@@ -44,7 +44,7 @@ public @interface SelectKey {
 
     /**
      * Whether should the path to the variable in the JSON file include the classpath.
-     * E.g, {@code @SelectKey("hello) public static boolean HELLO = true;} would be saved as "hello" : true, however with
+     * E.g, {@code @SelectKey("hello") public static final SelectionHolder<Boolean> HELLO = new SelectionHolder<>(true);} would be saved as "hello" : true, however with
      * classpath enabled it would be saved as "com.foo.ConfigContainer.hello" : true.
      * <p>
      * If the {@link SelectableConfiguration} that this field is registered on
