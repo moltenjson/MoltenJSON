@@ -16,6 +16,7 @@
 package net.reflxction.simplejson.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.HashMap;
@@ -29,7 +30,9 @@ import java.util.function.Predicate;
  */
 public class JsonBuilder {
 
-    // The map to assign values in
+    /**
+     * The container map, which contains all the keys associated to their object
+     */
     private final Map<String, Object> jsonMap;
 
     /**
@@ -46,6 +49,24 @@ public class JsonBuilder {
      */
     public JsonBuilder() {
         this(true);
+    }
+
+    /**
+     * Initiates a new JSON builder, which contains the content of the given JSON object
+     *
+     * @param object Object to construct from
+     */
+    public JsonBuilder(JsonObject object) {
+        jsonMap = JsonUtils.toMap(object);
+    }
+
+    /**
+     * Initiates a new JSON builder, using the given Map
+     *
+     * @param jsonMap Map to use
+     */
+    public JsonBuilder(Map<String, Object> jsonMap) {
+        this.jsonMap = jsonMap;
     }
 
     /**
@@ -72,7 +93,7 @@ public class JsonBuilder {
      */
     public <T> JsonBuilder mapIf(Predicate<T> predicate, String key, T value) {
         if (predicate.test(value))
-           return map(key, value);
+            return map(key, value);
         return this;
     }
 
@@ -96,7 +117,7 @@ public class JsonBuilder {
      * @return This builder instance
      */
     public JsonBuilder mapIfAbsent(String key, Object value) {
-        return mapIf(o -> !jsonMap.containsKey(key), key, value);
+        return mapIf(o -> jsonMap.get(key) != null, key, value);
     }
 
     /**
@@ -108,6 +129,15 @@ public class JsonBuilder {
     public JsonBuilder removeKey(String key) {
         jsonMap.remove(key);
         return this;
+    }
+
+    /**
+     * Returns all the assigned objects to their keys
+     *
+     * @return The JSON map
+     */
+    public Map<String, Object> getJsonMap() {
+        return jsonMap;
     }
 
     /**
@@ -150,7 +180,16 @@ public class JsonBuilder {
      * @return The constructed JSON object
      */
     public JsonObject buildJsonObject() {
-        return JsonUtils.getObjectFromString(build());
+        return buildJsonElement().getAsJsonObject();
+    }
+
+    /**
+     * Constructs a {@link JsonElement} from the built/mapped JSON.
+     *
+     * @return The constructed JSON object
+     */
+    public JsonElement buildJsonElement() {
+        return JsonUtils.getElementFromString(build());
     }
 
 }
