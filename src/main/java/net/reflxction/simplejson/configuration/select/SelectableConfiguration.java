@@ -78,7 +78,7 @@ public class SelectableConfiguration {
         this.classpath = classpath;
         JsonFile jsonFile = new JsonFile(file.getFile());
         writer = new JsonWriter(jsonFile);
-        content = writer.getCachedContent();
+        content = writer.getCachedContentAsObject();
         this.gson = gson;
     }
 
@@ -198,7 +198,7 @@ public class SelectableConfiguration {
      */
     public JsonFile setFile(JsonFile file) {
         writer.setFile(file);
-        content = writer.getCachedContent();
+        content = writer.getCachedContentAsObject();
         return file;
     }
 
