@@ -57,7 +57,7 @@ public class DirectConfiguration {
      */
     public DirectConfiguration(JsonFile file) throws IOException {
         writer = new JsonWriter(file);
-        content = writer.getCachedContent();
+        content = writer.getCachedContentAsObject();
     }
 
     /**
@@ -238,7 +238,7 @@ public class DirectConfiguration {
      */
     public JsonFile setFile(JsonFile file) {
         writer.setFile(file);
-        content = writer.getCachedContent();
+        content = writer.getCachedContentAsObject();
         return file;
     }
 

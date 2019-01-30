@@ -60,7 +60,7 @@ public class JsonURLReader {
      *
      * @return A JSON object of the URL content
      */
-    public JsonElement getContent() {
+    public JsonElement getContentAsElement() {
         return content;
     }
 
@@ -104,7 +104,7 @@ public class JsonURLReader {
      */
     public void writeToFile(JsonFile file, boolean prettyPrinting) throws IOException {
         JsonWriter writer = new JsonWriter(file);
-        writer.writeAndOverride(getContent(), prettyPrinting);
+        writer.writeAndOverride(getContentAsElement(), prettyPrinting);
         writer.close();
     }
 
