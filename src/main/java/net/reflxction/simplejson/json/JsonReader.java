@@ -213,7 +213,7 @@ public class JsonReader implements Closeable {
         try {
             byte[] encoded = Files.readAllBytes(Paths.get(file.getPath()));
             String json = new String(encoded, StandardCharsets.UTF_8);
-            return JsonUtils.getObjectFromString(json);
+            return JsonUtils.getElementFromString(json);
         } catch (IOException e) {
             ObjectUtils.ifNotNull(onError, x -> onError.accept(e));
             return null;
