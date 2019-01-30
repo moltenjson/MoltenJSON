@@ -16,11 +16,13 @@
 package net.reflxction.simplejson.json;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.utils.Gsons;
 import net.reflxction.simplejson.utils.JsonUtils;
 
 import java.io.BufferedWriter;
+import java.io.Closeable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -29,17 +31,31 @@ import java.nio.file.Paths;
 /**
  * Writes data and content to the JSON file
  */
-public class JsonWriter {
+public class JsonWriter implements Closeable {
 
-    // A buffered writer used to manage IO connections
+    /**
+     * A buffered writer used to manage IO connections
+     */
     private BufferedWriter bufferedWriter;
 
-    // The JSON file
+    /**
+     * The JSON file to write for
+     */
     private JsonFile file;
 
-    // The cached content of the file
+    /**
+     * The cached content of the file as a {@link JsonElement}
+     */
+    private JsonElement contentElement;
+
+    /**
+     * The cached content of the file
+     */
     private JsonObject content;
 
+    /**
+     * A reader which caches content of the file as soon as this writer is created.
+     */
     private JsonReader reader;
 
     /**
@@ -51,7 +67,12 @@ public class JsonWriter {
     public JsonWriter(JsonFile file) throws IOException {
         this.file = file;
         reader = new JsonReader(file);
-        content = reader.getJsonObject(Throwable::printStackTrace);
+        try {
+            contentElement = reader.getJsonElement(Throwable::printStackTrace);
+            content = contentElement.getAsJsonObject();
+        } catch (IllegalStateException e) {
+            content = new JsonObject();
+        }
         reader.close();
     }
 
@@ -190,16 +211,6 @@ public class JsonWriter {
     }
 
     /**
-     * Closes the IO connection between the writer and the file. This MUST be called when you are done with using the writer
-     *
-     * @throws IOException If it encountered IO issues while closing
-     */
-    public void close() throws IOException {
-        if (bufferedWriter != null)
-            bufferedWriter.close();
-    }
-
-    /**
      * Returns {@code true} if the given member exists, or {@code false} if otherwise.
      *
      * @param key Key to check for
@@ -242,6 +253,25 @@ public class JsonWriter {
     private void write(String text) throws IOException {
         if (bufferedWriter != null) bufferedWriter.write(text);
         else Files.write(Paths.get(file.getPath()), text.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * Closes this stream and releases any system resources associated
+     * with it. If the stream is already closed then invoking this
+     * method has no effect.
+     *
+     * <p> As noted in {@link AutoCloseable#close()}, cases where the
+     * close may fail require careful attention. It is strongly advised
+     * to relinquish the underlying resources and to internally
+     * <em>mark</em> the {@code Closeable} as closed, prior to throwing
+     * the {@code IOException}.
+     *
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    public void close() throws IOException {
+        if (bufferedWriter != null)
+            bufferedWriter.close();
     }
 
     /**

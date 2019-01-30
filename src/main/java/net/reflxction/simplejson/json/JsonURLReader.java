@@ -16,6 +16,7 @@
 package net.reflxction.simplejson.json;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.exceptions.JsonParseException;
 import net.reflxction.simplejson.utils.Gsons;
@@ -33,11 +34,15 @@ import java.nio.charset.Charset;
  */
 public class JsonURLReader {
 
-    // The URL to read from
+    /**
+     * URL to read from
+     */
     private final URL url;
 
-    // The URL content
-    private JsonObject content;
+    /**
+     * The content of the URL
+     */
+    private JsonElement content;
 
     /**
      * Initiates a new URL reader
@@ -51,12 +56,21 @@ public class JsonURLReader {
     }
 
     /**
+     * Gets the {@link JsonElement} from the URL.
+     *
+     * @return A JSON object of the URL content
+     */
+    public JsonElement getContent() {
+        return content;
+    }
+
+    /**
      * Gets the JSON object from the URL.
      *
      * @return A JSON object of the URL content
      */
-    public JsonObject getContent() {
-        return content;
+    public JsonObject getContentAsObject() {
+        return content.getAsJsonObject();
     }
 
     /**
@@ -64,7 +78,7 @@ public class JsonURLReader {
      *
      * @return The content
      */
-    private JsonObject parseContent() {
+    private JsonElement parseContent() {
         try {
             return JsonUtils.getObjectFromString(IOUtils.toString(url, Charset.forName("UTF-8")));
         } catch (IOException e) {
@@ -77,7 +91,7 @@ public class JsonURLReader {
      *
      * @return The new content
      */
-    public JsonObject refresh() {
+    public JsonElement refresh() {
         return content = parseContent();
     }
 
@@ -116,6 +130,31 @@ public class JsonURLReader {
      */
     public <T> T deserializeAs(Type type, Gson gson) {
         return gson.fromJson(content, type);
+    }
+
+    /**
+     * Deserializes the object assigned to the key to the specified object type, using the provided GSON
+     * profile.
+     *
+     * @param key  Key of the object to deserialize
+     * @param type Type of the object
+     * @param gson Gson profile to use
+     * @param <T>  Object assignment
+     * @return The deserialized object
+     */
+    public <T> T deserialize(String key, Type type, Gson gson) {
+        return gson.fromJson(content.getAsJsonObject().get(key), type);
+    }
+
+    /**
+     * Deserializes the object assigned to the given key to the specified object type
+     *
+     * @param type Type to deserialize as
+     * @param <T>  Object assignment
+     * @return The deserialized object
+     */
+    public <T> T deserialize(String key, Type type) {
+        return deserialize(key, type, Gsons.DEFAULT);
     }
 
     /**

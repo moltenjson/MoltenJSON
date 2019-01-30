@@ -16,13 +16,17 @@
 package net.reflxction.simplejson.json;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.exceptions.JsonParseException;
 import net.reflxction.simplejson.utils.Gsons;
 import net.reflxction.simplejson.utils.JsonUtils;
 import net.reflxction.simplejson.utils.ObjectUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -34,16 +38,24 @@ import java.util.function.Consumer;
  */
 public class JsonReader implements Closeable {
 
-    // The JSON file that it should read for
+    /**
+     * The JSON file to read from
+     */
     private JsonFile file;
 
-    // A buffered reader to handle reading and managing IO for the reader, while using GSON to parse
-    private BufferedReader bufferedReader;
+    /**
+     * A buffered reader to handle reading and managing IO for the reader, while using GSON to parse
+     */
+    private final BufferedReader bufferedReader;
 
-    // A file reader, used by the buffered reader
+    /**
+     * A file reader, used by the buffered reader
+     */
     private FileReader fileReader;
 
-    // Whether the reader should use the given BufferedReader instead of initiating its own
+    /**
+     * Whether the reader should use the given BufferedReader instead of initiating its own
+     */
     private final boolean inputReader;
 
     /**
@@ -110,14 +122,6 @@ public class JsonReader implements Closeable {
      * @return The object assigned, after parsing from JSON
      */
     public <T> T deserializeAs(Type type, Gson gson) {
-        try {
-            if (!inputReader) {
-                fileReader = new FileReader(file.getFile());
-                bufferedReader = new BufferedReader(fileReader);
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
         T result = gson.fromJson(bufferedReader, type);
         ObjectUtils.ifNull(result, () -> {
             throw new JsonParseException("Could not parse JSON from file " + getFile().getPath() + ". Object to parse: " + type.getTypeName());
@@ -190,6 +194,22 @@ public class JsonReader implements Closeable {
      * @return A JSONObject from the file
      */
     public JsonObject getJsonObject(Consumer<IOException> onError) {
+        return getJsonElement(onError).getAsJsonObject();
+    }
+
+    /**
+     * Returns a {@link JsonElement} from the file, which can be used to parse content separately
+     * rather than deserializing an entire object.
+     * <p>
+     * For deserializing objects, see {@link #deserializeAs(Type)}
+     * <p>
+     * To leave exceptions unhandled (no stacktrace, etc.), use {@link #getJsonObject()}
+     *
+     * @param onError A consumer for handling errors inside the try/catch of the
+     *                parsing methods.
+     * @return A JSONObject from the file
+     */
+    public JsonElement getJsonElement(Consumer<IOException> onError) {
         try {
             byte[] encoded = Files.readAllBytes(Paths.get(file.getPath()));
             String json = new String(encoded, StandardCharsets.UTF_8);
@@ -198,6 +218,21 @@ public class JsonReader implements Closeable {
             ObjectUtils.ifNotNull(onError, x -> onError.accept(e));
             return null;
         }
+    }
+
+    /**
+     * Returns a {@link JsonElement} from the file, which can be used to parse content separately
+     * rather than deserializing an entire object.
+     * <p>
+     * For deserializing objects, see {@link #deserializeAs(Type)}
+     * <p>
+     * Any exceptions inside this method are not handled (no stacktrace, debugging, etc.),
+     * to handle exceptions inside this method, use {@link #getJsonElement(Consumer)}
+     *
+     * @return A JSONObject from the file
+     */
+    public JsonElement getJsonElement() {
+        return getJsonElement(null);
     }
 
     /**
@@ -225,10 +260,8 @@ public class JsonReader implements Closeable {
      */
     @Override
     public void close() throws IOException {
-        if (inputReader) {
-            bufferedReader.close();
-        } else {
-            bufferedReader.close();
+        bufferedReader.close();
+        if (!inputReader) {
             fileReader.close();
         }
     }
