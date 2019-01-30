@@ -34,6 +34,11 @@ import java.nio.file.Paths;
 public class JsonWriter implements Closeable {
 
     /**
+     * Represents an empty JSON object. This
+     */
+    private static final JsonObject EMPTY = new JsonObject();
+
+    /**
      * A buffered writer used to manage IO connections
      */
     private BufferedWriter bufferedWriter;
@@ -71,7 +76,7 @@ public class JsonWriter implements Closeable {
             contentElement = reader.getJsonElement(Throwable::printStackTrace);
             content = contentElement.getAsJsonObject();
         } catch (IllegalStateException e) {
-            content = new JsonObject();
+            content = EMPTY;
         }
         reader.close();
     }
@@ -236,12 +241,24 @@ public class JsonWriter implements Closeable {
      * Returns the cached content which is created whenever a {@link JsonWriter} is initiated.
      * <p>
      * Mutative methods like {@link #add(String, Object)}, {@link #removeKey(String, boolean)} update
-     * the content of the cached content, and write to the file (without saving).
+     * the content of the cached content, and write to the file.
      *
      * @return The cached JSON object
      */
-    public JsonObject getCachedContent() {
+    public JsonObject getCachedContentAsObject() {
         return content;
+    }
+
+    /**
+     * Returns the cached content as a {@link JsonElement}, which is created whenever a {@link JsonWriter} is initiated.
+     * <p>
+     * Mutative methods like {@link #add(String, Object)}, {@link #removeKey(String, boolean)} update
+     * the content of the cached content, and write to the file.
+     *
+     * @return The cached JSON object
+     */
+    public JsonElement getCachedContentAsElement() {
+        return contentElement;
     }
 
     /**
