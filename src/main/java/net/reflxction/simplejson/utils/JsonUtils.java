@@ -45,27 +45,6 @@ public class JsonUtils {
     }
 
     /**
-     * Returns a Google {@link JsonObject} from the given JSON text, using the given GSON profile.
-     *
-     * @param json Json text to parse
-     * @param gson GSON profile to use
-     * @return JsonObject from the given JSON string
-     */
-    public static JsonObject getObjectFromString(String json, Gson gson) {
-        return getElementFromString(json, gson).getAsJsonObject();
-    }
-
-    /**
-     * Returns a Google {@link JsonObject} from the given JSON text
-     *
-     * @param json Json text to parse
-     * @return JsonObject from the given JSON string
-     */
-    public static JsonObject getObjectFromString(String json) {
-        return getObjectFromString(json, Gsons.DEFAULT);
-    }
-
-    /**
      * Returns a Google {@link JsonElement} from the given JSON text, using the given GSON profile.
      *
      * @param json Json text to parse
@@ -84,6 +63,27 @@ public class JsonUtils {
      */
     public static JsonElement getElementFromString(String json) {
         return getElementFromString(json, Gsons.DEFAULT);
+    }
+
+    /**
+     * Returns a Google {@link JsonObject} from the given JSON text, using the given GSON profile.
+     *
+     * @param json Json text to parse
+     * @param gson GSON profile to use
+     * @return JsonObject from the given JSON string
+     */
+    public static JsonObject getObjectFromString(String json, Gson gson) {
+        return getElementFromString(json, gson).getAsJsonObject();
+    }
+
+    /**
+     * Returns a Google {@link JsonObject} from the given JSON text
+     *
+     * @param json Json text to parse
+     * @return JsonObject from the given JSON string
+     */
+    public static JsonObject getObjectFromString(String json) {
+        return getObjectFromString(json, Gsons.DEFAULT);
     }
 
     /**
