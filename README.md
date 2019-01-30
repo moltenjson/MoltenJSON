@@ -6,10 +6,11 @@ SimpleJSON is a wide, feature-extensive JSON/[GSON](https://github.com/google/gs
 
 # Features
 * Extremely easy to use
+* Well-documented code
 * Easily read, write and handle JSON from any file or URL, using a basic reader, a basic configuration or a complex configuration.
 * Different JSON utilities for simplifying building JSON.
 * Clean, easy-to-read and heavily-documented code.
-* Built to be thread-safe. This library supports running in multi-threaded environments.
+* Built and implemented to be thread-safe. This library supports running in multi-threaded environments.
 * Outstanding performance and very fast.
 
 # Using the library
@@ -20,8 +21,8 @@ The library is configured to produce javadoc and sources JARs. This should allow
 # Download
 If your project does not use a build system like Maven or Gradle, then you should consider adding [JAR files](https://github.com/ReflxctionDev/SimpleJSON/releases/) to your classpath instead.
 
-# Examples
-For examples, take a look at the [examples](https://github.com/ReflxctionDev/SimpleJSON/tree/master/src/main/java/examples) package.
+# Examples & Wiki
+Every entity and class in this library is explained in details in [SimpleJSON's wiki](https://github.com/ReflxctionDev/SimpleJSON/wiki). The wiki includes examples on the usage of each of them
 
 # Contributing
 
