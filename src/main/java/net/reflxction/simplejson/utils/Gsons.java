@@ -27,6 +27,7 @@ public class Gsons {
      * Cannot be initiated
      */
     private Gsons() {
+        throw new AssertionError(Gsons.class.getName() + " cannot be initiated");
     }
 
     /**

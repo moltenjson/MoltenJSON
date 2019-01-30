@@ -32,6 +32,7 @@ class Reflector {
 
     // Cannot be initiated
     private Reflector() {
+        throw new AssertionError(Reflector.class.getName() + " cannot be initiated");
     }
 
     static void setStatic(Field field, Object value) {
