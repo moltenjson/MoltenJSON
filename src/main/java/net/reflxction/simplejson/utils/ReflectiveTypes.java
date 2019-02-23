@@ -33,19 +33,19 @@ public class ReflectiveTypes {
     }
 
     /**
-     * Represents a reflective {@link java.lang.reflect.ParameterizedType} for List<Object> generics
+     * Represents a reflective {@link java.lang.reflect.ParameterizedType} for List(e = Object) generics
      */
     public static final Type LIST_TYPE = new TypeToken<List<Object>>() {
     }.getType();
 
     /**
-     * Represents a reflective {@link java.lang.reflect.ParameterizedType} for List<String> generics
+     * Represents a reflective {@link java.lang.reflect.ParameterizedType} for List(e = String) generics
      */
     public static final Type LIST_STRING_TYPE = new TypeToken<List<String>>() {
     }.getType();
 
     /**
-     * Represents a reflective {@link java.lang.reflect.ParameterizedType} for Map<String, Object>
+     * Represents a reflective {@link java.lang.reflect.ParameterizedType} for Map(k = String, v = Object)
      */
     public static final Type MAP_TYPE = new TypeToken<LinkedHashMap<String, Object>>() {
     }.getType();
