@@ -14,7 +14,7 @@ SimpleJSON is a wide, feature-extensive JSON/[GSON](https://github.com/google/gs
 * Outstanding performance and very fast.
 
 # Using the library
-As for now, you can access the built library from [JitPack](https://jitpack.io/#ReflxctionDev/SimpleJSON). It may be deployed to a Maven repository in the future.
+Setting up the project to use SimpleJSON is explained in details in [https://github.com/ReflxctionDev/SimpleJSON/wiki/Setting-up](this wiki page).
 
 The library is configured to produce javadoc and sources JARs. This should allow you to browse JavaDocs from your project directly.
 
