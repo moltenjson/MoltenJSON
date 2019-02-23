@@ -59,16 +59,48 @@ public class JsonReader implements Closeable {
     private final boolean inputReader;
 
     /**
+     * Whether to allow calls for {@link #setFile(JsonFile)} or not
+     */
+    private final boolean locked;
+
+    /**
+     * Initiates a new JSON file reader
+     *
+     * @param file   File to read for
+     * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
+     * @throws IOException I/O exceptions while connecting with the file
+     */
+    public JsonReader(JsonFile file, boolean locked) throws IOException {
+        inputReader = false;
+        this.file = file;
+        fileReader = new FileReader(file.getFile());
+        bufferedReader = new BufferedReader(fileReader);
+        this.locked = locked;
+    }
+
+    /**
      * Initiates a new JSON file reader
      *
      * @param file File to read for
      * @throws IOException I/O exceptions while connecting with the file
      */
     public JsonReader(JsonFile file) throws IOException {
-        inputReader = false;
-        this.file = file;
-        fileReader = new FileReader(file.getFile());
-        bufferedReader = new BufferedReader(fileReader);
+        this(file, false);
+    }
+
+    /**
+     * Initiates a new JSON writer from a {@link BufferedReader}.
+     * <p>
+     * This is recommended when you want to read a resource/file that is embedded
+     * inside your project resources
+     *
+     * @param reader Reader to initiate from
+     * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
+     */
+    public JsonReader(BufferedReader reader, boolean locked) {
+        inputReader = true;
+        bufferedReader = reader;
+        this.locked = locked;
     }
 
     /**
@@ -80,8 +112,7 @@ public class JsonReader implements Closeable {
      * @param reader Reader to initiate from
      */
     public JsonReader(BufferedReader reader) {
-        inputReader = true;
-        bufferedReader = reader;
+        this(reader, false);
     }
 
     /**
@@ -242,7 +273,18 @@ public class JsonReader implements Closeable {
      * @return The set file
      */
     public JsonFile setFile(JsonFile file) {
+        if (locked)
+            throw new IllegalArgumentException("Cannot invoke #setFile() on a locked JsonReader!");
         return this.file = file;
+    }
+
+    /**
+     * Returns whether to allow calls to {@link #setFile(JsonFile)} or not.
+     *
+     * @return Whether to allow calls to {@link #setFile(JsonFile)} or not.
+     */
+    public final boolean isLocked() {
+        return locked;
     }
 
     /**
@@ -279,4 +321,20 @@ public class JsonReader implements Closeable {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Returns a new {@link JsonReader} and throws unchecked exceptions if there were any IO exceptions
+     *
+     * @param file   JSON file to read from
+     * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
+     * @return The JsonReader object
+     */
+    public static JsonReader of(JsonFile file, boolean locked) {
+        try {
+            return new JsonReader(file, locked);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }

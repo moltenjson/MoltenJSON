@@ -62,6 +62,11 @@ public class SelectableConfiguration {
     private final boolean classpath;
 
     /**
+     * Whether to allow calls to {@link #setFile(JsonFile)} or not
+     */
+    private final boolean locked;
+
+    /**
      * The GSON profile to use when writing
      */
     private final Gson gson;
@@ -72,16 +77,47 @@ public class SelectableConfiguration {
      * @param file      File to use
      * @param classpath Whether or not to include the variable classpath when saving
      * @param gson      Gson profile to use
+     * @param locked    Whether to allow calls to {@link #setFile(JsonFile)} or not
      * @throws IOException I/O exceptions while connecting with the file
      */
-    public SelectableConfiguration(JsonFile file, boolean classpath, Gson gson) throws IOException {
+    public SelectableConfiguration(JsonFile file, boolean classpath, Gson gson, boolean locked) throws IOException {
         this.classpath = classpath;
         JsonFile jsonFile = new JsonFile(file.getFile());
         writer = new JsonWriter(jsonFile);
         content = writer.getCachedContentAsObject();
         this.gson = gson;
+        this.locked = locked;
     }
 
+    /**
+     * Initiates a new SelectableConfiguration
+     *
+     * @param file      JSON file to use
+     * @param classpath Whether or not to include the variable classpath when saving
+     * @param gson      Gson profile to use for reading and writing
+     * @throws IOException I/O exceptions while connecting with the file
+     */
+    public SelectableConfiguration(JsonFile file, boolean classpath, Gson gson) throws IOException {
+        this(file, classpath, gson, false);
+    }
+
+    /**
+     * Initiates a new SelectableConfiguration with the {@link #gson} profile set to {@link Gsons#DEFAULT}
+     *
+     * @param file      JSON file to use
+     * @param classpath Whether or not to include variable classpath when writing
+     * @throws IOException I/O exceptions while connecting to the file
+     */
+    public SelectableConfiguration(JsonFile file, boolean classpath) throws IOException {
+        this(file, classpath, Gsons.DEFAULT);
+    }
+
+    /**
+     * Initiates a new SelectableConfiguration with {@link #classpath} set to {@code true}.
+     *
+     * @param file JSON file to use
+     * @throws IOException I/O exceptions while connecting to the file
+     */
     public SelectableConfiguration(JsonFile file) throws IOException {
         this(file, true, Gsons.PRETTY_PRINTING);
     }
@@ -110,6 +146,22 @@ public class SelectableConfiguration {
      */
     public final void associate() {
         opted.forEach((clazz, fields) -> fields.forEach(this::assign));
+    }
+
+    /**
+     * Registers the given classes and assigns all opted fields which are annotated
+     * with {@link SelectKey} to their class.
+     * <p>
+     * After invoking {@link #register(Class[])}, all methods will be linked (associated) with their JSON fields
+     * which is done through invoking {@link #associate()}.
+     *
+     * @param classes Classes to register
+     * @see #register(Class[])
+     * @see #associate()
+     */
+    public final void registerAndAssociate(Class<?>... classes) {
+        register(classes);
+        associate();
     }
 
     /**
@@ -164,7 +216,7 @@ public class SelectableConfiguration {
     final String getKey(Field field) {
         if (!field.isAnnotationPresent(SelectKey.class))
             throw new RuntimeException("Found a registered key which is not annotated with @SelectKey! " + field.getDeclaringClass()
-                    + "." + field.getName());
+                    + "#" + field.getName());
         SelectKey select = field.getAnnotation(SelectKey.class);
         String name = select.value().isEmpty() ? field.getName() : select.value();
         if (classpath || select.classpath()) {
@@ -197,6 +249,8 @@ public class SelectableConfiguration {
      * @return The set file
      */
     public JsonFile setFile(JsonFile file) {
+        if (locked)
+            throw new IllegalArgumentException("Cannot invoke #setFile() on n locked SelectableConfiguration!");
         writer.setFile(file);
         content = writer.getCachedContentAsObject();
         return file;
@@ -222,6 +276,15 @@ public class SelectableConfiguration {
     }
 
     /**
+     * Returns whether to allow calls to {@link #setFile(JsonFile)} or not.
+     *
+     * @return Whether to allow calls to {@link #setFile(JsonFile)} or not.
+     */
+    public final boolean isLocked() {
+        return locked;
+    }
+
+    /**
      * Returns a new {@link SelectableConfiguration} and throws unchecked exceptions if there were any IO exceptions
      *
      * @param file File to use
@@ -230,6 +293,21 @@ public class SelectableConfiguration {
     public static SelectableConfiguration of(JsonFile file) {
         try {
             return new SelectableConfiguration(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Returns a new {@link SelectableConfiguration} with the given parameters
+     *
+     * @param file      File to use
+     * @param classpath Whether or not to include the variable classpath when saving
+     * @return The SelectableConfiguration object
+     */
+    public static SelectableConfiguration of(JsonFile file, boolean classpath) {
+        try {
+            return new SelectableConfiguration(file, classpath);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -251,4 +329,20 @@ public class SelectableConfiguration {
         }
     }
 
+    /**
+     * Returns a new {@link SelectableConfiguration} with the given parameters
+     *
+     * @param file      File to use
+     * @param classpath Whether or not to include the variable classpath when saving
+     * @param gson      Gson profile to use
+     * @param locked    Whether to allow calls for {@link #setFile(JsonFile)} or not
+     * @return The SelectableConfiguration object
+     */
+    public static SelectableConfiguration of(JsonFile file, boolean classpath, Gson gson, boolean locked) {
+        try {
+            return new SelectableConfiguration(file, classpath, gson, locked);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

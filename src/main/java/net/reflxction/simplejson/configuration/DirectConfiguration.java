@@ -31,9 +31,13 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- * Represents a configuration file which makes <p>direct</p> contact with the
- * configuration. Direct contact is achieved from <p>getter</p> and <p>setter</p> methods
+ * Represents a configuration file which makes <i>direct</i> contact with the
+ * configuration. Direct contact is achieved from <i>getter</i> and <i>setter</i> methods
  * and eventually saves with {@link DirectConfiguration#save(Consumer)}
+ * <p>
+ * All methods which update or get a value are done on a local {@link JsonObject}, which is derived
+ * on creation of this configuration. When {@link #save(Consumer)} is invoked, the content is saved
+ * on the JSON file.
  *
  * @see net.reflxction.simplejson.configuration.select.SelectableConfiguration
  */
@@ -50,14 +54,31 @@ public class DirectConfiguration {
     private JsonObject content;
 
     /**
+     * Whether to allow calls to {@link #setFile(JsonFile)} or not
+     */
+    private final boolean locked;
+
+    /**
+     * Initiates a new configuration for given JSON file.
+     *
+     * @param file   JSON file to contact
+     * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
+     * @throws IOException I/O exception while connecting with the file
+     */
+    public DirectConfiguration(JsonFile file, boolean locked) throws IOException {
+        writer = new JsonWriter(file);
+        this.locked = locked;
+        content = writer.getCachedContentAsObject();
+    }
+
+    /**
      * Initiates a new configuration for the given addon name.
      *
      * @param file JSON file to contact
      * @throws IOException I/O exception while connecting with the file
      */
     public DirectConfiguration(JsonFile file) throws IOException {
-        writer = new JsonWriter(file);
-        content = writer.getCachedContentAsObject();
+        this(file, false);
     }
 
     /**
@@ -236,10 +257,21 @@ public class DirectConfiguration {
      * @param file New file to set
      * @return The set file
      */
-    public JsonFile setFile(JsonFile file) {
+    public final JsonFile setFile(JsonFile file) {
+        if (locked)
+            throw new IllegalArgumentException("Cannot invoke #setFile() on a locked DirectConfiguration!");
         writer.setFile(file);
         content = writer.getCachedContentAsObject();
         return file;
+    }
+
+    /**
+     * Returns whether to allow calls to {@link #setFile(JsonFile)} or not.
+     *
+     * @return Whether to allow calls to {@link #setFile(JsonFile)} or not.
+     */
+    public final boolean isLocked() {
+        return locked;
     }
 
     /**
@@ -251,6 +283,21 @@ public class DirectConfiguration {
     public static DirectConfiguration of(JsonFile file) {
         try {
             return new DirectConfiguration(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Returns a new {@link DirectConfiguration} and throws unchecked exceptions if there were any IO exceptions
+     *
+     * @param file   JSON file to contact
+     * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
+     * @return The DirectConfiguration object
+     */
+    public static DirectConfiguration of(JsonFile file, boolean locked) {
+        try {
+            return new DirectConfiguration(file, locked);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

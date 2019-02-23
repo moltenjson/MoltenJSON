@@ -29,12 +29,20 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 /**
- * Writes data and content to the JSON file
+ * Writes data and content to the JSON file.
+ * <p>
+ * All writing operations make <i>immediate IO calls</i>. This is mainly intended for <i>internal</i>
+ * usage and for <i>one-time operations for writing or caching</i>. If your program tends to make a lot
+ * of reading/writing operations, it's <i>heavily advised</i> to use Configurations.
+ *
+ * @see net.reflxction.simplejson.configuration.DirectConfiguration
+ * @see net.reflxction.simplejson.configuration.select.SelectableConfiguration
  */
 public class JsonWriter implements Closeable {
 
     /**
-     * Represents an empty JSON object. This
+     * Represents an empty JSON object. Instances of the content will be derived from this object if
+     * the file content was a {@link JsonElement}.
      */
     private static final JsonObject EMPTY = new JsonObject();
 
@@ -64,13 +72,20 @@ public class JsonWriter implements Closeable {
     private JsonReader reader;
 
     /**
+     * Whether to allow calls to {@link #setFile(JsonFile)} or not
+     */
+    private final boolean locked;
+
+    /**
      * Initiates a new JSON writer
      *
-     * @param file JSON file to write to
+     * @param file   JSON file to write to
+     * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
      * @throws IOException If there were IO issues whilst initiating the file writer
      */
-    public JsonWriter(JsonFile file) throws IOException {
+    public JsonWriter(JsonFile file, boolean locked) throws IOException {
         this.file = file;
+        this.locked = locked;
         reader = new JsonReader(file);
         try {
             contentElement = reader.getJsonElement(Throwable::printStackTrace);
@@ -82,6 +97,30 @@ public class JsonWriter implements Closeable {
     }
 
     /**
+     * Initiates a new JSON writer
+     *
+     * @param file JSON file to write to
+     * @throws IOException If there were IO issues whilst initiating the file writer
+     */
+    public JsonWriter(JsonFile file) throws IOException {
+        this(file, false);
+    }
+
+    /**
+     * Initiates a new JSON writer from a {@link BufferedWriter}.
+     * <p>
+     * This is recommended when you want to read a resource/file that is embedded
+     * inside your project resources
+     *
+     * @param writer Writer to initiate from
+     * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
+     */
+    public JsonWriter(BufferedWriter writer, boolean locked) {
+        bufferedWriter = writer;
+        this.locked = locked;
+    }
+
+    /**
      * Initiates a new JSON writer from a {@link BufferedWriter}.
      * <p>
      * This is recommended when you want to read a resource/file that is embedded
@@ -90,7 +129,7 @@ public class JsonWriter implements Closeable {
      * @param writer Writer to initiate from
      */
     public JsonWriter(BufferedWriter writer) {
-        bufferedWriter = writer;
+        this(writer, false);
     }
 
     /**
@@ -151,7 +190,7 @@ public class JsonWriter implements Closeable {
      * <p>
      * This will only add the element. If you want to override the content of the file, use {@link #writeAndOverride(Object, boolean)}
      * <p>
-     * This will <strong>NOT</strong> override the value if it already exists. If you want to
+     * This will <i>NOT</i> override the value if it already exists. If you want to
      * override and set it regardless, use {@link #add(String, Object, boolean, boolean)}
      *
      * @param key            Key to assign to
@@ -169,10 +208,10 @@ public class JsonWriter implements Closeable {
      * <p>
      * This will only add the element. If you want to override the content of the file, use {@link #writeAndOverride(Object, boolean)}
      * <p>
-     * This will <strong>NOT</strong> override the value if it already exists. If you want to
+     * This will <i>NOT</i> override the value if it already exists. If you want to
      * override and set it regardless, use {@link #add(String, Object, boolean, boolean)}
      * <p>
-     * This will <strong>NOT</strong> write the file in prettified format. If you want to
+     * This will <i>NOT</i> write the file in prettified format. If you want to
      * write pretty content, use {@link #add(String, Object, boolean)}
      *
      * @param key   Key to assign to
@@ -232,6 +271,8 @@ public class JsonWriter implements Closeable {
      * @return The set file
      */
     public JsonFile setFile(JsonFile file) {
+        if (locked)
+            throw new IllegalArgumentException("Cannot invoke #setFile() on a locked JsonWriter!");
         reader.setFile(file);
         content = reader.getJsonObject();
         return this.file = file;
@@ -273,6 +314,15 @@ public class JsonWriter implements Closeable {
     }
 
     /**
+     * Returns whether to allow calls to {@link #setFile(JsonFile)} or not.
+     *
+     * @return Whether to allow calls to {@link #setFile(JsonFile)} or not.
+     */
+    public final boolean isLocked() {
+        return locked;
+    }
+
+    /**
      * Closes this stream and releases any system resources associated
      * with it. If the stream is already closed then invoking this
      * method has no effect.
@@ -304,4 +354,20 @@ public class JsonWriter implements Closeable {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Returns a new {@link JsonWriter} and throws unchecked exceptions if there were any IO exceptions
+     *
+     * @param file   JSON file to write to
+     * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
+     * @return The JsonWriter object
+     */
+    public static JsonWriter of(JsonFile file, boolean locked) {
+        try {
+            return new JsonWriter(file, locked);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
