@@ -19,7 +19,7 @@ import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -50,6 +50,11 @@ public class JsonFile {
     private final File file;
 
     /**
+     * Represents the JSON file's path.
+     */
+    private final String path;
+
+    /**
      * Initiates a JSON file
      *
      * @param file             File
@@ -58,7 +63,8 @@ public class JsonFile {
      */
     public JsonFile(File file, boolean createIfNotExist) throws IOException {
         this.file = file;
-        maintain(createIfNotExist);
+        this.path = file.getPath();
+        prepare(createIfNotExist);
         if (!file.exists() && createIfNotExist) //noinspection ResultOfMethodCallIgnored
             file.createNewFile();
     }
@@ -109,7 +115,7 @@ public class JsonFile {
      * @return The path leading to the file
      */
     public String getPath() {
-        return file.getPath();
+        return path;
     }
 
     /**
@@ -119,9 +125,9 @@ public class JsonFile {
      * @param create Whether to create the file if it doesn't exist already
      * @throws IOException Issues with creating or writing
      */
-    private void maintain(boolean create) throws IOException {
+    private void prepare(boolean create) throws IOException {
         if ((!file.exists() && create && file.createNewFile()) || (file.exists() &&
-                isEmpty(FileUtils.readFileToString(file, Charset.forName("UTF-8")).trim())))
+                isEmpty(FileUtils.readFileToString(file, StandardCharsets.UTF_8).trim())))
             writeCurlyBrackets();
     }
 

@@ -28,6 +28,7 @@ import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A helping class for reading content of JSON files from URLs.
@@ -80,7 +81,7 @@ public class JsonURLReader {
      */
     private JsonElement parseContent() {
         try {
-            return JsonUtils.getObjectFromString(IOUtils.toString(url, Charset.forName("UTF-8")));
+            return JsonUtils.getObjectFromString(IOUtils.toString(url, StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new JsonParseException(e.getMessage());
         }
