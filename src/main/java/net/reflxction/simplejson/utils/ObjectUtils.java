@@ -22,7 +22,6 @@ import java.util.function.Consumer;
  */
 public class ObjectUtils {
 
-    // Cannot be initiated
     private ObjectUtils() {
         throw new AssertionError(ObjectUtils.class.getName() + " cannot be initiated");
     }
