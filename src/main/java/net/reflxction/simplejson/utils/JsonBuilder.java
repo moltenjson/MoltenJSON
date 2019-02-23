@@ -117,7 +117,7 @@ public class JsonBuilder {
      * @return This builder instance
      */
     public JsonBuilder mapIfAbsent(String key, Object value) {
-        return mapIf(o -> jsonMap.get(key) != null, key, value);
+        return mapIf(o -> jsonMap.containsKey(key), key, value);
     }
 
     /**
