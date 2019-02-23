@@ -37,11 +37,11 @@ class Reflector {
 
     static void setStatic(Field field, Object value) {
         try {
+            field.setAccessible(true);
             if (field.getType().equals(SelectionHolder.class)) {
                 getSelectionHolder(field).set(value);
                 return;
             }
-            field.setAccessible(true);
             field.set(field.getDeclaringClass(), value);
         } catch (ReflectiveOperationException e) {
             throw new RuntimeException(e);
@@ -49,6 +49,7 @@ class Reflector {
     }
 
     static Object getValue(SelectableConfiguration configuration, Field field) {
+        field.setAccessible(true);
         Type d = field.getType();
         if (d.equals(SelectionHolder.class)) {
             d = getGeneric(field);
@@ -71,6 +72,7 @@ class Reflector {
 
     private static SelectionHolder getSelectionHolder(Field field) {
         try {
+            field.setAccessible(true);
             return (SelectionHolder) field.get(null);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -78,6 +80,7 @@ class Reflector {
     }
 
     private static Type getGeneric(Field field) {
+        field.setAccessible(true);
         ParameterizedType type = (ParameterizedType) field.getGenericType();
         return TypeToken.of(type).resolveType(SelectionHolder.class.getTypeParameters()[0]).getType();
     }
