@@ -18,10 +18,7 @@ package net.reflxction.simplejson.utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +27,8 @@ import java.util.Map;
  */
 public class JsonUtils {
 
-    // Cannot be initiated
     private JsonUtils() {
+        throw new AssertionError(JsonUtils.class.getName() + " cannot be initiated!");
     }
 
     /**
@@ -52,7 +49,7 @@ public class JsonUtils {
      * @return JsonElement from the given JSON string
      */
     public static JsonElement getElementFromString(String json, Gson gson) {
-        return gson.fromJson(json, JsonElement.class);
+        return gson.fromJson(json, ReflectiveTypes.ELEMENT_TYPE);
     }
 
     /**
@@ -94,10 +91,9 @@ public class JsonUtils {
      * @return A Map with the JSON content
      */
     public static Map<String, Object> toMap(String json) {
-        Type type = new TypeToken<Map<String, Object>>() {
-        }.getType();
-        return Gsons.DEFAULT.fromJson(json, type);
+        return Gsons.DEFAULT.fromJson(json, ReflectiveTypes.MAP_TYPE);
     }
+
     /**
      * Converts the given JSON element to a {@link Map}, which has all the strings (keys) assigned to their
      * values according to the given JSON.
@@ -106,9 +102,7 @@ public class JsonUtils {
      * @return A Map with the JSON content
      */
     public static Map<String, Object> toMap(JsonElement json) {
-        Type type = new TypeToken<LinkedHashMap<String, Object>>() {
-        }.getType();
-        return Gsons.DEFAULT.fromJson(json, type);
+        return Gsons.DEFAULT.fromJson(json, ReflectiveTypes.MAP_TYPE);
     }
 
     /**
@@ -119,9 +113,16 @@ public class JsonUtils {
      * @return A List with the JSON content
      */
     public static List<Object> toList(String json) {
-        Type listType = new TypeToken<List<String>>() {
-        }.getType();
-        return Gsons.DEFAULT.fromJson(json, listType);
+        return Gsons.DEFAULT.fromJson(json, ReflectiveTypes.LIST_TYPE);
     }
 
+    /**
+     * Converts the given JSON element to a {@link List}, which contains the objects inside that list
+     *
+     * @param json JSON to convert
+     * @return A Map with the JSON content
+     */
+    public static List<Object> toList(JsonElement json) {
+        return Gsons.DEFAULT.fromJson(json, ReflectiveTypes.LIST_TYPE);
+    }
 }
