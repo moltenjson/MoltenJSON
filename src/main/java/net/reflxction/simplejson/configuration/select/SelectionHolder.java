@@ -20,10 +20,10 @@ package net.reflxction.simplejson.configuration.select;
  * <p>
  * Selection holders are similar to constants however they allow modifications to them easily,
  * hence they can be used if the user does not wish to use raw types with {@code public static}
- * modifiers and allows the use of {@code final} modifier to use the <p>constant-like</p> pattern.
+ * modifiers and allows the use of {@code final} modifier to use the <i>constant-like</i> pattern.
  * <p>
- * Using this will be more encouraged than using raw types, as this supports <p>thread-safety</p>, unlike
- * the raw types which lack the {@code final} modifier, hence possibly <p>non-thread-safe</p>.
+ * Using this will be more encouraged than using raw types, as this supports <i>thread-safety</i>, unlike
+ * the raw types which lack the {@code final} modifier, hence possibly <i>non-thread-safe</i>.
  *
  * @param <T> Object type
  * @see SelectableConfiguration

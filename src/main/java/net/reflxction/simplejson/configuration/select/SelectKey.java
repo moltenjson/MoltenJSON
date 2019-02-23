@@ -44,7 +44,7 @@ public @interface SelectKey {
 
     /**
      * Whether should the path to the variable in the JSON file include the classpath.
-     * E.g, {@code @SelectKey("hello") public static final SelectionHolder<Boolean> HELLO = new SelectionHolder<>(true);} would be saved as "hello" : true, however with
+     * E.g, {@code @SelectKey("hello") public static final SelectionHolder<Boolean> HELLO = new SelectionHolder<>(true);} would be saved as "hello": true, however with
      * classpath enabled it would be saved as "com.foo.ConfigContainer.hello" : true.
      * <p>
      * If the {@link SelectableConfiguration} that this field is registered on
