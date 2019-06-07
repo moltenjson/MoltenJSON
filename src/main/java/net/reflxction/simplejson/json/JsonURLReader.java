@@ -19,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.exceptions.JsonParseException;
+import net.reflxction.simplejson.utils.Checks;
 import net.reflxction.simplejson.utils.Gsons;
 import net.reflxction.simplejson.utils.JsonUtils;
 import org.apache.commons.io.IOUtils;
@@ -27,8 +28,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * A helping class for reading content of JSON files from URLs.
@@ -49,11 +50,21 @@ public class JsonURLReader {
      * Initiates a new URL reader
      *
      * @param url URL string to read from
+     */
+    public JsonURLReader(URL url) {
+        Objects.requireNonNull(url, "URL (url) cannot be null");
+        this.url = url;
+        this.content = parseContent();
+    }
+
+    /**
+     * Initiates a new URL reader
+     *
+     * @param url URL string to read from
      * @throws MalformedURLException If the given URL was malformed
      */
     public JsonURLReader(String url) throws MalformedURLException {
-        this.url = new URL(url);
-        this.content = parseContent();
+        this(new URL(url));
     }
 
     /**
@@ -117,6 +128,7 @@ public class JsonURLReader {
      * @return The deserialized object
      */
     public <T> T deserializeAs(Type type) {
+        Checks.notNull(type);
         return deserializeAs(type, Gsons.DEFAULT);
     }
 
@@ -130,6 +142,8 @@ public class JsonURLReader {
      * @return The deserialized object
      */
     public <T> T deserializeAs(Type type, Gson gson) {
+        Checks.notNull(type);
+        Checks.notNull(gson);
         return gson.fromJson(content, type);
     }
 
@@ -144,6 +158,9 @@ public class JsonURLReader {
      * @return The deserialized object
      */
     public <T> T deserialize(String key, Type type, Gson gson) {
+        Checks.notNull(key);
+        Checks.notNull(type);
+        Checks.notNull(gson);
         return gson.fromJson(content.getAsJsonObject().get(key), type);
     }
 
@@ -151,7 +168,7 @@ public class JsonURLReader {
      * Deserializes the object assigned to the given key to the specified object type
      *
      * @param type Type to deserialize as
-     * @param key Key to deserialize its object
+     * @param key  Key to deserialize its object
      * @param <T>  Object assignment
      * @return The deserialized object
      */

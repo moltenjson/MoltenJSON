@@ -18,6 +18,7 @@ package net.reflxction.simplejson.json;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.reflxction.simplejson.utils.Checks;
 import net.reflxction.simplejson.utils.Gsons;
 import net.reflxction.simplejson.utils.JsonUtils;
 
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
  * Writes data and content to the JSON file.
@@ -38,7 +40,7 @@ import java.nio.file.Paths;
  * @see net.reflxction.simplejson.configuration.DirectConfiguration
  * @see net.reflxction.simplejson.configuration.select.SelectableConfiguration
  */
-public class JsonWriter implements Closeable {
+public class JsonWriter implements Closeable, Lockable {
 
     /**
      * Represents an empty JSON object. Instances of the content will be derived from this object if
@@ -84,6 +86,7 @@ public class JsonWriter implements Closeable {
      * @throws IOException If there were IO issues whilst initiating the file writer
      */
     public JsonWriter(JsonFile file, boolean locked) throws IOException {
+        Checks.notNull(file);
         this.file = file;
         this.locked = locked;
         reader = new JsonReader(file);
@@ -116,6 +119,7 @@ public class JsonWriter implements Closeable {
      * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
      */
     public JsonWriter(BufferedWriter writer, boolean locked) {
+        Objects.requireNonNull(writer, "BufferedWriter (writer) cannot be null");
         bufferedWriter = writer;
         this.locked = locked;
     }
@@ -146,6 +150,7 @@ public class JsonWriter implements Closeable {
      * @throws IOException if it encountered IO issues while writing
      */
     public void writeAndOverride(Object jsonResult, boolean prettyPrinting) throws IOException {
+        Objects.requireNonNull(jsonResult, "Object (jsonResult) cannot be null");
         writeAndOverride(jsonResult, prettyPrinting ? Gsons.PRETTY_PRINTING : Gsons.DEFAULT);
     }
 
@@ -163,6 +168,8 @@ public class JsonWriter implements Closeable {
      * @throws IOException if it encountered IO issues while writing
      */
     public void writeAndOverride(Object jsonResult, Gson gson) throws IOException {
+        Objects.requireNonNull(jsonResult, "Object (jsonResult) cannot be null");
+        Checks.notNull(gson);
         write(gson.toJson(jsonResult));
     }
 
@@ -179,6 +186,8 @@ public class JsonWriter implements Closeable {
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
     public JsonObject add(String key, Object value, boolean prettyPrinting, boolean override) throws IOException {
+        Checks.notNull(key);
+        Checks.notNull(value);
         if (memberExists(key) && !override) return content;
         content.add(key, Gsons.DEFAULT.toJsonTree(value));
         write(prettyPrinting ? JsonUtils.setPretty(content.toString()) : content.toString());
@@ -234,6 +243,7 @@ public class JsonWriter implements Closeable {
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
     public JsonObject removeKey(String key, boolean prettyPrinting) throws IOException {
+        Checks.notNull(key);
         content.remove(key);
         write(prettyPrinting ? JsonUtils.setPretty(content.toString()) : content.toString());
         return content;
@@ -251,6 +261,7 @@ public class JsonWriter implements Closeable {
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
     public JsonObject removeKey(String key) throws IOException {
+        Checks.notNull(key);
         return removeKey(key, true);
     }
 
@@ -261,22 +272,10 @@ public class JsonWriter implements Closeable {
      * @return true if the value exists, false if otherwise.
      */
     public boolean memberExists(String key) {
+        Checks.notNull(key);
         return content.has(key);
     }
 
-    /**
-     * Sets the target {@link JsonFile} and updates the cached content
-     *
-     * @param file New file to set
-     * @return The set file
-     */
-    public JsonFile setFile(JsonFile file) {
-        if (locked)
-            throw new IllegalArgumentException("Cannot invoke #setFile() on a locked JsonWriter!");
-        reader.setFile(file);
-        content = reader.getJsonObject();
-        return this.file = file;
-    }
 
     /**
      * Returns the cached content which is created whenever a {@link JsonWriter} is initiated.
@@ -314,11 +313,28 @@ public class JsonWriter implements Closeable {
     }
 
     /**
-     * Returns whether to allow calls to {@link #setFile(JsonFile)} or not.
+     * Sets the new file. Implementation of this method should also update any content
+     * this component controls.
      *
-     * @return Whether to allow calls to {@link #setFile(JsonFile)} or not.
+     * @param file New JSON file to use. Must not be null
      */
-    public final boolean isLocked() {
+    @Override
+    public void setFile(JsonFile file) {
+        checkLocked("Cannot invoke #setFile() on a locked JsonWriter!");
+        Checks.notNull(file);
+        reader.setFile(file);
+        content = reader.getJsonObject();
+    }
+
+    /**
+     * Returns whether the current component is locked or not. This will control whether
+     * {@link #setFile(JsonFile)} can be used or not.
+     *
+     * @return Whether the current component is locked or not.
+     */
+
+    @Override
+    public boolean isLocked() {
         return locked;
     }
 

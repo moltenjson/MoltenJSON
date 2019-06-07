@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
  * Represents a JSON file. This is used by JSON writers and readers.
@@ -39,10 +40,10 @@ import java.nio.file.Paths;
 public class JsonFile {
 
     /**
-     * Represents the string of an empty JSON object. This will be written in empty JSON files
+     * Represents the bytes of a string of an empty JSON object. This will be written in empty JSON files
      * to allow them to be used by readers, writers and configurations
      */
-    private static final String EMPTY_JSON = "{}";
+    private static final byte[] EMPTY_JSON = "{}".getBytes();
 
     /**
      * The file which contains the JSON string
@@ -62,11 +63,50 @@ public class JsonFile {
      * @throws IOException I/O exceptions while connecting with the file
      */
     public JsonFile(File file, boolean createIfNotExist) throws IOException {
+        Objects.requireNonNull(file, "File (file) cannot be null");
         this.file = file;
         this.path = file.getPath();
         prepare(createIfNotExist);
-        if (!file.exists() && createIfNotExist) //noinspection ResultOfMethodCallIgnored
-            file.createNewFile();
+    }
+
+    /**
+     * Creates a new JSON file from the given parent directory and the child (JSON file) file.
+     *
+     * @param parent           Parent directory
+     * @param child            The JSON child file
+     * @param createIfNotExist Whether should the file be created if it does not exist
+     *                         already.
+     * @throws IOException I/O exceptions whilst connecting to the file.
+     */
+    public JsonFile(File parent, String child, boolean createIfNotExist) throws IOException {
+        Objects.requireNonNull(parent, "File (parent) cannot be null");
+        Objects.requireNonNull(child, "String (child) cannot be null");
+        this.file = new File(parent, child);
+        this.path = file.getPath();
+        prepare(createIfNotExist);
+    }
+
+    /**
+     * Creates a new JSON file from the given parent and the child file.
+     *
+     * @param parent           The parent directory
+     * @param child            The child file. Must be a valid JSON file
+     * @param createIfNotExist Whether the file should be created if it doesn't exist already.
+     * @throws IOException I/O exceptions while connecting to the file
+     */
+    public JsonFile(String parent, String child, boolean createIfNotExist) throws IOException {
+        Objects.requireNonNull(parent, "File (parent) cannot be null");
+        Objects.requireNonNull(child, "String (child) cannot be null");
+        this.file = new File(parent, child);
+        this.path = file.getPath();
+        prepare(createIfNotExist);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JsonFile(String parent, String child) throws IOException {
+        this(parent, child, true);
     }
 
     /**
@@ -77,6 +117,13 @@ public class JsonFile {
      */
     public JsonFile(File file) throws IOException {
         this(file, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public JsonFile(File parent, String child) throws IOException {
+        this(parent, child, true);
     }
 
     /**
@@ -136,7 +183,7 @@ public class JsonFile {
      */
     private void writeCurlyBrackets() {
         try {
-            Files.write(Paths.get(file.getPath()), EMPTY_JSON.getBytes()); // Write the curly brackets so JSON can be parsed
+            Files.write(Paths.get(file.getPath()), EMPTY_JSON); // Write the curly brackets so JSON can be parsed
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -210,4 +257,40 @@ public class JsonFile {
         }
     }
 
+    /**
+     * Creates a new JSON file from the given parent directory and the child (JSON file) file.
+     *
+     * @param parent           Parent directory
+     * @param child            The JSON child file
+     * @param createIfNotExist Whether should the file be created if it does not exist
+     */
+    public static JsonFile of(String parent, String child, boolean createIfNotExist) {
+        try {
+            return new JsonFile(parent, child, createIfNotExist);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static JsonFile of(String parent, String child) {
+        try {
+            return new JsonFile(parent, child);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public static JsonFile of(File parent, String child) {
+        try {
+            return new JsonFile(parent, child);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

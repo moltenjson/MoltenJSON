@@ -32,10 +32,12 @@ public class ObjectUtils {
      * @param object Object to check for
      * @param task   Task to execute if not null
      * @param <T>    Object reference
+     * @return Referenced object
      */
-    public static <T> void ifNotNull(T object, Consumer<T> task) {
+    public static <T> T ifNotNull(T object, Consumer<T> task) {
         if (object != null)
             task.accept(object);
+        return object;
     }
 
     /**
@@ -44,10 +46,12 @@ public class ObjectUtils {
      * @param object Object to check for
      * @param task   Task to execute if null
      * @param <T>    Object reference
+     * @return Referenced object
      */
-    public static <T> void ifNull(T object, Runnable task) {
+    public static <T> T ifNull(T object, Runnable task) {
         if (object == null)
             task.run();
+        return object;
     }
 
 }

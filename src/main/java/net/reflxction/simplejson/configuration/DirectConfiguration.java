@@ -19,6 +19,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.json.JsonFile;
 import net.reflxction.simplejson.json.JsonWriter;
+import net.reflxction.simplejson.json.Lockable;
+import net.reflxction.simplejson.utils.Checks;
 import net.reflxction.simplejson.utils.Gsons;
 import net.reflxction.simplejson.utils.JsonUtils;
 import net.reflxction.simplejson.utils.ObjectUtils;
@@ -28,6 +30,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -41,7 +44,7 @@ import java.util.function.Consumer;
  *
  * @see net.reflxction.simplejson.configuration.select.SelectableConfiguration
  */
-public class DirectConfiguration {
+public class DirectConfiguration implements Lockable {
 
     /**
      * The JSON writer used to cache content and write to the file
@@ -66,6 +69,7 @@ public class DirectConfiguration {
      * @throws IOException I/O exception while connecting with the file
      */
     public DirectConfiguration(JsonFile file, boolean locked) throws IOException {
+        Objects.requireNonNull(file, "JsonFile (file) cannot be null");
         writer = new JsonWriter(file);
         this.locked = locked;
         content = writer.getCachedContentAsObject();
@@ -88,6 +92,7 @@ public class DirectConfiguration {
      * @return The associated string
      */
     public final String getString(String key) {
+        Checks.notNull(key);
         return content.get(key).getAsString();
     }
 
@@ -98,6 +103,7 @@ public class DirectConfiguration {
      * @return The associated integer
      */
     public final int getInt(String key) {
+        Checks.notNull(key);
         return content.get(key).getAsInt();
     }
 
@@ -108,6 +114,7 @@ public class DirectConfiguration {
      * @return The associated double
      */
     public final double getDouble(String key) {
+        Checks.notNull(key);
         return content.get(key).getAsDouble();
     }
 
@@ -118,6 +125,7 @@ public class DirectConfiguration {
      * @return The associated long
      */
     public final long getLong(String key) {
+        Checks.notNull(key);
         return content.get(key).getAsLong();
     }
 
@@ -128,6 +136,7 @@ public class DirectConfiguration {
      * @return The associated float
      */
     public final float getFloat(String key) {
+        Checks.notNull(key);
         return content.get(key).getAsFloat();
     }
 
@@ -138,6 +147,7 @@ public class DirectConfiguration {
      * @return The associated boolean
      */
     public final boolean getBoolean(String key) {
+        Checks.notNull(key);
         return content.get(key).getAsBoolean();
     }
 
@@ -148,6 +158,7 @@ public class DirectConfiguration {
      * @return The associated decimal
      */
     public final BigDecimal getBigDecimal(String key) {
+        Checks.notNull(key);
         return content.get(key).getAsBigDecimal();
     }
 
@@ -158,6 +169,7 @@ public class DirectConfiguration {
      * @return The associated List
      */
     public final List<Object> getList(String key) {
+        Checks.notNull(key);
         return JsonUtils.toList(content.get(key).toString());
     }
 
@@ -168,6 +180,7 @@ public class DirectConfiguration {
      * @return The associated Map
      */
     public final Map<String, Object> getMap(String key) {
+        Checks.notNull(key);
         return JsonUtils.toMap(content.get(key).toString());
     }
 
@@ -180,6 +193,7 @@ public class DirectConfiguration {
      * @return The deserialized object
      */
     public final <T> T get(String key, Type type) {
+        Checks.notNull(key);
         return get(key, type, Gsons.PRETTY_PRINTING);
     }
 
@@ -193,6 +207,7 @@ public class DirectConfiguration {
      * @return The deserialized object
      */
     public final <T> T get(String key, Type type, Gson gson) {
+        Checks.notNull(key);
         return gson.fromJson(content.get(key), type);
     }
 
@@ -223,6 +238,9 @@ public class DirectConfiguration {
      * @param gson  Gson profile to use
      */
     public final void set(String key, Object value, Gson gson) {
+        Checks.notNull(key);
+        Checks.notNull(value);
+        Checks.notNull(gson);
         content.add(key, gson.toJsonTree(value));
     }
 
@@ -234,6 +252,7 @@ public class DirectConfiguration {
      * @param key Key to remove
      */
     public final void remove(String key) {
+        Checks.notNull(key);
         content.remove(key);
     }
 
@@ -252,25 +271,27 @@ public class DirectConfiguration {
     }
 
     /**
-     * Sets the target {@link JsonFile} and updates the cached content
+     * Sets the new file. Implementation of this method should also update any content
+     * this component controls.
      *
-     * @param file New file to set
-     * @return The set file
+     * @param file New JSON file to use. Must not be null
      */
-    public final JsonFile setFile(JsonFile file) {
-        if (locked)
-            throw new IllegalArgumentException("Cannot invoke #setFile() on a locked DirectConfiguration!");
+    @Override
+    public final void setFile(JsonFile file) {
+        checkLocked("Cannot invoke #setFile() on a locked DirectConfiguration!");
+        Checks.notNull(file);
         writer.setFile(file);
         content = writer.getCachedContentAsObject();
-        return file;
     }
 
     /**
-     * Returns whether to allow calls to {@link #setFile(JsonFile)} or not.
+     * Returns whether the current component is locked or not. This will control whether
+     * {@link #setFile(JsonFile)} can be used or not.
      *
-     * @return Whether to allow calls to {@link #setFile(JsonFile)} or not.
+     * @return Whether the current component is locked or not.
      */
-    public final boolean isLocked() {
+    @Override
+    public boolean isLocked() {
         return locked;
     }
 
@@ -302,4 +323,5 @@ public class DirectConfiguration {
             throw new RuntimeException(e);
         }
     }
+
 }

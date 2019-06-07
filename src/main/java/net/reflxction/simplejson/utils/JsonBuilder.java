@@ -57,6 +57,7 @@ public class JsonBuilder {
      * @param object Object to construct from
      */
     public JsonBuilder(JsonObject object) {
+        Checks.notNull(object);
         jsonMap = JsonUtils.toMap(object);
     }
 
@@ -66,6 +67,7 @@ public class JsonBuilder {
      * @param jsonMap Map to use
      */
     public JsonBuilder(Map<String, Object> jsonMap) {
+        Objects.requireNonNull(jsonMap, "Map<String, Object> (jsonMap) cannot be null");
         this.jsonMap = jsonMap;
     }
 
@@ -85,14 +87,14 @@ public class JsonBuilder {
      * Maps the given value to the specific key if the given {@link Predicate} is met, otherwise this
      * method will have no effect.
      *
-     * @param predicate Criteria to test for the value
+     * @param predicate Criteria to test for the value. If null, the value will get mapped.
      * @param key       Key to assign to
      * @param value     Value assigned to the key
      * @param <T>       Object instance assignment
      * @return This builder instance
      */
     public <T> JsonBuilder mapIf(Predicate<T> predicate, String key, T value) {
-        if (predicate.test(value))
+        if (predicate == null || predicate.test(value))
             return map(key, value);
         return this;
     }
@@ -132,7 +134,7 @@ public class JsonBuilder {
     }
 
     /**
-     * Returns all the assigned objects to their keys
+     * Returns all the assigned objects to their keys as a {@link Map}
      *
      * @return The JSON map
      */
@@ -171,6 +173,7 @@ public class JsonBuilder {
      * @return The mapped JSON string
      */
     public String build(Gson profile) {
+        Checks.notNull(profile);
         return profile.toJson(jsonMap);
     }
 

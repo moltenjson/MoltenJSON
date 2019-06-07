@@ -20,15 +20,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.json.JsonFile;
 import net.reflxction.simplejson.json.JsonWriter;
+import net.reflxction.simplejson.json.Lockable;
+import net.reflxction.simplejson.utils.Checks;
 import net.reflxction.simplejson.utils.Gsons;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +38,7 @@ import java.util.stream.Collectors;
  * @see SelectKey
  * @see net.reflxction.simplejson.configuration.DirectConfiguration
  */
-public class SelectableConfiguration {
+public class SelectableConfiguration implements Lockable {
 
     /**
      * The JSON writer which caches the content and writes to the file
@@ -81,6 +80,8 @@ public class SelectableConfiguration {
      * @throws IOException I/O exceptions while connecting with the file
      */
     public SelectableConfiguration(JsonFile file, boolean classpath, Gson gson, boolean locked) throws IOException {
+        Checks.notNull(file);
+        Checks.notNull(gson);
         this.classpath = classpath;
         JsonFile jsonFile = new JsonFile(file.getFile());
         writer = new JsonWriter(jsonFile);
@@ -119,7 +120,7 @@ public class SelectableConfiguration {
      * @throws IOException I/O exceptions while connecting to the file
      */
     public SelectableConfiguration(JsonFile file) throws IOException {
-        this(file, true, Gsons.PRETTY_PRINTING);
+        this(file, false, Gsons.PRETTY_PRINTING);
     }
 
     /**
@@ -131,12 +132,14 @@ public class SelectableConfiguration {
      *
      * @param classes Classes to register
      */
-    public final void register(Class<?>... classes) {
+    public final SelectableConfiguration register(Class<?>... classes) {
+        Objects.requireNonNull(classes, "Class<?>... (classes) cannot be null");
         for (Class<?> clazz : classes) {
             List<Field> fields = opt(clazz);
-            if (fields.isEmpty()) return;
+            if (fields.isEmpty()) return this;
             opted.putIfAbsent(clazz, fields);
         }
+        return this;
     }
 
     /**
@@ -144,8 +147,9 @@ public class SelectableConfiguration {
      * <p>
      * This should be used after all the required classes have been registered,
      */
-    public final void associate() {
+    public final SelectableConfiguration associate() {
         opted.forEach((clazz, fields) -> fields.forEach(this::assign));
+        return this;
     }
 
     /**
@@ -159,9 +163,35 @@ public class SelectableConfiguration {
      * @see #register(Class[])
      * @see #associate()
      */
-    public final void registerAndAssociate(Class<?>... classes) {
+    public final SelectableConfiguration registerAndAssociate(Class<?>... classes) {
         register(classes);
         associate();
+        return this;
+    }
+
+    /**
+     * Returns whether the current component is locked or not. This will control whether
+     * {@link #setFile(JsonFile)} can be used or not.
+     *
+     * @return Whether the current component is locked or not.
+     */
+    @Override
+    public boolean isLocked() {
+        return locked;
+    }
+
+    /**
+     * Sets the new file. Implementation of this method should also update any content
+     * this component controls.
+     *
+     * @param file New JSON file to use. Must not be null
+     */
+    @Override
+    public void setFile(JsonFile file) {
+        checkLocked("Cannot invoke #setFile() on a locked SelectableConfiguration!");
+        Checks.notNull(file);
+        writer.setFile(file);
+        content = writer.getCachedContentAsObject();
     }
 
     /**
@@ -172,6 +202,7 @@ public class SelectableConfiguration {
      * @param key Key to remove
      */
     public final void remove(String key) {
+        Checks.notNull(key);
         content.remove(key);
     }
 
@@ -243,20 +274,6 @@ public class SelectableConfiguration {
     }
 
     /**
-     * Sets the target {@link JsonFile} and updates the cached content
-     *
-     * @param file New file to set
-     * @return The set file
-     */
-    public JsonFile setFile(JsonFile file) {
-        if (locked)
-            throw new IllegalArgumentException("Cannot invoke #setFile() on n locked SelectableConfiguration!");
-        writer.setFile(file);
-        content = writer.getCachedContentAsObject();
-        return file;
-    }
-
-    /**
      * Returns the content of the configuration. This can be modified
      *
      * @return The configuration content
@@ -273,15 +290,6 @@ public class SelectableConfiguration {
      */
     public final boolean isClasspath() {
         return classpath;
-    }
-
-    /**
-     * Returns whether to allow calls to {@link #setFile(JsonFile)} or not.
-     *
-     * @return Whether to allow calls to {@link #setFile(JsonFile)} or not.
-     */
-    public final boolean isLocked() {
-        return locked;
     }
 
     /**
