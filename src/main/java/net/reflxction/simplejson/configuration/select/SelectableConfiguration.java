@@ -15,7 +15,6 @@
  */
 package net.reflxction.simplejson.configuration.select;
 
-import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.json.JsonFile;
@@ -53,7 +52,7 @@ public class SelectableConfiguration implements Lockable {
     /**
      * A map which links the class with all its annotated fields
      */
-    private final Map<Class<?>, List<Field>> opted = Maps.newHashMap();
+    private final Map<Class<?>, List<Field>> opted = new HashMap<>();
 
     /**
      * Whether it should include the classpath of variables when saving or not.
