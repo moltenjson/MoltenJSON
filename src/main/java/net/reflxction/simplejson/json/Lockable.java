@@ -26,9 +26,10 @@ package net.reflxction.simplejson.json;
  * as immutable (final). This boolean should be only controlled from a constructor and not
  * have any setters.
  *
+ * @param <T> This object reference
  * @since SimpleJSON 2.0.2
  */
-public interface Lockable {
+public interface Lockable<T extends Lockable> {
 
     /**
      * Returns whether the current component is locked or not. This will control whether
@@ -43,8 +44,9 @@ public interface Lockable {
      * this component controls.
      *
      * @param file New JSON file to use. Must not be null
+     * @return This object instance
      */
-    void setFile(JsonFile file);
+    T setFile(JsonFile file);
 
     /**
      * Checks whether it is safe to use {@link #setFile(JsonFile)} or not.

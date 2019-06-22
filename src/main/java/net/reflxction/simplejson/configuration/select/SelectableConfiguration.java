@@ -15,8 +15,10 @@
  */
 package net.reflxction.simplejson.configuration.select;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import net.reflxction.simplejson.configuration.direct.DirectConfiguration;
 import net.reflxction.simplejson.json.JsonFile;
 import net.reflxction.simplejson.json.JsonWriter;
 import net.reflxction.simplejson.json.Lockable;
@@ -35,9 +37,9 @@ import java.util.stream.Collectors;
  * the current field value if the JSON does not map the value yet.
  *
  * @see SelectKey
- * @see net.reflxction.simplejson.configuration.DirectConfiguration
+ * @see DirectConfiguration
  */
-public class SelectableConfiguration implements Lockable {
+public class SelectableConfiguration implements Lockable<SelectableConfiguration> {
 
     /**
      * The JSON writer which caches the content and writes to the file
@@ -132,7 +134,7 @@ public class SelectableConfiguration implements Lockable {
      * @param classes Classes to register
      */
     public final SelectableConfiguration register(Class<?>... classes) {
-        Objects.requireNonNull(classes, "Class<?>... (classes) cannot be null");
+        Preconditions.checkNotNull(classes, "Class<?>... (classes) cannot be null");
         for (Class<?> clazz : classes) {
             List<Field> fields = opt(clazz);
             if (fields.isEmpty()) return this;
@@ -184,14 +186,17 @@ public class SelectableConfiguration implements Lockable {
      * this component controls.
      *
      * @param file New JSON file to use. Must not be null
+     * @return This object instance
      */
     @Override
-    public void setFile(JsonFile file) {
+    public SelectableConfiguration setFile(JsonFile file) {
         checkLocked("Cannot invoke #setFile() on a locked SelectableConfiguration!");
         Checks.notNull(file);
         writer.setFile(file);
         content = writer.getCachedContentAsObject();
+        return this;
     }
+
 
     /**
      * Removes the given key from the JSON file.

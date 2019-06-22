@@ -15,6 +15,7 @@
  */
 package net.reflxction.simplejson.json;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -29,13 +30,12 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
  * Reads and parses JSON data from JSON files
  */
-public class JsonReader implements Closeable, Lockable {
+public class JsonReader implements Closeable, Lockable<JsonReader> {
 
     /**
      * The JSON file to read from
@@ -98,7 +98,7 @@ public class JsonReader implements Closeable, Lockable {
      * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
      */
     public JsonReader(BufferedReader reader, boolean locked) {
-        Objects.requireNonNull(reader, "BufferedReader (reader) cannot be null");
+        Preconditions.checkNotNull(reader, "BufferedReader (reader) cannot be null");
         inputReader = true;
         bufferedReader = reader;
         this.locked = locked;
@@ -279,11 +279,13 @@ public class JsonReader implements Closeable, Lockable {
      * this component controls.
      *
      * @param file New JSON file to use. Must not be null
+     * @return This object instance
      */
-    public void setFile(JsonFile file) {
+    public JsonReader setFile(JsonFile file) {
         checkLocked("Cannot invoke #setFile() on a locked JsonReader!");
         Checks.notNull(file);
         this.file = file;
+        return this;
     }
 
     /**
