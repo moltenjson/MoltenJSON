@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.reflxction.simplejson.configuration;
+package net.reflxction.simplejson.configuration.direct;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.json.JsonFile;
@@ -30,7 +31,6 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -44,7 +44,7 @@ import java.util.function.Consumer;
  *
  * @see net.reflxction.simplejson.configuration.select.SelectableConfiguration
  */
-public class DirectConfiguration implements Lockable {
+public class DirectConfiguration implements Lockable<DirectConfiguration> {
 
     /**
      * The JSON writer used to cache content and write to the file
@@ -69,7 +69,7 @@ public class DirectConfiguration implements Lockable {
      * @throws IOException I/O exception while connecting with the file
      */
     public DirectConfiguration(JsonFile file, boolean locked) throws IOException {
-        Objects.requireNonNull(file, "JsonFile (file) cannot be null");
+        Preconditions.checkNotNull(file, "JsonFile (file) cannot be null");
         writer = new JsonWriter(file);
         this.locked = locked;
         content = writer.getCachedContentAsObject();
@@ -208,7 +208,35 @@ public class DirectConfiguration implements Lockable {
      */
     public final <T> T get(String key, Type type, Gson gson) {
         Checks.notNull(key);
+        Checks.notNull(type);
         return gson.fromJson(content.get(key), type);
+    }
+
+    /**
+     * Returns a deserialized instance of the given class assignment, derived from the total
+     * file content
+     *
+     * @param type Type to return an instance of, as a deserialized object
+     * @param gson Gson profile to use
+     * @param <T>  Class object assignment
+     * @return The deserialized object
+     */
+    public final <T> T getAs(Type type, Gson gson) {
+        Checks.notNull(type);
+        Checks.notNull(gson);
+        return gson.fromJson(content, type);
+    }
+
+    /**
+     * Returns a deserialized instance of the given class assignment, derived from the total
+     * file content
+     *
+     * @param type Type to return an instance of, as a deserialized object
+     * @param <T>  Class object assignment
+     * @return The deserialized object
+     */
+    public final <T> T getAs(Type type) {
+        return getAs(type, Gsons.DEFAULT);
     }
 
     /**
@@ -275,13 +303,15 @@ public class DirectConfiguration implements Lockable {
      * this component controls.
      *
      * @param file New JSON file to use. Must not be null
+     * @return This object instance
      */
     @Override
-    public final void setFile(JsonFile file) {
+    public final DirectConfiguration setFile(JsonFile file) {
         checkLocked("Cannot invoke #setFile() on a locked DirectConfiguration!");
         Checks.notNull(file);
         writer.setFile(file);
         content = writer.getCachedContentAsObject();
+        return this;
     }
 
     /**
