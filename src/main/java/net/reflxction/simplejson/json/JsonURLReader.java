@@ -15,6 +15,7 @@
  */
 package net.reflxction.simplejson.json;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -29,10 +30,11 @@ import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.Objects;
 
 /**
  * A helping class for reading content of JSON files from URLs.
+ *
+ * @see JsonResponse
  */
 public class JsonURLReader {
 
@@ -52,7 +54,7 @@ public class JsonURLReader {
      * @param url URL string to read from
      */
     public JsonURLReader(URL url) {
-        Objects.requireNonNull(url, "URL (url) cannot be null");
+        Preconditions.checkNotNull(url, "URL (url) cannot be null");
         this.url = url;
         this.content = parseContent();
     }

@@ -15,6 +15,7 @@
  */
 package net.reflxction.simplejson.utils;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -67,7 +68,7 @@ public class JsonBuilder {
      * @param jsonMap Map to use
      */
     public JsonBuilder(Map<String, Object> jsonMap) {
-        Objects.requireNonNull(jsonMap, "Map<String, Object> (jsonMap) cannot be null");
+        Preconditions.checkNotNull(jsonMap, "Map<String, Object> (jsonMap) cannot be null");
         this.jsonMap = jsonMap;
     }
 

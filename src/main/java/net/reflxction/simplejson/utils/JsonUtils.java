@@ -15,13 +15,13 @@
  */
 package net.reflxction.simplejson.utils;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Contains various helping methods for JSON
@@ -39,7 +39,7 @@ public class JsonUtils {
      * @return The given JSON string in a pretty manner
      */
     public static String setPretty(String json) {
-        Objects.requireNonNull(json, "String (json) cannot be null");
+        Preconditions.checkNotNull(json, "String (json) cannot be null");
         return Gsons.PRETTY_PRINTING.toJson(getObjectFromString(json));
     }
 
@@ -51,7 +51,7 @@ public class JsonUtils {
      * @return JsonElement from the given JSON string
      */
     public static JsonElement getElementFromString(String json, Gson gson) {
-        Objects.requireNonNull(json, "String (json) cannot be null");
+        Preconditions.checkNotNull(json, "String (json) cannot be null");
         Checks.notNull(gson);
         return gson.fromJson(json, ReflectiveTypes.ELEMENT_TYPE);
     }
@@ -63,7 +63,7 @@ public class JsonUtils {
      * @return JsonElement from the given JSON string
      */
     public static JsonElement getElementFromString(String json) {
-        Objects.requireNonNull(json, "String (json) cannot be null");
+        Preconditions.checkNotNull(json, "String (json) cannot be null");
         return getElementFromString(json, Gsons.DEFAULT);
     }
 
@@ -75,7 +75,7 @@ public class JsonUtils {
      * @return JsonObject from the given JSON string
      */
     public static JsonObject getObjectFromString(String json, Gson gson) {
-        Objects.requireNonNull(json, "String (json) cannot be null");
+        Preconditions.checkNotNull(json, "String (json) cannot be null");
         Checks.notNull(gson);
         return getElementFromString(json, gson).getAsJsonObject();
     }
@@ -98,7 +98,7 @@ public class JsonUtils {
      * @return A Map with the JSON content
      */
     public static Map<String, Object> toMap(String json) {
-        Objects.requireNonNull(json, "String (json) cannot be null");
+        Preconditions.checkNotNull(json, "String (json) cannot be null");
         return Gsons.DEFAULT.fromJson(json, ReflectiveTypes.MAP_TYPE);
     }
 
@@ -110,7 +110,7 @@ public class JsonUtils {
      * @return A Map with the JSON content
      */
     public static Map<String, Object> toMap(JsonElement json) {
-        Objects.requireNonNull(json, "JsonElement (json) cannot be null");
+        Preconditions.checkNotNull(json, "JsonElement (json) cannot be null");
         return Gsons.DEFAULT.fromJson(json, ReflectiveTypes.MAP_TYPE);
     }
 
@@ -122,7 +122,7 @@ public class JsonUtils {
      * @return A List with the JSON content
      */
     public static List<Object> toList(String json) {
-        Objects.requireNonNull(json, "String (json) cannot be null");
+        Preconditions.checkNotNull(json, "String (json) cannot be null");
         return Gsons.DEFAULT.fromJson(json, ReflectiveTypes.LIST_TYPE);
     }
 
@@ -133,7 +133,7 @@ public class JsonUtils {
      * @return A Map with the JSON content
      */
     public static List<Object> toList(JsonElement json) {
-        Objects.requireNonNull(json, "JsonElement (json) cannot be null");
+        Preconditions.checkNotNull(json, "JsonElement (json) cannot be null");
         return Gsons.DEFAULT.fromJson(json, ReflectiveTypes.LIST_TYPE);
     }
 }

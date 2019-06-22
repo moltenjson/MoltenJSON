@@ -15,6 +15,7 @@
  */
 package net.reflxction.simplejson.json;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -27,7 +28,6 @@ import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Represents a JSON-formatted API response. This utility allows parsing JSON responses easily.
@@ -36,6 +36,7 @@ import java.util.Objects;
  * work as a quick and short alternative to {@link JsonObject}, to allow accessing strings, numbers, lists, maps, and other
  * primitive types easily.
  *
+ * @see JsonURLReader
  * @since SimpleJSON 2.0.2
  */
 public class JsonResponse {
@@ -63,7 +64,7 @@ public class JsonResponse {
      * @param gson     GSON profile to use
      */
     public JsonResponse(String response, Gson gson) {
-        Objects.requireNonNull(response, "String (response) cannot be null");
+        Preconditions.checkNotNull(response, "String (response) cannot be null");
         Checks.notNull(gson);
         this.responseText = response;
         this.response = JsonUtils.getObjectFromString(response, this.gson = gson);

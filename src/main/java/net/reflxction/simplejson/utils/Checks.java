@@ -15,12 +15,12 @@
  */
 package net.reflxction.simplejson.utils;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.json.JsonFile;
 
 import java.lang.reflect.Type;
-import java.util.Objects;
 
 /**
  * A simple utility to simplify checking for specific conditions
@@ -28,27 +28,27 @@ import java.util.Objects;
 public class Checks {
 
     public static void notNull(Gson gson) {
-        Objects.requireNonNull(gson, "Gson (gson) cannot be null");
+        Preconditions.checkNotNull(gson, "Gson (gson) cannot be null");
     }
 
     public static void notNull(String key) {
-        Objects.requireNonNull(key, "String (key) cannot be null");
+        Preconditions.checkNotNull(key, "String (key) cannot be null");
     }
 
     public static void notNull(Type type) {
-        Objects.requireNonNull(type, "Type (type) cannot be null");
+        Preconditions.checkNotNull(type, "Type (type) cannot be null");
     }
 
     public static void notNull(JsonObject object) {
-        Objects.requireNonNull(object, "JsonObject (object) cannot be null");
+        Preconditions.checkNotNull(object, "JsonObject (object) cannot be null");
     }
 
     public static void notNull(JsonFile file) {
-        Objects.requireNonNull(file, "JsonFile (file) cannot be null");
+        Preconditions.checkNotNull(file, "JsonFile (file) cannot be null");
     }
 
     public static void notNull(Object o) {
-        Objects.requireNonNull(o, "Object (value) cannot be null");
+        Preconditions.checkNotNull(o, "Object (value) cannot be null");
     }
 
 }

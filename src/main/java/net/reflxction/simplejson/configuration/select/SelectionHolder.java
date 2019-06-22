@@ -15,7 +15,7 @@
  */
 package net.reflxction.simplejson.configuration.select;
 
-import java.util.Objects;
+import com.google.common.base.Preconditions;
 
 /**
  * Represents a selection holder.
@@ -52,7 +52,7 @@ public class SelectionHolder<T> {
      */
     public SelectionHolder(T value, boolean allowNullValues) {
         this.allowNullValues = allowNullValues;
-        this.value = allowNullValues ? value : Objects.requireNonNull(value, "Value in the target SelectionHolder may not be null.");
+        this.value = allowNullValues ? value : Preconditions.checkNotNull(value, "Value in the target SelectionHolder may not be null.");
     }
 
     /**
@@ -79,7 +79,7 @@ public class SelectionHolder<T> {
      * @param value New value to set
      */
     public void set(T value) {
-        this.value = allowNullValues ? value : Objects.requireNonNull(value, "Value in the target SelectionHolder may not be null.");
+        this.value = allowNullValues ? value : Preconditions.checkNotNull(value, "Value in the target SelectionHolder may not be null.");
     }
 
     @Override
