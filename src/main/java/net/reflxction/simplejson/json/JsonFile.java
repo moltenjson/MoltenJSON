@@ -15,6 +15,8 @@
  */
 package net.reflxction.simplejson.json;
 
+import com.google.common.base.Preconditions;
+import net.reflxction.simplejson.configuration.direct.DirectConfiguration;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -22,19 +24,18 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 /**
  * Represents a JSON file. This is used by JSON writers and readers.
  * <p>
  * This cannot be used to write or read directly
- * For reading, {@link JsonReader} and {@link net.reflxction.simplejson.configuration.DirectConfiguration}.
+ * For reading, {@link JsonReader} and {@link DirectConfiguration}.
  * <p>
- * For writing, {@link JsonWriter} and {@link net.reflxction.simplejson.configuration.DirectConfiguration}.
+ * For writing, {@link JsonWriter} and {@link DirectConfiguration}.
  *
  * @see JsonWriter
  * @see JsonReader
- * @see net.reflxction.simplejson.configuration.DirectConfiguration
+ * @see DirectConfiguration
  * @see net.reflxction.simplejson.configuration.select.SelectableConfiguration
  */
 public class JsonFile {
@@ -63,7 +64,7 @@ public class JsonFile {
      * @throws IOException I/O exceptions while connecting with the file
      */
     public JsonFile(File file, boolean createIfNotExist) throws IOException {
-        Objects.requireNonNull(file, "File (file) cannot be null");
+        Preconditions.checkNotNull(file, "File (file) cannot be null");
         this.file = file;
         this.path = file.getPath();
         prepare(createIfNotExist);
@@ -79,8 +80,8 @@ public class JsonFile {
      * @throws IOException I/O exceptions whilst connecting to the file.
      */
     public JsonFile(File parent, String child, boolean createIfNotExist) throws IOException {
-        Objects.requireNonNull(parent, "File (parent) cannot be null");
-        Objects.requireNonNull(child, "String (child) cannot be null");
+        Preconditions.checkNotNull(parent, "File (parent) cannot be null");
+        Preconditions.checkNotNull(child, "String (child) cannot be null");
         this.file = new File(parent, child);
         this.path = file.getPath();
         prepare(createIfNotExist);
@@ -95,8 +96,8 @@ public class JsonFile {
      * @throws IOException I/O exceptions while connecting to the file
      */
     public JsonFile(String parent, String child, boolean createIfNotExist) throws IOException {
-        Objects.requireNonNull(parent, "File (parent) cannot be null");
-        Objects.requireNonNull(child, "String (child) cannot be null");
+        Preconditions.checkNotNull(parent, "File (parent) cannot be null");
+        Preconditions.checkNotNull(child, "String (child) cannot be null");
         this.file = new File(parent, child);
         this.path = file.getPath();
         prepare(createIfNotExist);
@@ -166,7 +167,7 @@ public class JsonFile {
     }
 
     /**
-     * Maintains this {@link JsonFile} by creating it (if required), and writes
+     * Prepares this {@link JsonFile} by creating it (if required), and writes
      * curly brackets ("{}") to make it usable and maintainable by readers and writers
      *
      * @param create Whether to create the file if it doesn't exist already
@@ -187,6 +188,15 @@ public class JsonFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Returns whether this file exists or not
+     *
+     * @return The existence of this file
+     */
+    public boolean exists() {
+        return file.exists();
     }
 
     /**
