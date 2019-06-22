@@ -54,8 +54,6 @@ import java.util.*;
  * keys, and values assigned to them.
  * <p>
  * Instances of {@link TreeConfiguration} should be constructed using {@link TreeConfigurationBuilder}.
- * A {@link TreeConfigurationBuilder} can be derived from {@link TreeConfiguration} using
- * {@link TreeConfiguration#asBuilder()}.
  * <p>
  * A {@link TreeConfiguration} is thread-safe.
  *
