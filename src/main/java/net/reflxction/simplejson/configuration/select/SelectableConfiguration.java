@@ -132,6 +132,7 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
      * Supports varargs usage.
      *
      * @param classes Classes to register
+     * @return This configuration instance. This can be invoked in chained calls (for convenience)
      */
     public final SelectableConfiguration register(Class<?>... classes) {
         Preconditions.checkNotNull(classes, "Class<?>... (classes) cannot be null");
@@ -147,6 +148,8 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
      * Assigns all opted fields to their JSON values.
      * <p>
      * This should be used after all the required classes have been registered,
+     *
+     * @return This configuration instance. This can be invoked in chained calls (for convenience)
      */
     public final SelectableConfiguration associate() {
         opted.forEach((clazz, fields) -> fields.forEach(this::assign));
@@ -161,6 +164,7 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
      * which is done through invoking {@link #associate()}.
      *
      * @param classes Classes to register
+     * @return This configuration instance. This can be invoked in chained calls (for convenience)
      * @see #register(Class[])
      * @see #associate()
      */

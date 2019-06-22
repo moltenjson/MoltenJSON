@@ -94,7 +94,8 @@ public class TreeConfigurationBuilder<N, E> {
      * Initiates a new {@link TreeConfigurationBuilder} which controls data
      * in the specified directory.
      *
-     * @param directory Directory which contains all the data files
+     * @param directory      Directory which contains all the data files
+     * @param namingStrategy The naming strategy used in fetching file names and vice versa
      */
     public TreeConfigurationBuilder(File directory, TreeNamingStrategy<N> namingStrategy) {
         Preconditions.checkNotNull(directory, "File (directory) cannot be null");

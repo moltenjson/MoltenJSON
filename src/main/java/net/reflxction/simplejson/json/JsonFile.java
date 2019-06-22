@@ -273,6 +273,7 @@ public class JsonFile {
      * @param parent           Parent directory
      * @param child            The JSON child file
      * @param createIfNotExist Whether should the file be created if it does not exist
+     * @return New JSON file instance
      */
     public static JsonFile of(String parent, String child, boolean createIfNotExist) {
         try {

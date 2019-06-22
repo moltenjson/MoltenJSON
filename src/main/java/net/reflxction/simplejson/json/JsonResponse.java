@@ -175,6 +175,7 @@ public class JsonResponse {
      * Returns a {@link List} of the specified object from the associated key
      *
      * @param key Key to fetch from
+     * @param <E> List generic
      * @return The associated List
      */
     public final <E> List<E> getList(String key) {
