@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'net.reflxction'
-version '2.3.0-SNAPSHOT'
+version '2.3.0-BETA'
 
 sourceCompatibility = 1.8
 
