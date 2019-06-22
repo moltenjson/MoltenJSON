@@ -15,9 +15,11 @@
  */
 package net.reflxction.simplejson.json;
 
+import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import net.reflxction.simplejson.configuration.direct.DirectConfiguration;
 import net.reflxction.simplejson.utils.Checks;
 import net.reflxction.simplejson.utils.Gsons;
 import net.reflxction.simplejson.utils.JsonUtils;
@@ -28,7 +30,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Objects;
 
 /**
  * Writes data and content to the JSON file.
@@ -37,10 +38,10 @@ import java.util.Objects;
  * usage and for <i>one-time operations for writing or caching</i>. If your program tends to make a lot
  * of reading/writing operations, it's <i>heavily advised</i> to use Configurations.
  *
- * @see net.reflxction.simplejson.configuration.DirectConfiguration
+ * @see DirectConfiguration
  * @see net.reflxction.simplejson.configuration.select.SelectableConfiguration
  */
-public class JsonWriter implements Closeable, Lockable {
+public class JsonWriter implements Closeable, Lockable<JsonWriter> {
 
     /**
      * Represents an empty JSON object. Instances of the content will be derived from this object if
@@ -119,7 +120,7 @@ public class JsonWriter implements Closeable, Lockable {
      * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
      */
     public JsonWriter(BufferedWriter writer, boolean locked) {
-        Objects.requireNonNull(writer, "BufferedWriter (writer) cannot be null");
+        Preconditions.checkNotNull(writer, "BufferedWriter (writer) cannot be null");
         bufferedWriter = writer;
         this.locked = locked;
     }
@@ -150,7 +151,7 @@ public class JsonWriter implements Closeable, Lockable {
      * @throws IOException if it encountered IO issues while writing
      */
     public void writeAndOverride(Object jsonResult, boolean prettyPrinting) throws IOException {
-        Objects.requireNonNull(jsonResult, "Object (jsonResult) cannot be null");
+        Preconditions.checkNotNull(jsonResult, "Object (jsonResult) cannot be null");
         writeAndOverride(jsonResult, prettyPrinting ? Gsons.PRETTY_PRINTING : Gsons.DEFAULT);
     }
 
@@ -168,7 +169,7 @@ public class JsonWriter implements Closeable, Lockable {
      * @throws IOException if it encountered IO issues while writing
      */
     public void writeAndOverride(Object jsonResult, Gson gson) throws IOException {
-        Objects.requireNonNull(jsonResult, "Object (jsonResult) cannot be null");
+        Preconditions.checkNotNull(jsonResult, "Object (jsonResult) cannot be null");
         Checks.notNull(gson);
         write(gson.toJson(jsonResult));
     }
@@ -317,13 +318,17 @@ public class JsonWriter implements Closeable, Lockable {
      * this component controls.
      *
      * @param file New JSON file to use. Must not be null
+     * @return This object instance
      */
     @Override
-    public void setFile(JsonFile file) {
+    public JsonWriter setFile(JsonFile file) {
         checkLocked("Cannot invoke #setFile() on a locked JsonWriter!");
         Checks.notNull(file);
         reader.setFile(file);
+        this.file = file;
+        contentElement = reader.getJsonElement(Throwable::printStackTrace);
         content = reader.getJsonObject();
+        return this;
     }
 
     /**
