@@ -15,10 +15,10 @@
  */
 package net.reflxction.simplejson.utils;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
@@ -38,8 +38,7 @@ public class JsonUtils {
      * @param json JSON to parse
      * @return The given JSON string in a pretty manner
      */
-    public static String setPretty(String json) {
-        Preconditions.checkNotNull(json, "String (json) cannot be null");
+    public static String setPretty(@NotNull String json) {
         return Gsons.PRETTY_PRINTING.toJson(getObjectFromString(json));
     }
 
@@ -50,9 +49,7 @@ public class JsonUtils {
      * @param gson GSON profile to use
      * @return JsonElement from the given JSON string
      */
-    public static JsonElement getElementFromString(String json, Gson gson) {
-        Preconditions.checkNotNull(json, "String (json) cannot be null");
-        Checks.notNull(gson);
+    public static JsonElement getElementFromString(@NotNull String json, @NotNull Gson gson) {
         return gson.fromJson(json, ReflectiveTypes.ELEMENT_TYPE);
     }
 
@@ -62,8 +59,7 @@ public class JsonUtils {
      * @param json Json text to parse
      * @return JsonElement from the given JSON string
      */
-    public static JsonElement getElementFromString(String json) {
-        Preconditions.checkNotNull(json, "String (json) cannot be null");
+    public static JsonElement getElementFromString(@NotNull String json) {
         return getElementFromString(json, Gsons.DEFAULT);
     }
 
@@ -74,9 +70,7 @@ public class JsonUtils {
      * @param gson GSON profile to use
      * @return JsonObject from the given JSON string
      */
-    public static JsonObject getObjectFromString(String json, Gson gson) {
-        Preconditions.checkNotNull(json, "String (json) cannot be null");
-        Checks.notNull(gson);
+    public static JsonObject getObjectFromString(@NotNull String json, @NotNull Gson gson) {
         return getElementFromString(json, gson).getAsJsonObject();
     }
 
@@ -86,7 +80,7 @@ public class JsonUtils {
      * @param json Json text to parse
      * @return JsonObject from the given JSON string
      */
-    public static JsonObject getObjectFromString(String json) {
+    public static JsonObject getObjectFromString(@NotNull String json) {
         return getObjectFromString(json, Gsons.DEFAULT);
     }
 
@@ -97,8 +91,7 @@ public class JsonUtils {
      * @param json JSON to convert
      * @return A Map with the JSON content
      */
-    public static Map<String, Object> toMap(String json) {
-        Preconditions.checkNotNull(json, "String (json) cannot be null");
+    public static Map<String, Object> toMap(@NotNull String json) {
         return Gsons.DEFAULT.fromJson(json, ReflectiveTypes.MAP_TYPE);
     }
 
@@ -109,8 +102,7 @@ public class JsonUtils {
      * @param json JSON to convert
      * @return A Map with the JSON content
      */
-    public static Map<String, Object> toMap(JsonElement json) {
-        Preconditions.checkNotNull(json, "JsonElement (json) cannot be null");
+    public static Map<String, Object> toMap(@NotNull JsonElement json) {
         return Gsons.DEFAULT.fromJson(json, ReflectiveTypes.MAP_TYPE);
     }
 
@@ -121,8 +113,7 @@ public class JsonUtils {
      * @param json JSON to convert
      * @return A List with the JSON content
      */
-    public static List<Object> toList(String json) {
-        Preconditions.checkNotNull(json, "String (json) cannot be null");
+    public static List<Object> toList(@NotNull String json) {
         return Gsons.DEFAULT.fromJson(json, ReflectiveTypes.LIST_TYPE);
     }
 
@@ -132,8 +123,7 @@ public class JsonUtils {
      * @param json JSON to convert
      * @return A Map with the JSON content
      */
-    public static List<Object> toList(JsonElement json) {
-        Preconditions.checkNotNull(json, "JsonElement (json) cannot be null");
+    public static List<Object> toList(@NotNull JsonElement json) {
         return Gsons.DEFAULT.fromJson(json, ReflectiveTypes.LIST_TYPE);
     }
 }

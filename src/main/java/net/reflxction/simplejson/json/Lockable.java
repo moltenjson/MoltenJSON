@@ -15,6 +15,8 @@
  */
 package net.reflxction.simplejson.json;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * Represents a component which can be locked.
  * <p>
@@ -46,7 +48,7 @@ public interface Lockable<T extends Lockable> {
      * @param file New JSON file to use. Must not be null
      * @return This object instance
      */
-    T setFile(JsonFile file);
+    T setFile(@NotNull JsonFile file);
 
     /**
      * Checks whether it is safe to use {@link #setFile(JsonFile)} or not.

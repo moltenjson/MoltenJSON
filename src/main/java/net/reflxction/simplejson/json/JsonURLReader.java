@@ -15,15 +15,14 @@
  */
 package net.reflxction.simplejson.json;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.exceptions.JsonParseException;
-import net.reflxction.simplejson.utils.Checks;
 import net.reflxction.simplejson.utils.Gsons;
 import net.reflxction.simplejson.utils.JsonUtils;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -53,8 +52,7 @@ public class JsonURLReader {
      *
      * @param url URL string to read from
      */
-    public JsonURLReader(URL url) {
-        Preconditions.checkNotNull(url, "URL (url) cannot be null");
+    public JsonURLReader(@NotNull URL url) {
         this.url = url;
         this.content = parseContent();
     }
@@ -65,7 +63,7 @@ public class JsonURLReader {
      * @param url URL string to read from
      * @throws MalformedURLException If the given URL was malformed
      */
-    public JsonURLReader(String url) throws MalformedURLException {
+    public JsonURLReader(@NotNull String url) throws MalformedURLException {
         this(new URL(url));
     }
 
@@ -116,7 +114,7 @@ public class JsonURLReader {
      * @param prettyPrinting Whether it should use pretty printing when writing (by adding whitespace, fixing indentation, etc.)
      * @throws IOException If IO issues were encountered while writing
      */
-    public void writeToFile(JsonFile file, boolean prettyPrinting) throws IOException {
+    public void writeToFile(@NotNull JsonFile file, boolean prettyPrinting) throws IOException {
         JsonWriter writer = new JsonWriter(file);
         writer.writeAndOverride(getContentAsElement(), prettyPrinting);
         writer.close();
@@ -129,8 +127,7 @@ public class JsonURLReader {
      * @param <T>  Object assignment
      * @return The deserialized object
      */
-    public <T> T deserializeAs(Type type) {
-        Checks.notNull(type);
+    public <T> T deserializeAs(@NotNull Type type) {
         return deserializeAs(type, Gsons.DEFAULT);
     }
 
@@ -143,9 +140,7 @@ public class JsonURLReader {
      * @param <T>  Object assignment
      * @return The deserialized object
      */
-    public <T> T deserializeAs(Type type, Gson gson) {
-        Checks.notNull(type);
-        Checks.notNull(gson);
+    public <T> T deserializeAs(@NotNull Type type, @NotNull Gson gson) {
         return gson.fromJson(content, type);
     }
 
@@ -159,10 +154,7 @@ public class JsonURLReader {
      * @param <T>  Object assignment
      * @return The deserialized object
      */
-    public <T> T deserialize(String key, Type type, Gson gson) {
-        Checks.notNull(key);
-        Checks.notNull(type);
-        Checks.notNull(gson);
+    public <T> T deserialize(@NotNull String key, @NotNull Type type, @NotNull Gson gson) {
         return gson.fromJson(content.getAsJsonObject().get(key), type);
     }
 
@@ -174,7 +166,7 @@ public class JsonURLReader {
      * @param <T>  Object assignment
      * @return The deserialized object
      */
-    public <T> T deserialize(String key, Type type) {
+    public <T> T deserialize(@NotNull String key, Type type) {
         return deserialize(key, type, Gsons.DEFAULT);
     }
 
@@ -184,7 +176,7 @@ public class JsonURLReader {
      * @param url URL string to read from
      * @return The DirectConfiguration object
      */
-    public static JsonURLReader of(String url) {
+    public static JsonURLReader of(@NotNull String url) {
         try {
             return new JsonURLReader(url);
         } catch (MalformedURLException e) {

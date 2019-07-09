@@ -17,6 +17,7 @@ package net.reflxction.simplejson.configuration.tree.strategy;
 
 import net.reflxction.simplejson.configuration.tree.TreeConfiguration;
 import net.reflxction.simplejson.configuration.tree.TreeConfigurationBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -51,7 +52,7 @@ public interface TreeNamingStrategy<N> {
      * @param e Object to convert
      * @return The valid file name.
      */
-    String toName(N e);
+    String toName(@NotNull N e);
 
     /**
      * Converts the file name to be an object, can be used as a key.
@@ -59,6 +60,6 @@ public interface TreeNamingStrategy<N> {
      * @param name The file name. This does <i>NOT</i> include the extension.
      * @return The object key
      */
-    N fromName(String name);
+    N fromName(@NotNull String name);
 
 }

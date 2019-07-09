@@ -15,10 +15,11 @@
  */
 package net.reflxction.simplejson.utils;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -57,8 +58,7 @@ public class JsonBuilder {
      *
      * @param object Object to construct from
      */
-    public JsonBuilder(JsonObject object) {
-        Checks.notNull(object);
+    public JsonBuilder(@NotNull JsonObject object) {
         jsonMap = JsonUtils.toMap(object);
     }
 
@@ -67,8 +67,7 @@ public class JsonBuilder {
      *
      * @param jsonMap Map to use
      */
-    public JsonBuilder(Map<String, Object> jsonMap) {
-        Preconditions.checkNotNull(jsonMap, "Map<String, Object> (jsonMap) cannot be null");
+    public JsonBuilder(@NotNull Map<String, Object> jsonMap) {
         this.jsonMap = jsonMap;
     }
 
@@ -79,8 +78,23 @@ public class JsonBuilder {
      * @param value Value assigned to the key
      * @return This builder instance
      */
-    public JsonBuilder map(String key, Object value) {
+    public JsonBuilder map(@NotNull String key, @Nullable Object value) {
         jsonMap.put(key, value);
+        return this;
+    }
+
+    /**
+     * Maps the given value to the specific key if the given boolean value is {@code true}, otherwise
+     * this method will have no effect
+     *
+     * @param expression Criteria to test for the value. If null, the value will get mapped.
+     * @param key        Key to assign to
+     * @param value      Value assigned to the key
+     * @return This builder instance
+     */
+    public JsonBuilder mapIf(boolean expression, @NotNull String key, @Nullable Object value) {
+        if (expression)
+            return map(key, value);
         return this;
     }
 
@@ -94,10 +108,8 @@ public class JsonBuilder {
      * @param <T>       Object instance assignment
      * @return This builder instance
      */
-    public <T> JsonBuilder mapIf(Predicate<T> predicate, String key, T value) {
-        if (predicate == null || predicate.test(value))
-            return map(key, value);
-        return this;
+    public <T> JsonBuilder mapIf(@Nullable Predicate<T> predicate, @NotNull String key, @Nullable T value) {
+        return mapIf(predicate == null || predicate.test(value), key, value);
     }
 
     /**
@@ -105,10 +117,10 @@ public class JsonBuilder {
      * no effect.
      *
      * @param key   Key to assign to
-     * @param value Value assigned to the key, must not be null.
+     * @param value Value assigned to the key. If null, this method will have no effect
      * @return This builder instance
      */
-    public JsonBuilder mapIfNotNull(String key, Object value) {
+    public JsonBuilder mapIfNotNull(@NotNull String key, @Nullable Object value) {
         return mapIf(Objects::nonNull, key, value);
     }
 
@@ -119,7 +131,7 @@ public class JsonBuilder {
      * @param value Value assigned to the key
      * @return This builder instance
      */
-    public JsonBuilder mapIfAbsent(String key, Object value) {
+    public JsonBuilder mapIfAbsent(@NotNull String key, @Nullable Object value) {
         return mapIf(o -> jsonMap.containsKey(key), key, value);
     }
 
@@ -129,7 +141,7 @@ public class JsonBuilder {
      * @param key Key to remove
      * @return This builder instance
      */
-    public JsonBuilder removeKey(String key) {
+    public JsonBuilder removeKey(@NotNull String key) {
         jsonMap.remove(key);
         return this;
     }
@@ -173,8 +185,7 @@ public class JsonBuilder {
      * @param profile GSON profile to construct from
      * @return The mapped JSON string
      */
-    public String build(Gson profile) {
-        Checks.notNull(profile);
+    public String build(@NotNull Gson profile) {
         return profile.toJson(jsonMap);
     }
 

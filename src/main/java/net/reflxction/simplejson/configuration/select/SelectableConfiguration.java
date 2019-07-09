@@ -15,15 +15,14 @@
  */
 package net.reflxction.simplejson.configuration.select;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.configuration.direct.DirectConfiguration;
 import net.reflxction.simplejson.json.JsonFile;
 import net.reflxction.simplejson.json.JsonWriter;
 import net.reflxction.simplejson.json.Lockable;
-import net.reflxction.simplejson.utils.Checks;
 import net.reflxction.simplejson.utils.Gsons;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
 
 /**
  * Represents a configuration which saves fields annotated with {@link SelectKey} to its configuration.
- * On application bootstrap, registered fields will have their value associated to their JSON value, or
+ * On application bootstrap, registered fields will have their value associated to their JSON keys, or
  * the current field value if the JSON does not map the value yet.
  *
  * @see SelectKey
@@ -80,9 +79,7 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
      * @param locked    Whether to allow calls to {@link #setFile(JsonFile)} or not
      * @throws IOException I/O exceptions while connecting with the file
      */
-    public SelectableConfiguration(JsonFile file, boolean classpath, Gson gson, boolean locked) throws IOException {
-        Checks.notNull(file);
-        Checks.notNull(gson);
+    public SelectableConfiguration(@NotNull JsonFile file, boolean classpath, @NotNull Gson gson, boolean locked) throws IOException {
         this.classpath = classpath;
         JsonFile jsonFile = new JsonFile(file.getFile());
         writer = new JsonWriter(jsonFile);
@@ -99,7 +96,7 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
      * @param gson      Gson profile to use for reading and writing
      * @throws IOException I/O exceptions while connecting with the file
      */
-    public SelectableConfiguration(JsonFile file, boolean classpath, Gson gson) throws IOException {
+    public SelectableConfiguration(@NotNull JsonFile file, boolean classpath, @NotNull Gson gson) throws IOException {
         this(file, classpath, gson, false);
     }
 
@@ -110,7 +107,7 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
      * @param classpath Whether or not to include variable classpath when writing
      * @throws IOException I/O exceptions while connecting to the file
      */
-    public SelectableConfiguration(JsonFile file, boolean classpath) throws IOException {
+    public SelectableConfiguration(@NotNull JsonFile file, boolean classpath) throws IOException {
         this(file, classpath, Gsons.DEFAULT);
     }
 
@@ -120,13 +117,13 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
      * @param file JSON file to use
      * @throws IOException I/O exceptions while connecting to the file
      */
-    public SelectableConfiguration(JsonFile file) throws IOException {
+    public SelectableConfiguration(@NotNull JsonFile file) throws IOException {
         this(file, false, Gsons.PRETTY_PRINTING);
     }
 
     /**
      * Registers the given classes and assigns all opted fields which are annotated
-     * with {@link SelectKey} to their class. If the class doesn't contain any
+     * with {@link SelectKey} to their class. If the class does not contain any
      * field annotated with {@code @SelectKey} then this method will have no effect.
      * <p>
      * Supports varargs usage.
@@ -134,8 +131,7 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
      * @param classes Classes to register
      * @return This configuration instance. This can be invoked in chained calls (for convenience)
      */
-    public final SelectableConfiguration register(Class<?>... classes) {
-        Preconditions.checkNotNull(classes, "Class<?>... (classes) cannot be null");
+    public final SelectableConfiguration register(@NotNull Class<?>... classes) {
         for (Class<?> clazz : classes) {
             List<Field> fields = opt(clazz);
             if (fields.isEmpty()) return this;
@@ -193,9 +189,8 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
      * @return This object instance
      */
     @Override
-    public SelectableConfiguration setFile(JsonFile file) {
+    public SelectableConfiguration setFile(@NotNull JsonFile file) {
         checkLocked("Cannot invoke #setFile() on a locked SelectableConfiguration!");
-        Checks.notNull(file);
         writer.setFile(file);
         content = writer.getCachedContentAsObject();
         return this;
@@ -205,12 +200,11 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
     /**
      * Removes the given key from the JSON file.
      * <p>
-     * This will have no effect if the given key doesn't exist.
+     * This will have no effect if the given key does not exist.
      *
      * @param key Key to remove
      */
-    public final void remove(String key) {
-        Checks.notNull(key);
+    public final void remove(@NotNull String key) {
         content.remove(key);
     }
 
@@ -232,7 +226,7 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
 
     /**
      * Opts all fields from the given class which are annotated with {@link SelectKey}, or returns
-     * an empty {@link java.util.Collection} if the class doesn't contain any fields annotated with it.
+     * an empty {@link java.util.Collection} if the class does not contain any fields annotated with it.
      *
      * @param clazz Class to opt from
      * @return A {@link List} of fields from the class which are annotated with {@link SelectKey}.
@@ -265,7 +259,7 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
     }
 
     /**
-     * Assigns the field to its JSON value. If the {@link #content} doesn't contain declaration
+     * Assigns the field to its JSON value. If the {@link #content} does not contain declaration
      * for the field, it would add it to the JSON content with its current value.
      *
      * @param field Field to assign

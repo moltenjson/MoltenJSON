@@ -15,14 +15,13 @@
  */
 package net.reflxction.simplejson.json;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.configuration.direct.DirectConfiguration;
-import net.reflxction.simplejson.utils.Checks;
 import net.reflxction.simplejson.utils.Gsons;
 import net.reflxction.simplejson.utils.JsonUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedWriter;
 import java.io.Closeable;
@@ -86,8 +85,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
      * @throws IOException If there were IO issues whilst initiating the file writer
      */
-    public JsonWriter(JsonFile file, boolean locked) throws IOException {
-        Checks.notNull(file);
+    public JsonWriter(@NotNull JsonFile file, boolean locked) throws IOException {
         this.file = file;
         this.locked = locked;
         reader = new JsonReader(file);
@@ -106,7 +104,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @param file JSON file to write to
      * @throws IOException If there were IO issues whilst initiating the file writer
      */
-    public JsonWriter(JsonFile file) throws IOException {
+    public JsonWriter(@NotNull JsonFile file) throws IOException {
         this(file, false);
     }
 
@@ -119,8 +117,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @param writer Writer to initiate from
      * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
      */
-    public JsonWriter(BufferedWriter writer, boolean locked) {
-        Preconditions.checkNotNull(writer, "BufferedWriter (writer) cannot be null");
+    public JsonWriter(@NotNull BufferedWriter writer, boolean locked) {
         bufferedWriter = writer;
         this.locked = locked;
     }
@@ -133,7 +130,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      *
      * @param writer Writer to initiate from
      */
-    public JsonWriter(BufferedWriter writer) {
+    public JsonWriter(@NotNull BufferedWriter writer) {
         this(writer, false);
     }
 
@@ -150,8 +147,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @param prettyPrinting Whether the writer should write it in a pretty manner
      * @throws IOException if it encountered IO issues while writing
      */
-    public void writeAndOverride(Object jsonResult, boolean prettyPrinting) throws IOException {
-        Preconditions.checkNotNull(jsonResult, "Object (jsonResult) cannot be null");
+    public void writeAndOverride(@NotNull Object jsonResult, boolean prettyPrinting) throws IOException {
         writeAndOverride(jsonResult, prettyPrinting ? Gsons.PRETTY_PRINTING : Gsons.DEFAULT);
     }
 
@@ -168,9 +164,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @param gson       GSON profile to use
      * @throws IOException if it encountered IO issues while writing
      */
-    public void writeAndOverride(Object jsonResult, Gson gson) throws IOException {
-        Preconditions.checkNotNull(jsonResult, "Object (jsonResult) cannot be null");
-        Checks.notNull(gson);
+    public void writeAndOverride(@NotNull Object jsonResult, @NotNull Gson gson) throws IOException {
         write(gson.toJson(jsonResult));
     }
 
@@ -186,9 +180,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @return The modified JsonObject
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
-    public JsonObject add(String key, Object value, boolean prettyPrinting, boolean override) throws IOException {
-        Checks.notNull(key);
-        Checks.notNull(value);
+    public JsonObject add(@NotNull String key, @NotNull Object value, boolean prettyPrinting, boolean override) throws IOException {
         if (memberExists(key) && !override) return content;
         content.add(key, Gsons.DEFAULT.toJsonTree(value));
         write(prettyPrinting ? JsonUtils.setPretty(content.toString()) : content.toString());
@@ -209,7 +201,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @return The modified JsonObject
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
-    public JsonObject add(String key, Object value, boolean prettyPrinting) throws IOException {
+    public JsonObject add(@NotNull String key, @NotNull Object value, boolean prettyPrinting) throws IOException {
         return add(key, value, prettyPrinting, false);
     }
 
@@ -229,22 +221,21 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @return The modified JsonObject
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
-    public JsonObject add(String key, Object value) throws IOException {
+    public JsonObject add(@NotNull String key, @NotNull Object value) throws IOException {
         return add(key, value, false);
     }
 
     /**
      * Removes the given key from the JSON file.
      * <p>
-     * This will have no effect if the given key doesn't exist.
+     * This will have no effect if the given key does not exist.
      *
      * @param key            Key to remove
      * @param prettyPrinting Whether to use pretty printing when writing
      * @return The modified JsonObject
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
-    public JsonObject removeKey(String key, boolean prettyPrinting) throws IOException {
-        Checks.notNull(key);
+    public JsonObject removeKey(@NotNull String key, boolean prettyPrinting) throws IOException {
         content.remove(key);
         write(prettyPrinting ? JsonUtils.setPretty(content.toString()) : content.toString());
         return content;
@@ -253,7 +244,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
     /**
      * Removes the given key from the JSON file.
      * <p>
-     * This will have no effect if the given key doesn't exist.
+     * This will have no effect if the given key does not exist.
      * <p>
      * This will use pretty printing when writing.
      *
@@ -261,8 +252,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @return The modified JsonObject
      * @throws IOException If the {@link BufferedWriter} encounters any I/O issues
      */
-    public JsonObject removeKey(String key) throws IOException {
-        Checks.notNull(key);
+    public JsonObject removeKey(@NotNull String key) throws IOException {
         return removeKey(key, true);
     }
 
@@ -272,8 +262,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @param key Key to check for
      * @return true if the value exists, false if otherwise.
      */
-    public boolean memberExists(String key) {
-        Checks.notNull(key);
+    public boolean memberExists(@NotNull String key) {
         return content.has(key);
     }
 
@@ -308,7 +297,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @param text Text to write
      * @throws IOException If I/O exceptions were encountered
      */
-    private void write(String text) throws IOException {
+    private void write(@NotNull String text) throws IOException {
         if (bufferedWriter != null) bufferedWriter.write(text);
         else Files.write(Paths.get(file.getPath()), text.getBytes(StandardCharsets.UTF_8));
     }
@@ -321,9 +310,8 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @return This object instance
      */
     @Override
-    public JsonWriter setFile(JsonFile file) {
+    public JsonWriter setFile(@NotNull JsonFile file) {
         checkLocked("Cannot invoke #setFile() on a locked JsonWriter!");
-        Checks.notNull(file);
         reader.setFile(file);
         this.file = file;
         contentElement = reader.getJsonElement(Throwable::printStackTrace);
@@ -368,7 +356,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @param file JSON file to write to
      * @return The JsonWriter object
      */
-    public static JsonWriter of(JsonFile file) {
+    public static JsonWriter of(@NotNull JsonFile file) {
         try {
             return new JsonWriter(file);
         } catch (IOException e) {
@@ -383,7 +371,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
      * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
      * @return The JsonWriter object
      */
-    public static JsonWriter of(JsonFile file, boolean locked) {
+    public static JsonWriter of(@NotNull JsonFile file, boolean locked) {
         try {
             return new JsonWriter(file, locked);
         } catch (IOException e) {

@@ -15,15 +15,14 @@
  */
 package net.reflxction.simplejson.json;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.reflxction.simplejson.exceptions.JsonParseException;
-import net.reflxction.simplejson.utils.Checks;
 import net.reflxction.simplejson.utils.Gsons;
 import net.reflxction.simplejson.utils.JsonUtils;
-import net.reflxction.simplejson.utils.ObjectUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -69,8 +68,7 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
      * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
      * @throws IOException I/O exceptions while connecting with the file
      */
-    public JsonReader(JsonFile file, boolean locked) throws IOException {
-        Checks.notNull(file);
+    public JsonReader(@NotNull JsonFile file, boolean locked) throws IOException {
         inputReader = false;
         this.file = file;
         fileReader = new FileReader(file.getFile());
@@ -84,7 +82,7 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
      * @param file File to read for
      * @throws IOException I/O exceptions while connecting with the file
      */
-    public JsonReader(JsonFile file) throws IOException {
+    public JsonReader(@NotNull JsonFile file) throws IOException {
         this(file, false);
     }
 
@@ -97,8 +95,7 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
      * @param reader Reader to initiate from
      * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
      */
-    public JsonReader(BufferedReader reader, boolean locked) {
-        Preconditions.checkNotNull(reader, "BufferedReader (reader) cannot be null");
+    public JsonReader(@NotNull BufferedReader reader, boolean locked) {
         inputReader = true;
         bufferedReader = reader;
         this.locked = locked;
@@ -112,7 +109,7 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
      *
      * @param reader Reader to initiate from
      */
-    public JsonReader(BufferedReader reader) {
+    public JsonReader(@NotNull BufferedReader reader) {
         this(reader, false);
     }
 
@@ -136,8 +133,7 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
      * @param <T>  The given object assignment
      * @return The object assigned, after parsing from JSON
      */
-    public <T> T deserializeAs(Type type) {
-        Checks.notNull(type);
+    public <T> T deserializeAs(@NotNull Type type) {
         return deserializeAs(type, Gsons.DEFAULT);
     }
 
@@ -154,13 +150,10 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
      * @param <T>  The given object assignment
      * @return The object assigned, after parsing from JSON
      */
-    public <T> T deserializeAs(Type type, Gson gson) {
-        Checks.notNull(type);
-        Checks.notNull(gson);
+    public <T> T deserializeAs(@NotNull Type type, @NotNull Gson gson) {
         T result = gson.fromJson(bufferedReader, type);
-        ObjectUtils.ifNull(result, () -> {
+        if (result == null)
             throw new JsonParseException("Could not parse JSON from file " + getFile().getPath() + ". Object to parse: " + type.getTypeName());
-        });
         return result;
     }
 
@@ -177,9 +170,7 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
      * @param <T>     The given object assignment
      * @return The deserialized object instance
      */
-    public <T> T deserialize(String element, Type type) {
-        Checks.notNull(element);
-        Checks.notNull(type);
+    public <T> T deserialize(@NotNull String element, @NotNull Type type) {
         return deserialize(element, type, Gsons.DEFAULT);
     }
 
@@ -197,10 +188,7 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
      * @param <T>     The given object assignment
      * @return The deserialized object instance
      */
-    public <T> T deserialize(String element, Type type, Gson gson) {
-        Checks.notNull(element);
-        Checks.notNull(type);
-        Checks.notNull(gson);
+    public <T> T deserialize(@NotNull String element, @NotNull Type type, @NotNull Gson gson) {
         JsonObject object = getJsonObject();
         return gson.fromJson(object.get(element), type);
     }
@@ -232,7 +220,7 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
      *                parsing methods.
      * @return A JSONObject from the file
      */
-    public JsonObject getJsonObject(Consumer<IOException> onError) {
+    public JsonObject getJsonObject(@Nullable Consumer<IOException> onError) {
         return getJsonElement(onError).getAsJsonObject();
     }
 
@@ -254,7 +242,8 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
             String json = new String(encoded, StandardCharsets.UTF_8);
             return JsonUtils.getElementFromString(json);
         } catch (IOException e) {
-            ObjectUtils.ifNotNull(onError, x -> onError.accept(e));
+            if (onError != null)
+                onError.accept(e);
             return null;
         }
     }
@@ -281,9 +270,8 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
      * @param file New JSON file to use. Must not be null
      * @return This object instance
      */
-    public JsonReader setFile(JsonFile file) {
+    public JsonReader setFile(@NotNull JsonFile file) {
         checkLocked("Cannot invoke #setFile() on a locked JsonReader!");
-        Checks.notNull(file);
         this.file = file;
         return this;
     }
@@ -324,7 +312,7 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
      * @param file JSON file to read from
      * @return The JsonReader object
      */
-    public static JsonReader of(JsonFile file) {
+    public static JsonReader of(@NotNull JsonFile file) {
         try {
             return new JsonReader(file);
         } catch (IOException e) {
@@ -339,7 +327,7 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
      * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
      * @return The JsonReader object
      */
-    public static JsonReader of(JsonFile file, boolean locked) {
+    public static JsonReader of(@NotNull JsonFile file, boolean locked) {
         try {
             return new JsonReader(file, locked);
         } catch (IOException e) {

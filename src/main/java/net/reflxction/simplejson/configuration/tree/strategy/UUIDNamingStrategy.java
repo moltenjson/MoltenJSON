@@ -15,6 +15,8 @@
  */
 package net.reflxction.simplejson.configuration.tree.strategy;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.UUID;
 
 /**
@@ -37,7 +39,7 @@ class UUIDNamingStrategy implements TreeNamingStrategy<UUID> {
      * @return The valid file name.
      */
     @Override
-    public String toName(UUID e) {
+    public String toName(@NotNull UUID e) {
         return e.toString();
     }
 
@@ -48,7 +50,7 @@ class UUIDNamingStrategy implements TreeNamingStrategy<UUID> {
      * @return The object key
      */
     @Override
-    public UUID fromName(String name) {
+    public UUID fromName(@NotNull String name) {
         return UUID.fromString(name);
     }
 }

@@ -15,6 +15,8 @@
  */
 package net.reflxction.simplejson.configuration.tree.strategy;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * A simple string to file name strategy. Accessible from {@link TreeNamingStrategy#STRING_STRATEGY}.
  * <p>
@@ -35,7 +37,7 @@ class StringNamingStrategy implements TreeNamingStrategy<String> {
      * @return The valid file name.
      */
     @Override
-    public String toName(String e) {
+    public String toName(@NotNull String e) {
         return e;
     }
 
@@ -46,7 +48,7 @@ class StringNamingStrategy implements TreeNamingStrategy<String> {
      * @return The object key
      */
     @Override
-    public String fromName(String name) {
+    public String fromName(@NotNull String name) {
         return name;
     }
 }

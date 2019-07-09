@@ -20,8 +20,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;
 import net.reflxction.simplejson.configuration.tree.strategy.TreeNamingStrategy;
 import net.reflxction.simplejson.utils.Gsons;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A builder-styled class designed to construct {@link TreeConfiguration} objects
@@ -56,23 +60,16 @@ public class TreeConfigurationBuilder<N, E> {
     private boolean searchSubdirectories = false;
 
     /**
-     * Whether or not to allow excluding files.
-     *
-     * @see #exclusionPrefixes
+     * The data map. This is {@link java.util.HashMap} by default.
+     * <p>
+     * Controlled by {@link #setDataMap(Map)}
      */
-    private boolean exclude = false;
+    private Map<N, E> dataMap = new HashMap<>();
 
     /**
      * Prefixes which come before the file name in order to exclude it from being loaded and updated
      */
     private ImmutableList<String> exclusionPrefixes = EMPTY_LIST;
-
-    /**
-     * Whether or not to restrict loaded files to have a specific extension.
-     *
-     * @see #restrictedExtensions
-     */
-    private boolean restrictExtension = false;
 
     /**
      * Extensions that files should strictly have to be loaded
@@ -97,10 +94,8 @@ public class TreeConfigurationBuilder<N, E> {
      * @param directory      Directory which contains all the data files
      * @param namingStrategy The naming strategy used in fetching file names and vice versa
      */
-    public TreeConfigurationBuilder(File directory, TreeNamingStrategy<N> namingStrategy) {
-        Preconditions.checkNotNull(directory, "File (directory) cannot be null");
+    public TreeConfigurationBuilder(@NotNull File directory, @NotNull TreeNamingStrategy<N> namingStrategy) {
         Preconditions.checkArgument(directory.isDirectory(), "File is not a directory!");
-        Preconditions.checkNotNull(namingStrategy, "TreeNamingStrategy<N> (namingStrategy) cannot be null");
         this.directory = directory;
         this.namingStrategy = namingStrategy;
     }
@@ -109,9 +104,9 @@ public class TreeConfigurationBuilder<N, E> {
      * Sets the GSON profile used in loading and updating operations
      *
      * @param gson New GSON profile to set
-     * @return This builder instance
+     * @return A reference to this builder
      */
-    public TreeConfigurationBuilder<N, E> setGson(Gson gson) {
+    public TreeConfigurationBuilder<N, E> setGson(@Nullable Gson gson) {
         if (gson == null) return this;
         this.gson = gson;
         return this;
@@ -120,7 +115,7 @@ public class TreeConfigurationBuilder<N, E> {
     /**
      * Sets whether sub-directories should be searched for files
      *
-     * @return This builder instance
+     * @return A reference to this builder
      */
     public TreeConfigurationBuilder<N, E> searchSubdirectories() {
         return searchSubdirectories(true);
@@ -132,7 +127,7 @@ public class TreeConfigurationBuilder<N, E> {
      * Used locally by {@link TreeConfiguration#asBuilder()}.
      *
      * @param searchSubdirectories New value to set
-     * @return This builder instance
+     * @return A reference to this builder
      */
     TreeConfigurationBuilder<N, E> searchSubdirectories(boolean searchSubdirectories) {
         this.searchSubdirectories = searchSubdirectories;
@@ -147,12 +142,27 @@ public class TreeConfigurationBuilder<N, E> {
      * Passing {@code null} will have no effect.
      *
      * @param prefixes Prefixes that exclude files
-     * @return This builder instance
+     * @return A reference to this builder
      */
-    public TreeConfigurationBuilder<N, E> setExclusionPrefixes(ImmutableList<String> prefixes) {
+    public TreeConfigurationBuilder<N, E> setExclusionPrefixes(@Nullable ImmutableList<String> prefixes) {
         if (prefixes == null) return this;
-        this.exclude = !prefixes.isEmpty();
         this.exclusionPrefixes = prefixes;
+        return this;
+    }
+
+    /**
+     * Sets the map that the data would be stored in. This is by default an empty {@link java.util.HashMap},
+     * however it can be changed to be another map type, allowing to choose a more appropriate map depending
+     * on the environment (e.g a multithreaded environment may need a {@link java.util.concurrent.ConcurrentHashMap}).
+     * <p>
+     * If the passed {@code Map} is {@code null}, this method will have no effect
+     *
+     * @param map New map to set
+     * @return A
+     */
+    public TreeConfigurationBuilder<N, E> setDataMap(@Nullable Map<N, E> map) {
+        if (map == null) return this;
+        this.dataMap = map;
         return this;
     }
 
@@ -164,11 +174,10 @@ public class TreeConfigurationBuilder<N, E> {
      * Passing {@code null} will have no effect.
      *
      * @param extensions Restricted extensions.
-     * @return This builder instance
+     * @return A reference to this builder
      */
-    public TreeConfigurationBuilder<N, E> setRestrictedExtensions(ImmutableList<String> extensions) {
+    public TreeConfigurationBuilder<N, E> setRestrictedExtensions(@Nullable ImmutableList<String> extensions) {
         if (extensions == null) return this;
-        this.restrictExtension = !extensions.isEmpty();
         this.restrictedExtensions = extensions;
         return this;
     }
@@ -177,10 +186,9 @@ public class TreeConfigurationBuilder<N, E> {
      * Sets the naming strategy used in this configuration. This is to fetch file names and update them.
      *
      * @param strategy New strategy to set
-     * @return This builder instance
+     * @return A reference to this builder
      */
-    public TreeConfigurationBuilder<N, E> setNamingStrategy(TreeNamingStrategy<N> strategy) {
-        Preconditions.checkNotNull(namingStrategy, "TreeNamingStrategy<N> (namingStrategy) cannot be null");
+    public TreeConfigurationBuilder<N, E> setNamingStrategy(@Nullable TreeNamingStrategy<N> strategy) {
         this.namingStrategy = strategy;
         return this;
     }
@@ -190,7 +198,7 @@ public class TreeConfigurationBuilder<N, E> {
      * throws an exception, or files which cannot be parsed (malformed JSON).
      *
      * @param ignoreInvalidFiles New value to set
-     * @return This builder instance
+     * @return A reference to this builder
      */
     public TreeConfigurationBuilder<N, E> ignoreInvalidFiles(boolean ignoreInvalidFiles) {
         this.ignoreInvalidFiles = ignoreInvalidFiles;
@@ -203,7 +211,7 @@ public class TreeConfigurationBuilder<N, E> {
      * @return The constructed configuration
      */
     public TreeConfiguration<N, E> build() {
-        return new TreeConfiguration<>(directory, gson, searchSubdirectories, exclusionPrefixes, restrictedExtensions, namingStrategy, ignoreInvalidFiles);
+        return new TreeConfiguration<>(dataMap, directory, gson, searchSubdirectories, exclusionPrefixes, restrictedExtensions, namingStrategy, ignoreInvalidFiles);
     }
 
 }

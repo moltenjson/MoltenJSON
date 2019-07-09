@@ -15,9 +15,9 @@
  */
 package net.reflxction.simplejson.json;
 
-import com.google.common.base.Preconditions;
 import net.reflxction.simplejson.configuration.direct.DirectConfiguration;
 import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,11 +60,10 @@ public class JsonFile {
      * Initiates a JSON file
      *
      * @param file             File
-     * @param createIfNotExist Whether the file should be created if it doesn't exist already.
+     * @param createIfNotExist Whether the file should be created if it does not exist already.
      * @throws IOException I/O exceptions while connecting with the file
      */
-    public JsonFile(File file, boolean createIfNotExist) throws IOException {
-        Preconditions.checkNotNull(file, "File (file) cannot be null");
+    public JsonFile(@NotNull File file, boolean createIfNotExist) throws IOException {
         this.file = file;
         this.path = file.getPath();
         prepare(createIfNotExist);
@@ -79,9 +78,7 @@ public class JsonFile {
      *                         already.
      * @throws IOException I/O exceptions whilst connecting to the file.
      */
-    public JsonFile(File parent, String child, boolean createIfNotExist) throws IOException {
-        Preconditions.checkNotNull(parent, "File (parent) cannot be null");
-        Preconditions.checkNotNull(child, "String (child) cannot be null");
+    public JsonFile(@NotNull File parent, @NotNull String child, boolean createIfNotExist) throws IOException {
         this.file = new File(parent, child);
         this.path = file.getPath();
         prepare(createIfNotExist);
@@ -92,12 +89,10 @@ public class JsonFile {
      *
      * @param parent           The parent directory
      * @param child            The child file. Must be a valid JSON file
-     * @param createIfNotExist Whether the file should be created if it doesn't exist already.
+     * @param createIfNotExist Whether the file should be created if it does not exist already.
      * @throws IOException I/O exceptions while connecting to the file
      */
-    public JsonFile(String parent, String child, boolean createIfNotExist) throws IOException {
-        Preconditions.checkNotNull(parent, "File (parent) cannot be null");
-        Preconditions.checkNotNull(child, "String (child) cannot be null");
+    public JsonFile(@NotNull String parent, @NotNull String child, boolean createIfNotExist) throws IOException {
         this.file = new File(parent, child);
         this.path = file.getPath();
         prepare(createIfNotExist);
@@ -106,7 +101,7 @@ public class JsonFile {
     /**
      * {@inheritDoc}
      */
-    public JsonFile(String parent, String child) throws IOException {
+    public JsonFile(@NotNull String parent, @NotNull String child) throws IOException {
         this(parent, child, true);
     }
 
@@ -116,14 +111,14 @@ public class JsonFile {
      * @param file File to retrieve
      * @throws IOException I/O problems with connecting to the file
      */
-    public JsonFile(File file) throws IOException {
+    public JsonFile(@NotNull File file) throws IOException {
         this(file, true);
     }
 
     /**
      * {@inheritDoc}
      */
-    public JsonFile(File parent, String child) throws IOException {
+    public JsonFile(@NotNull File parent, @NotNull String child) throws IOException {
         this(parent, child, true);
     }
 
@@ -131,10 +126,10 @@ public class JsonFile {
      * Initiates a new JSON file
      *
      * @param path             Path to the JSON file
-     * @param createIfNotExist Whether this should create the file if it doesn't exist already.
+     * @param createIfNotExist Whether this should create the file if it does not exist already.
      * @throws IOException I/O exceptions while connecting with the file
      */
-    public JsonFile(String path, boolean createIfNotExist) throws IOException {
+    public JsonFile(@NotNull String path, boolean createIfNotExist) throws IOException {
         this(new File(path), createIfNotExist);
     }
 
@@ -144,7 +139,7 @@ public class JsonFile {
      * @param path Path of the file
      * @throws IOException I/O exceptions while connecting with the file
      */
-    public JsonFile(String path) throws IOException {
+    public JsonFile(@NotNull String path) throws IOException {
         this(path, true);
     }
 
@@ -170,7 +165,7 @@ public class JsonFile {
      * Prepares this {@link JsonFile} by creating it (if required), and writes
      * curly brackets ("{}") to make it usable and maintainable by readers and writers
      *
-     * @param create Whether to create the file if it doesn't exist already
+     * @param create Whether to create the file if it does not exist already
      * @throws IOException Issues with creating or writing
      */
     private void prepare(boolean create) throws IOException {
@@ -215,7 +210,7 @@ public class JsonFile {
      * @param file File to retrieve
      * @return The JsonFile object
      */
-    public static JsonFile of(File file) {
+    public static JsonFile of(@NotNull File file) {
         try {
             return new JsonFile(file);
         } catch (IOException e) {
@@ -227,10 +222,10 @@ public class JsonFile {
      * Initiates a JSON file
      *
      * @param file              File to use
-     * @param createIfNotExists Whether the file should be created if it doesn't exist already.
+     * @param createIfNotExists Whether the file should be created if it does not exist already.
      * @return The JsonFile object
      */
-    public static JsonFile of(File file, boolean createIfNotExists) {
+    public static JsonFile of(@NotNull File file, boolean createIfNotExists) {
         try {
             return new JsonFile(file, createIfNotExists);
         } catch (IOException e) {
@@ -244,7 +239,7 @@ public class JsonFile {
      * @param path Path of the JSON file
      * @return The JsonFile object
      */
-    public static JsonFile of(String path) {
+    public static JsonFile of(@NotNull String path) {
         try {
             return new JsonFile(path);
         } catch (IOException e) {
@@ -256,10 +251,10 @@ public class JsonFile {
      * Initiates a new JSON file
      *
      * @param path             Path to the JSON file
-     * @param createIfNotExist Whether this should create the file if it doesn't exist already.
+     * @param createIfNotExist Whether this should create the file if it does not exist already.
      * @return The JsonFile object
      */
-    public static JsonFile of(String path, boolean createIfNotExist) {
+    public static JsonFile of(@NotNull String path, boolean createIfNotExist) {
         try {
             return new JsonFile(path, createIfNotExist);
         } catch (IOException e) {
@@ -275,7 +270,7 @@ public class JsonFile {
      * @param createIfNotExist Whether should the file be created if it does not exist
      * @return New JSON file instance
      */
-    public static JsonFile of(String parent, String child, boolean createIfNotExist) {
+    public static JsonFile of(@NotNull String parent, @NotNull String child, boolean createIfNotExist) {
         try {
             return new JsonFile(parent, child, createIfNotExist);
         } catch (IOException e) {
@@ -286,7 +281,7 @@ public class JsonFile {
     /**
      * {@inheritDoc}
      */
-    public static JsonFile of(String parent, String child) {
+    public static JsonFile of(@NotNull String parent, @NotNull String child) {
         try {
             return new JsonFile(parent, child);
         } catch (IOException e) {
@@ -297,7 +292,7 @@ public class JsonFile {
     /**
      * {@inheritDoc}
      */
-    public static JsonFile of(File parent, String child) {
+    public static JsonFile of(@NotNull File parent, @NotNull String child) {
         try {
             return new JsonFile(parent, child);
         } catch (IOException e) {

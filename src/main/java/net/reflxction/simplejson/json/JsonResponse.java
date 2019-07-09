@@ -15,13 +15,12 @@
  */
 package net.reflxction.simplejson.json;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import net.reflxction.simplejson.utils.Checks;
 import net.reflxction.simplejson.utils.Gsons;
 import net.reflxction.simplejson.utils.JsonUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -63,9 +62,7 @@ public class JsonResponse {
      * @param response The response text. Must be a valid JSON.
      * @param gson     GSON profile to use
      */
-    public JsonResponse(String response, Gson gson) {
-        Preconditions.checkNotNull(response, "String (response) cannot be null");
-        Checks.notNull(gson);
+    public JsonResponse(@NotNull String response, @NotNull Gson gson) {
         this.responseText = response;
         this.response = JsonUtils.getObjectFromString(response, this.gson = gson);
     }
@@ -76,7 +73,7 @@ public class JsonResponse {
      *
      * @param response The response text. Must be a valid JSON.
      */
-    public JsonResponse(String response) {
+    public JsonResponse(@NotNull String response) {
         this(response, Gsons.DEFAULT);
     }
 
@@ -88,8 +85,7 @@ public class JsonResponse {
      * @param <T>  Class object assignment
      * @return The deserialized object
      */
-    public <T> T get(String key, Type type) {
-        Checks.notNull(key);
+    public <T> T get(@NotNull String key, @NotNull Type type) {
         return gson.fromJson(response.get(key), type);
     }
 
@@ -100,8 +96,7 @@ public class JsonResponse {
      * @param key Key to fetch from
      * @return The associated string
      */
-    public final String getString(String key) {
-        Checks.notNull(key);
+    public final String getString(@NotNull String key) {
         return response.get(key).getAsString();
     }
 
@@ -111,8 +106,7 @@ public class JsonResponse {
      * @param key Key to fetch from
      * @return The associated integer
      */
-    public final int getInt(String key) {
-        Checks.notNull(key);
+    public final int getInt(@NotNull String key) {
         return response.get(key).getAsInt();
     }
 
@@ -122,8 +116,7 @@ public class JsonResponse {
      * @param key Key to fetch from
      * @return The associated double
      */
-    public final double getDouble(String key) {
-        Checks.notNull(key);
+    public final double getDouble(@NotNull String key) {
         return response.get(key).getAsDouble();
     }
 
@@ -133,8 +126,7 @@ public class JsonResponse {
      * @param key Key to fetch from
      * @return The associated long
      */
-    public final long getLong(String key) {
-        Checks.notNull(key);
+    public final long getLong(@NotNull String key) {
         return response.get(key).getAsLong();
     }
 
@@ -144,8 +136,7 @@ public class JsonResponse {
      * @param key Key to fetch from
      * @return The associated float
      */
-    public final float getFloat(String key) {
-        Checks.notNull(key);
+    public final float getFloat(@NotNull String key) {
         return response.get(key).getAsFloat();
     }
 
@@ -155,8 +146,7 @@ public class JsonResponse {
      * @param key Key to fetch from
      * @return The associated boolean
      */
-    public final boolean getBoolean(String key) {
-        Checks.notNull(key);
+    public final boolean getBoolean(@NotNull String key) {
         return response.get(key).getAsBoolean();
     }
 
@@ -166,8 +156,7 @@ public class JsonResponse {
      * @param key Key to fetch from
      * @return The associated decimal
      */
-    public final BigDecimal getBigDecimal(String key) {
-        Checks.notNull(key);
+    public final BigDecimal getBigDecimal(@NotNull String key) {
         return response.get(key).getAsBigDecimal();
     }
 
@@ -178,8 +167,7 @@ public class JsonResponse {
      * @param <E> List generic
      * @return The associated List
      */
-    public final <E> List<E> getList(String key) {
-        Checks.notNull(key);
+    public final <E> List<E> getList(@NotNull String key) {
         Type type = new TypeToken<List<E>>() {
         }.getType();
         return get(key, type);
@@ -193,8 +181,7 @@ public class JsonResponse {
      * @param <V> The map value generic
      * @return The associated Map
      */
-    public final <K, V> Map<K, V> getMap(String key) {
-        Checks.notNull(key);
+    public final <K, V> Map<K, V> getMap(@NotNull String key) {
         Type type = new TypeToken<LinkedHashMap<K, V>>() {
         }.getType();
         return get(key, type);
