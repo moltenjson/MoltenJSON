@@ -39,7 +39,7 @@ public class InvalidFileException extends RuntimeException {
      * call to {@link #initCause}.
      *
      * @param cause   Parent exception cause
-     * @param file    The invalid file placeholder that caused the exception
+     * @param file    The invalid file that caused the exception
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
