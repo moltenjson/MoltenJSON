@@ -40,3 +40,7 @@ out/production/resources/
 out/test/resources/
 .gradle/
 build/docs/
+
+# Project exclude paths
+/out/
+/out/production/classes/
