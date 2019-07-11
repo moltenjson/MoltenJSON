@@ -27,6 +27,7 @@ src/main/java/net/reflxction/run/
 .idea/
 src/test/
 settings.gradle
+gradle.properties
 gradlew
 gradlew.bat
 build/resources/
@@ -44,3 +45,7 @@ build/docs/
 # Project exclude paths
 /out/
 /out/production/classes/
+/gradle.properties
+
+# Project exclude paths
+/build/
