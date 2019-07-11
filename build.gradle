@@ -1,8 +1,20 @@
-plugins {
-    id 'java'
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-nexus-plugin:2.3.1'
+    }
 }
 
-group 'net.reflxction'
+plugins {
+    id 'java'
+    id 'io.codearte.nexus-staging' version '0.11.0'
+}
+
+apply plugin: 'com.bmuschko.nexus'
+
+group 'io.github.moltenjson'
 version '2.4.0'
 
 sourceCompatibility = 1.8
@@ -28,15 +40,18 @@ dependencies {
 
 }
 
+/* Removed in favor of nexus
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
 }
 
+
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
     from javadoc.destinationDir
 }
+*/
 
 sourceSets {
     main {
@@ -45,4 +60,43 @@ sourceSets {
             exclude 'src/main/java/examples'
         }
     }
+}
+
+modifyPom {
+    project {
+        name 'MoltenJSON'
+        description 'A powerful gson-based library for interacting with any type and level of JSON.'
+        url 'https://github.com/moltenjson/MoltenJSON'
+        inceptionYear '2019'
+        scm {
+            url 'https://github.com/moltenjson/MoltenJSON'
+            connection 'scm:https://github.com/moltenjson/MoltenJSON.git'
+            developerConnection 'scm:git://github.com/moltenjson/MoltenJSON.git'
+        }
+        licenses {
+            license {
+                name 'The Apache Software License, Version 2.0'
+                url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                distribution 'repo'
+            }
+        }
+        developers {
+            developer {
+                id 'reflxctiondev'
+                name 'ReflxctionDev'
+                email 'aloosh.kasasbeh@gmail.com'
+            }
+        }
+    }
+}
+
+extraArchive {
+    sources = true
+    javadoc = true
+}
+
+nexus {
+    sign = true
+    repositoryUrl = 'https://oss.sonatype.org/service/local/staging/deploy/maven2/'
+    snapshotRepositoryUrl = 'https://oss.sonatype.org/content/repositories/snapshots/'
 }
