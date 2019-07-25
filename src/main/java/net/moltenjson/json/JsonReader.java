@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 /**
  * Reads and parses JSON data from JSON files
  */
-public class JsonReader implements Closeable, Lockable<JsonReader> {
+public class JsonReader implements Closeable, Lockable<JsonReader>, Refreshable<JsonReader> {
 
     /**
      * The JSON file to read from
@@ -114,10 +114,11 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
     }
 
     /**
-     * The JSON file
+     * Returns the {@link JsonFile} that this component controls
      *
-     * @return The JSON file
+     * @return The JsonFile that this component holds
      */
+    @Override
     public JsonFile getFile() {
         return file;
     }
@@ -335,4 +336,13 @@ public class JsonReader implements Closeable, Lockable<JsonReader> {
         }
     }
 
+    /**
+     * Updates the cached content with with whatever is found in the file.
+     *
+     * @return The appropriate object to return when the component is refreshed
+     */
+    @Override
+    public JsonReader refresh() {
+        return setFile(file);
+    }
 }

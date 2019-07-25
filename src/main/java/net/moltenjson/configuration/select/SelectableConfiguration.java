@@ -21,6 +21,7 @@ import net.moltenjson.configuration.direct.DirectConfiguration;
 import net.moltenjson.json.JsonFile;
 import net.moltenjson.json.JsonWriter;
 import net.moltenjson.json.Lockable;
+import net.moltenjson.json.Refreshable;
 import net.moltenjson.utils.Gsons;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,7 +39,7 @@ import java.util.stream.Collectors;
  * @see SelectKey
  * @see DirectConfiguration
  */
-public class SelectableConfiguration implements Lockable<SelectableConfiguration> {
+public class SelectableConfiguration implements Lockable<SelectableConfiguration>, Refreshable<SelectableConfiguration> {
 
     /**
      * The JSON writer which caches the content and writes to the file
@@ -182,6 +183,16 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
     }
 
     /**
+     * Returns the {@link JsonFile} that this component controls
+     *
+     * @return The JsonFile that this component holds
+     */
+    @Override
+    public JsonFile getFile() {
+        return writer.getFile();
+    }
+
+    /**
      * Sets the new file. Implementation of this method should also update any content
      * this component controls.
      *
@@ -196,6 +207,15 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
         return this;
     }
 
+    /**
+     * Updates the cached content with with whatever is found in the file.
+     *
+     * @return The appropriate object to return when the component is refreshed
+     */
+    @Override
+    public SelectableConfiguration refresh() {
+        return setFile(writer.getFile()).associate();
+    }
 
     /**
      * Removes the given key from the JSON file.
@@ -218,7 +238,7 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
                 field.setAccessible(true);
                 content.add(getKey(field), gson.toJsonTree(Reflector.getStaticValue(field)));
             }));
-            writer.writeAndOverride(content, true);
+            writer.writeAndOverride(content, gson);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

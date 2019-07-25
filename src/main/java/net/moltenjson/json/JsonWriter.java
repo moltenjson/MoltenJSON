@@ -41,7 +41,7 @@ import java.nio.file.Paths;
  * @see DirectConfiguration
  * @see SelectableConfiguration
  */
-public class JsonWriter implements Closeable, Lockable<JsonWriter> {
+public class JsonWriter implements Closeable, Lockable<JsonWriter>, Refreshable<JsonWriter> {
 
     /**
      * Represents an empty JSON object. Instances of the content will be derived from this object if
@@ -267,7 +267,6 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
         return content.has(key);
     }
 
-
     /**
      * Returns the cached content which is created whenever a {@link JsonWriter} is initiated.
      * <p>
@@ -316,7 +315,7 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
         reader.setFile(file);
         this.file = file;
         contentElement = reader.getJsonElement(Throwable::printStackTrace);
-        content = reader.getJsonObject();
+        if (contentElement.isJsonObject()) content = reader.getJsonObject();
         return this;
     }
 
@@ -330,6 +329,26 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
     @Override
     public boolean isLocked() {
         return locked;
+    }
+
+    /**
+     * Returns the {@link JsonFile} that this component controls
+     *
+     * @return The JsonFile that this component holds
+     */
+    @Override
+    public JsonFile getFile() {
+        return file;
+    }
+
+    /**
+     * Updates the cached content with with whatever is found in the file.
+     *
+     * @return The appropriate object to return when the component is refreshed
+     */
+    @Override
+    public JsonWriter refresh() {
+        return setFile(file);
     }
 
     /**
@@ -379,5 +398,4 @@ public class JsonWriter implements Closeable, Lockable<JsonWriter> {
             throw new RuntimeException(e);
         }
     }
-
 }

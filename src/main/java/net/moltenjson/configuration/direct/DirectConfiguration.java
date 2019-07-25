@@ -22,6 +22,7 @@ import net.moltenjson.configuration.select.SelectableConfiguration;
 import net.moltenjson.json.JsonFile;
 import net.moltenjson.json.JsonWriter;
 import net.moltenjson.json.Lockable;
+import net.moltenjson.json.Refreshable;
 import net.moltenjson.utils.Gsons;
 import net.moltenjson.utils.JsonUtils;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +46,7 @@ import java.util.function.Consumer;
  *
  * @see SelectableConfiguration
  */
-public class DirectConfiguration implements Lockable<DirectConfiguration> {
+public class DirectConfiguration implements Lockable<DirectConfiguration>, Refreshable<DirectConfiguration> {
 
     /**
      * The JSON writer used to cache content and write to the file
@@ -297,6 +298,16 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
     }
 
     /**
+     * Updates the cached content with with whatever is found in the file.
+     *
+     * @return The appropriate object to return when the component is refreshed
+     */
+    @Override
+    public final DirectConfiguration refresh() {
+        return setFile(writer.getFile()); // This will update the content
+    }
+
+    /**
      * Returns whether the current component is locked or not. This will control whether
      * {@link #setFile(JsonFile)} can be used or not.
      *
@@ -305,6 +316,16 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
     @Override
     public boolean isLocked() {
         return locked;
+    }
+
+    /**
+     * Returns the {@link JsonFile} that this component controls
+     *
+     * @return The JsonFile that this component holds
+     */
+    @Override
+    public JsonFile getFile() {
+        return writer.getFile();
     }
 
     /**
@@ -335,5 +356,4 @@ public class DirectConfiguration implements Lockable<DirectConfiguration> {
             throw new RuntimeException(e);
         }
     }
-
 }

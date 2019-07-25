@@ -35,7 +35,7 @@ import java.nio.charset.StandardCharsets;
  *
  * @see JsonResponse
  */
-public class JsonURLReader {
+public class JsonURLReader implements Refreshable<JsonElement> {
 
     /**
      * URL to read from
@@ -103,6 +103,7 @@ public class JsonURLReader {
      *
      * @return The new content
      */
+    @Override
     public JsonElement refresh() {
         return content = parseContent();
     }

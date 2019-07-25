@@ -15,6 +15,7 @@
  */
 package net.moltenjson.json;
 
+import com.google.common.base.Preconditions;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -29,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
  * have any setters.
  *
  * @param <T> This object reference
+ * @see Refreshable
  * @since SimpleJSON 2.0.2
  */
 public interface Lockable<T extends Lockable> {
@@ -40,6 +42,13 @@ public interface Lockable<T extends Lockable> {
      * @return Whether the current component is locked or not.
      */
     boolean isLocked();
+
+    /**
+     * Returns the {@link JsonFile} that this component controls
+     *
+     * @return The JsonFile that this component holds
+     */
+    JsonFile getFile();
 
     /**
      * Sets the new file. Implementation of this method should also update any content
@@ -56,8 +65,7 @@ public interface Lockable<T extends Lockable> {
      * @param message Message to throw if not allowed.
      */
     default void checkLocked(String message) {
-        if (isLocked())
-            throw new IllegalStateException(message);
+        Preconditions.checkState(!isLocked(), message);
     }
 
 }
