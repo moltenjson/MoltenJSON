@@ -135,22 +135,6 @@ public class TreeConfigurationBuilder<N, E> {
     }
 
     /**
-     * Sets the prefixes that come before a file name to exclude it from being loaded and updated.
-     * For example, if one of the exclusion prefixes is "-", any file name that starts with "-"
-     * will be excluded from being loaded and updated.
-     * <p>
-     * Passing {@code null} will have no effect.
-     *
-     * @param prefixes Prefixes that exclude files
-     * @return A reference to this builder
-     */
-    public TreeConfigurationBuilder<N, E> setExclusionPrefixes(@Nullable ImmutableList<String> prefixes) {
-        if (prefixes == null) return this;
-        this.exclusionPrefixes = prefixes;
-        return this;
-    }
-
-    /**
      * Sets the map that the data would be stored in. This is by default an empty {@link java.util.HashMap},
      * however it can be changed to be another map type, allowing to choose a more appropriate map depending
      * on the environment (e.g a multithreaded environment may need a {@link java.util.concurrent.ConcurrentHashMap}).
@@ -167,6 +151,24 @@ public class TreeConfigurationBuilder<N, E> {
     }
 
     /**
+     * Sets the prefixes that come before a file name to exclude it from being loaded and updated.
+     * For example, if one of the exclusion prefixes is "-", any file name that starts with "-"
+     * will be excluded from being loaded and updated.
+     * <p>
+     * Passing {@code null} will have no effect.
+     *
+     * @param prefixes Prefixes that exclude files
+     * @return A reference to this builder
+     * @throws IllegalArgumentException If the inputted list is empty
+     */
+    public TreeConfigurationBuilder<N, E> setExclusionPrefixes(@Nullable ImmutableList<String> prefixes) {
+        if (prefixes == null) return this;
+        Preconditions.checkArgument(prefixes.size() > 0, "Exclusion prefixes must contain at least one element!");
+        this.exclusionPrefixes = prefixes;
+        return this;
+    }
+
+    /**
      * Sets the file extensions that files must have in order to be loaded and updated
      * For example, if the restricted extensions are ["json"], any file with any extension that is not
      * "json" will be excluded from being loaded and updated.
@@ -175,9 +177,11 @@ public class TreeConfigurationBuilder<N, E> {
      *
      * @param extensions Restricted extensions.
      * @return A reference to this builder
+     * @throws IllegalArgumentException If the inputted list is empty
      */
     public TreeConfigurationBuilder<N, E> setRestrictedExtensions(@Nullable ImmutableList<String> extensions) {
         if (extensions == null) return this;
+        Preconditions.checkArgument(extensions.size() > 0, "Restricted extensions must contain at least one element!");
         this.restrictedExtensions = extensions;
         return this;
     }
