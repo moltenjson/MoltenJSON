@@ -196,9 +196,10 @@ public class TreeConfiguration<N, E> {
      * <p>
      * Invoking this method updates the value {@link #dataLoaded} to be {@code true}.
      *
-     * @param templateType The type of data to serialize. This should be exactly the same
+     * @param templateType The type of data to deserialize as. This should be exactly the same
      *                     as the one specified in generics declaration.
      * @return The loaded data
+     * @see #lazyLoad(Object, Type)
      * @see #getData()
      */
     public Map<N, E> load(@NotNull Type templateType) {
@@ -216,6 +217,29 @@ public class TreeConfiguration<N, E> {
             }
         }
         return data;
+    }
+
+    /**
+     * Lazily loads the required data into memory and caches it into the {@link #data} map. Unlike {@link #load(Type)},
+     * this method only loads and caches the required data when requested, hence it is useful in cases where the data to
+     * control is relatively large and loading all of it is redundant.
+     *
+     * @param name     Name to look up and retrieve from
+     * @param template The type of data to serialize. This should be exactly the same
+     *                 as the one specified in generics declaration.
+     * @return The value associated with the name, or {@code null} if the specified name had no file associated with it.
+     * @see #load(Type)
+     * @see #getData()
+     */
+    public E lazyLoad(@NotNull final N name, @NotNull final Type template) {
+        E value = data.get(name);
+        if (value != null) return value; // In case there was an entry, use that entry
+        File file = files.stream().filter(f -> namingStrategy.toName(name).equals(FilenameUtils.getBaseName(f.getName())))
+                .findAny().orElse(null); // Get the file associated with the name
+        if (file == null) return null;
+        value = gson.fromJson(setFile(file, false).getCachedContentAsElement(), template);
+        data.put(name, value);
+        return value;
     }
 
     /**
@@ -247,7 +271,7 @@ public class TreeConfiguration<N, E> {
      * @see #get(Object)
      */
     public boolean hasData(@NotNull N name) {
-        return dataLoaded && data.containsKey(name);
+        return data.containsKey(name);
     }
 
     /**
@@ -320,7 +344,7 @@ public class TreeConfiguration<N, E> {
      */
     public E create(@NotNull N name, @NotNull E value, @NotNull String fileExtension) throws IOException {
         data.put(name, value);
-        Preconditions.checkArgument(restrictedExtensions.contains(fileExtension), "The specified file extension (\"" + fileExtension + "\") is not one of the allowed extensions (" + restrictedExtensions + ")");
+        Preconditions.checkArgument(restrictedExtensions.isEmpty() || restrictedExtensions.contains(fileExtension), "The specified file extension (\"" + fileExtension + "\") is not one of the allowed extensions (" + restrictedExtensions + ")");
         File file = new File(directory, namingStrategy.toName(name) + "." + fileExtension);
         files.add(file);
         setFile(file, true).writeAndOverride(get(name), gson);
@@ -455,7 +479,7 @@ public class TreeConfiguration<N, E> {
         if (isDirectoryEmpty(directory)) return new LinkedList<>();
         File[] files = Preconditions.checkNotNull(directory.listFiles(fileFilter));
         if (files.length == 0) return new LinkedList<>();
-        List<File> includedFiles = new LinkedList<>();
+        List<File> includedFiles = new ArrayList<>();
         for (File file : files) {
             if (!file.isDirectory())
                 includedFiles.add(file);
