@@ -68,6 +68,7 @@ public class TreeFileFilter<N, E> implements FileFilter {
         if (pathname.isDirectory() && searchSubdirectories) return true;
         if (exclusionPrefixes.stream().anyMatch(pathname.getName()::startsWith))
             return false;
-        else return restrictedExtensions.stream().anyMatch(FilenameUtils.getExtension(pathname.getName())::equals);
+        else if (restrictedExtensions.isEmpty()) return true;
+        return restrictedExtensions.stream().anyMatch(FilenameUtils.getExtension(pathname.getName())::equals);
     }
 }
