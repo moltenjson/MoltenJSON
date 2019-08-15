@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,6 +59,13 @@ public class TreeConfigurationBuilder<N, E> {
      * Controlled by {@link #searchSubdirectories()}
      */
     private boolean searchSubdirectories = false;
+
+    /**
+     * Whether to load and save data only when requested (recommended for big storage).
+     * <p>
+     * Controlled by {@link #setLazy(boolean)}
+     */
+    private boolean lazy = false;
 
     /**
      * The data map. This is {@link java.util.HashMap} by default.
@@ -119,6 +127,21 @@ public class TreeConfigurationBuilder<N, E> {
      */
     public TreeConfigurationBuilder<N, E> searchSubdirectories() {
         return searchSubdirectories(true);
+    }
+
+    /**
+     * Sets whether the configuration should only load data when requested (using {@link TreeConfiguration#lazyLoad(Object, Type)}),
+     * and saves only the loaded entries.
+     * <p>
+     * Setting this is not necessary even when lazy methods are used, however it is strongly recommended
+     * as it restrains access to non-lazy-safe methods such as {@link TreeConfiguration#save()}.
+     *
+     * @param lazy New value to set
+     * @return A reference to this builder
+     */
+    public TreeConfigurationBuilder<N, E> setLazy(boolean lazy) {
+        this.lazy = lazy;
+        return this;
     }
 
     /**
@@ -215,7 +238,7 @@ public class TreeConfigurationBuilder<N, E> {
      * @return The constructed configuration
      */
     public TreeConfiguration<N, E> build() {
-        return new TreeConfiguration<>(dataMap, directory, gson, searchSubdirectories, exclusionPrefixes, restrictedExtensions, namingStrategy, ignoreInvalidFiles);
+        return new TreeConfiguration<>(dataMap, directory, gson, searchSubdirectories, exclusionPrefixes, restrictedExtensions, namingStrategy, ignoreInvalidFiles, lazy);
     }
 
 }

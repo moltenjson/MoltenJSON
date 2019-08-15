@@ -114,6 +114,11 @@ public class TreeConfiguration<N, E> {
     private final boolean ignoreInvalidFiles;
 
     /**
+     * Whether to load or save data on request only.
+     */
+    private final boolean lazy;
+
+    /**
      * The file filter for getting all the files that meet the criteria
      */
     private final TreeFileFilter<N, E> fileFilter;
@@ -126,7 +131,7 @@ public class TreeConfiguration<N, E> {
     /**
      * All data files
      */
-    private List<File> files;
+    private Map<String, File> files;
 
     /**
      * A JSON file that is used to load the content
@@ -145,8 +150,9 @@ public class TreeConfiguration<N, E> {
      * @param namingStrategy       The naming strategy used to fetch file names and convert them into usable names
      * @param ignoreInvalidFiles   Whether or not to ignore files whom names cannot be fetched from the naming strategy,
      *                             or cannot be parsed (malformed JSON)
+     * @param lazy                 Whether to load and save data only when requested
      */
-    TreeConfiguration(@NotNull Map<N, E> data, @NotNull File directory, @NotNull Gson gson, boolean searchSubdirectories, @NotNull ImmutableList<String> exclusionPrefixes, @NotNull ImmutableList<String> restrictedExtensions, @NotNull TreeNamingStrategy<N> namingStrategy, boolean ignoreInvalidFiles) {
+    TreeConfiguration(@NotNull Map<N, E> data, @NotNull File directory, @NotNull Gson gson, boolean searchSubdirectories, @NotNull ImmutableList<String> exclusionPrefixes, @NotNull ImmutableList<String> restrictedExtensions, @NotNull TreeNamingStrategy<N> namingStrategy, boolean ignoreInvalidFiles, boolean lazy) {
         this.data = data;
         this.directory = directory;
         this.gson = gson;
@@ -155,6 +161,7 @@ public class TreeConfiguration<N, E> {
         this.restrictedExtensions = restrictedExtensions;
         this.namingStrategy = namingStrategy;
         this.ignoreInvalidFiles = ignoreInvalidFiles;
+        this.lazy = lazy;
         fileFilter = new TreeFileFilter<>(this);
         files = getIncludedFiles();
     }
@@ -182,7 +189,7 @@ public class TreeConfiguration<N, E> {
      *
      * @return Data file
      */
-    public List<File> getFiles() {
+    public Map<String, File> getFiles() {
         return files;
     }
 
@@ -203,9 +210,10 @@ public class TreeConfiguration<N, E> {
      * @see #getData()
      */
     public Map<N, E> load(@NotNull Type templateType) {
+        Preconditions.checkState(!lazy, "Cannot invoke #load(Type) on a lazy TreeConfiguration! Use #lazyLoad(N, Type) instead");
         dataLoaded = true;
         data.clear();
-        for (File file : files) {
+        for (File file : files.values()) {
             try {
                 if (setFile(file, false) == null) continue;
                 N name;
@@ -234,8 +242,7 @@ public class TreeConfiguration<N, E> {
     public E lazyLoad(@NotNull final N name, @NotNull final Type template) {
         E value = data.get(name);
         if (value != null) return value; // In case there was an entry, use that entry
-        File file = files.stream().filter(f -> namingStrategy.toName(name).equals(FilenameUtils.getBaseName(f.getName())))
-                .findAny().orElse(null); // Get the file associated with the name
+        File file = files.getOrDefault(namingStrategy.toName(name), null); // Get the file associated with the name
         if (file == null) return null;
         value = gson.fromJson(setFile(file, false).getCachedContentAsElement(), template);
         data.put(name, value);
@@ -346,7 +353,7 @@ public class TreeConfiguration<N, E> {
         data.put(name, value);
         Preconditions.checkArgument(restrictedExtensions.isEmpty() || restrictedExtensions.contains(fileExtension), "The specified file extension (\"" + fileExtension + "\") is not one of the allowed extensions (" + restrictedExtensions + ")");
         File file = new File(directory, namingStrategy.toName(name) + "." + fileExtension);
-        files.add(file);
+        files.put(namingStrategy.toName(name), file);
         setFile(file, true).writeAndOverride(get(name), gson);
         return value;
     }
@@ -385,7 +392,7 @@ public class TreeConfiguration<N, E> {
     private Optional<File> removeEntry(@NotNull N name) {
         E value = data.remove(name);
         if (value == null) return Optional.empty();
-        return files.stream().filter(file -> FilenameUtils.getBaseName(file.getName()).equals(namingStrategy.toName(name))).findFirst();
+        return Optional.of(files.get(namingStrategy.toName(name)));
     }
 
     /**
@@ -431,10 +438,37 @@ public class TreeConfiguration<N, E> {
      * invoking {@link #create(Object, Object, String)} or {@link #delete(Object)}.
      *
      * @return The new data to save
-     * @throws IOException Any exceptions in I/O writing
+     * @throws IOException           Any exceptions in I/O writing
+     * @throws IllegalStateException If the configuration is {@link #lazy}
+     * @see #saveNewMap(Map)
+     * @see #lazySave()
      */
     public Map<N, E> save() throws IOException {
+        Preconditions.checkState(!lazy, "Cannot invoke #save() on a lazy TreeConfiguration! Use #lazySave() instead");
         return saveNewMap(data);
+    }
+
+    /**
+     * Saves the lazily-loaded data from {@link #lazyLoad(Object, Type)}, by writing all the
+     * cached content into its corresponding files
+     *
+     * @return The newly saved data map, derived from {@link #data} which caches from {@link #lazyLoad(Object, Type)}.
+     * @throws IOException Any exceptions in I/O writing
+     * @see #save()
+     * @see #saveNewMap(Map)
+     */
+    public Map<N, E> lazySave() throws IOException {
+        for (N entry : data.keySet())
+            try {
+                File file = files.getOrDefault(namingStrategy.toName(entry), null);
+                setFile(file, false);
+                N name = namingStrategy.fromName(FilenameUtils.getBaseName(file.getName()));
+                writer.writeAndOverride(data.get(name), gson);
+            } catch (InvalidFileException e) {
+                if (ignoreInvalidFiles) continue;
+                throw e;
+            }
+        return data;
     }
 
     /**
@@ -451,10 +485,12 @@ public class TreeConfiguration<N, E> {
      * @param data New data to save
      * @return The inputted map data
      * @throws IOException Any exceptions in I/O writing
+     * @see #save()
+     * @see #lazySave()
      */
     public Map<N, E> saveNewMap(@NotNull Map<N, E> data) throws IOException {
         this.data = data;
-        for (File file : files) {
+        for (File file : files.values()) {
             try {
                 setFile(file, false);
                 N name = namingStrategy.fromName(FilenameUtils.getBaseName(file.getName()));
@@ -475,16 +511,18 @@ public class TreeConfiguration<N, E> {
      *
      * @return A list of all files that meet this criteria
      */
-    private List<File> getIncludedFiles() {
-        if (isDirectoryEmpty(directory)) return new LinkedList<>();
+    private Map<String, File> getIncludedFiles() {
+        if (isDirectoryEmpty(directory)) return new HashMap<>();
         File[] files = Preconditions.checkNotNull(directory.listFiles(fileFilter));
-        if (files.length == 0) return new LinkedList<>();
-        List<File> includedFiles = new ArrayList<>();
+        if (files.length == 0) return new HashMap<>();
+        Map<String, File> includedFiles = new HashMap<>();
         for (File file : files) {
             if (!file.isDirectory())
-                includedFiles.add(file);
-            else if (searchSubdirectories)
-                Collections.addAll(includedFiles, Preconditions.checkNotNull(file.listFiles(fileFilter)));
+                includedFiles.put(FilenameUtils.getBaseName(file.getName()), file);
+            else if (searchSubdirectories) {
+                for (File sub : Preconditions.checkNotNull(file.listFiles(fileFilter)))
+                    includedFiles.put(FilenameUtils.getBaseName(sub.getName()), sub);
+            }
         }
         return this.files = includedFiles;
     }
