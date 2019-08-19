@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Maven Central status](https://img.shields.io/maven-central/v/io.github.moltenjson/MoltenJSON.svg)](https://search.maven.org/search?q=a:MoltenJSON)
+[![Maven Central status](https://img.shields.io/maven-central/v/io.github.moltenjson/MoltenJSON.svg)](https://search.maven.org/artifact/io.github.moltenjson/MoltenJSON/2.4.9/jar)
 [![](https://jitpack.io/v/moltenjson/MoltenJSON.svg)](https://jitpack.io/#moltenjson/MoltenJSON)
 
 # MoltenJSON
