@@ -8,7 +8,9 @@ MoltenJSON is a wide, feature-extensive JSON/[GSON](https://github.com/google/gs
 # Features
 * Extremely easy to use
 * Well-documented code
-* Easily read, write and handle JSON from any file or URL, using a basic reader, a basic configuration or a complex configuration.
+* Several tools for reading, writing and parsing JSON files
+* Wide support for dealing with web-related operations, such as reading directly off a URL, or creating an HTTP request payload, or parsing data off an HTTP request
+* Various configuration types which suit different uses and can handle data (regardless of size) efficiently while allowing it to be accessed easily and simply
 * Different JSON utilities for simplifying building JSON.
 * Clean, easy-to-read and heavily-documented code.
 * Built and implemented to be thread-safe. This library supports running in multi-threaded environments.
