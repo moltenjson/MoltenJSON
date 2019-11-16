@@ -47,16 +47,6 @@ public class JsonReader implements Closeable, Lockable<JsonReader>, Refreshable<
     private final BufferedReader bufferedReader;
 
     /**
-     * A file reader, used by the buffered reader
-     */
-    private FileReader fileReader;
-
-    /**
-     * Whether the reader should use the given BufferedReader instead of initiating its own
-     */
-    private final boolean inputReader;
-
-    /**
      * Whether to allow calls for {@link #setFile(JsonFile)} or not
      */
     private final boolean locked;
@@ -69,9 +59,7 @@ public class JsonReader implements Closeable, Lockable<JsonReader>, Refreshable<
      * @throws IOException I/O exceptions while connecting with the file
      */
     public JsonReader(@NotNull JsonFile file, boolean locked) throws IOException {
-        inputReader = false;
         this.file = file;
-        fileReader = new FileReader(file.getFile());
         bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(file.getFile()), StandardCharsets.UTF_8));
         this.locked = locked;
     }
@@ -96,7 +84,6 @@ public class JsonReader implements Closeable, Lockable<JsonReader>, Refreshable<
      * @param locked Whether to allow calls to {@link #setFile(JsonFile)} or not
      */
     public JsonReader(@NotNull BufferedReader reader, boolean locked) {
-        inputReader = true;
         bufferedReader = reader;
         this.locked = locked;
     }
@@ -302,9 +289,6 @@ public class JsonReader implements Closeable, Lockable<JsonReader>, Refreshable<
     @Override
     public void close() throws IOException {
         bufferedReader.close();
-        if (!inputReader) {
-            fileReader.close();
-        }
     }
 
     /**

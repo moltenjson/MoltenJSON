@@ -16,7 +16,6 @@
 package net.moltenjson.configuration.select;
 
 import com.google.common.reflect.TypeToken;
-import net.moltenjson.utils.Gsons;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -54,7 +53,7 @@ class Reflector {
         if (d.equals(SelectionHolder.class)) {
             d = getGeneric(field);
         }
-        return Gsons.DEFAULT.fromJson(configuration.getContent().get(configuration.getKey(field)), d);
+        return configuration.gson.fromJson(configuration.getContent().get(configuration.getKey(field)), d);
     }
 
     static Object getStaticValue(Field field) {

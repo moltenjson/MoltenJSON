@@ -172,6 +172,15 @@ public class JsonURLReader implements Refreshable<JsonElement> {
     }
 
     /**
+     * Returns a {@link JsonResponse} that represents the contents of the URL
+     *
+     * @return The corresponding {@link JsonResponse}
+     */
+    public JsonResponse getAsResponse() {
+        return new JsonResponse(content.getAsJsonObject());
+    }
+
+    /**
      * Returns a new {@link JsonURLReader} and throws unchecked exceptions if there were any IO exceptions
      *
      * @param url URL string to read from

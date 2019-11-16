@@ -56,6 +56,29 @@ public class JsonResponse {
     private final Gson gson;
 
     /**
+     * Initiates a new {@link JsonResponse} from the given JSON object, and parses it using the specified
+     * GSON profile.
+     *
+     * @param json The JSON object.
+     * @param gson GSON profile to use
+     */
+    public JsonResponse(@NotNull JsonObject json, @NotNull Gson gson) {
+        this.response = json;
+        this.responseText = json.toString();
+        this.gson = gson;
+    }
+
+    /**
+     * Initiates a new {@link JsonResponse} from the given JSON object, and parses it using the default
+     * GSON profile.
+     *
+     * @param json The JSON object.
+     */
+    public JsonResponse(@NotNull JsonObject json) {
+        this(json, Gsons.DEFAULT);
+    }
+
+    /**
      * Initiates a new {@link JsonResponse} from the given JSON response, and parses it using the
      * provided GSON profile.
      *
@@ -63,8 +86,7 @@ public class JsonResponse {
      * @param gson     GSON profile to use
      */
     public JsonResponse(@NotNull String response, @NotNull Gson gson) {
-        this.responseText = response;
-        this.response = JsonUtils.getObjectFromString(response, this.gson = gson);
+        this(JsonUtils.getObjectFromString(response, gson), gson);
     }
 
     /**
@@ -89,6 +111,30 @@ public class JsonResponse {
         return gson.fromJson(response.get(key), type);
     }
 
+    /**
+     * Returns a deserialized instance of the given class assignment, derived from the total
+     * response content
+     *
+     * @param type Type to return an instance of, as a deserialized object
+     * @param gson Gson profile to use
+     * @param <T>  Class object assignment
+     * @return The deserialized object
+     */
+    public final <T> T getAs(@NotNull Type type, @NotNull Gson gson) {
+        return gson.fromJson(response, type);
+    }
+
+    /**
+     * Returns a deserialized instance of the given class assignment, derived from the total
+     * response content
+     *
+     * @param type Type to return an instance of, as a deserialized object
+     * @param <T>  Class object assignment
+     * @return The deserialized object
+     */
+    public final <T> T getAs(@NotNull Type type) {
+        return getAs(type, Gsons.DEFAULT);
+    }
 
     /**
      * Returns a {@link String} from the associated key.
@@ -187,6 +233,15 @@ public class JsonResponse {
         return get(key, type);
     }
 
+    /**
+     * Returns whether the specified key exists in the response or not.
+     *
+     * @param key Key to check for
+     * @return {@code true} if the member exists, {@code false} if otherwise.
+     */
+    public boolean contains(String key) {
+        return response.has(key);
+    }
     /**
      * Returns the response text, as provided in the constructor
      *

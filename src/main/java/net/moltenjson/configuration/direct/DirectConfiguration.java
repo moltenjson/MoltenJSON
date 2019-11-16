@@ -268,6 +268,16 @@ public class DirectConfiguration implements Lockable<DirectConfiguration>, Refre
     }
 
     /**
+     * Returns whether the specified key exists in the configuration data or not.
+     *
+     * @param key Key to check for
+     * @return {@code true} if the member exists, {@code false} if otherwise.
+     */
+    public boolean contains(String key) {
+        return content.has(key);
+    }
+
+    /**
      * Saves the configuration
      *
      * @param onException The task to execute on exception. If no exception handling is required,

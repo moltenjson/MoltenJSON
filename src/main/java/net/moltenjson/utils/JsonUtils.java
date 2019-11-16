@@ -18,6 +18,7 @@ package net.moltenjson.utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -27,6 +28,8 @@ import java.util.Map;
  * Contains various helping methods for JSON
  */
 public class JsonUtils {
+
+    private static final JsonParser PARSER = new JsonParser();
 
     private JsonUtils() {
         throw new AssertionError(JsonUtils.class.getName() + " cannot be initiated!");
@@ -39,7 +42,7 @@ public class JsonUtils {
      * @return The given JSON string in a pretty manner
      */
     public static String setPretty(@NotNull String json) {
-        return Gsons.PRETTY_PRINTING.toJson(getObjectFromString(json));
+        return Gsons.PRETTY_PRINTING.toJson(getElementFromString(json));
     }
 
     /**
@@ -60,7 +63,7 @@ public class JsonUtils {
      * @return JsonElement from the given JSON string
      */
     public static JsonElement getElementFromString(@NotNull String json) {
-        return getElementFromString(json, Gsons.DEFAULT);
+        return PARSER.parse(json);
     }
 
     /**
