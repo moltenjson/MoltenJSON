@@ -69,7 +69,7 @@ public class SelectableConfiguration implements Lockable<SelectableConfiguration
     /**
      * The GSON profile to use when writing
      */
-    private final Gson gson;
+    final Gson gson;
 
     /**
      * Initiates a new SelectableConfiguration and assigns all fields to their values from the JSON file
