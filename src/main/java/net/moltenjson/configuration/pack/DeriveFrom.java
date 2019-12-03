@@ -34,7 +34,8 @@ import java.lang.annotation.Target;
 public @interface DeriveFrom {
 
     /**
-     * Represents the file name or path. The name can have "?sep?" as a placeholder for {@link java.io.File#separator}
+     * Represents the file name or path. The name can have slashes "/" as path separators. Slashes will get replaced
+     * with the appropriate {@link java.io.File#separator} for the operating system.
      *
      * @return The file name/path
      */

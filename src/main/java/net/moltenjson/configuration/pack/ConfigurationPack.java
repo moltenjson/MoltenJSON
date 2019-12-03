@@ -102,7 +102,7 @@ public class ConfigurationPack<I> implements Refreshable<ConfigurationPack<I>> {
     private JsonFile addFieldFile(@NotNull Field field) {
         Preconditions.checkArgument(field.isAnnotationPresent(DeriveFrom.class), "Field " + field.getName() + " is not annotated with @DeriveFrom!");
         DeriveFrom derive = field.getAnnotation(DeriveFrom.class);
-        JsonFile file = JsonFile.of(directory, derive.value().replace("?sep?", File.separator));
+        JsonFile file = JsonFile.of(directory, derive.value().replaceAll("/", File.separator));
         fieldMap.put(field, file);
         return file;
     }
