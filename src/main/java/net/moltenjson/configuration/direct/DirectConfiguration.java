@@ -284,8 +284,19 @@ public class DirectConfiguration implements Lockable<DirectConfiguration>, Refre
      *                    this may be left null.
      */
     public final void save(@Nullable Consumer<IOException> onException) {
+        save(Gsons.PRETTY_PRINTING, onException);
+    }
+
+    /**
+     * Saves the configuration
+     *
+     * @param gson        The GSON profile to save with
+     * @param onException The task to execute on exception. If no exception handling is required,
+     *                    this may be left null.
+     */
+    public final void save(@NotNull Gson gson, @Nullable Consumer<IOException> onException) {
         try {
-            writer.writeAndOverride(content, true);
+            writer.writeAndOverride(content, gson);
         } catch (IOException e) {
             if (onException != null)
                 onException.accept(e);
