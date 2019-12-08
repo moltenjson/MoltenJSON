@@ -23,9 +23,6 @@ import java.lang.annotation.Target;
 /**
  * An annotation to mark fields which are a part of a configuration pack, in which this field is associated with
  * a specific file and has its content derived from it.
- * <p>
- * A field annotated with this annotation must <i>NOT</i> be {@code static}! Static fields will get ignored.
- * If you need to use a static field, use a {@link net.moltenjson.configuration.select.SelectableConfiguration}.
  *
  * @see ConfigurationPack
  */
